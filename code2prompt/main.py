@@ -34,20 +34,32 @@ def is_ignored(file_path: Path, gitignore_patterns: list, base_path: Path) -> bo
 
     for pattern in gitignore_patterns:
         # Normalize directory patterns to match both files and directories
-        if pattern.endswith('/'):
-            pattern = pattern.rstrip('/')
-            # Check if the relative path starts with the directory pattern
-            if str(relative_path).startswith(pattern + '/') or str(relative_path) == pattern:
+        directory_pattern = pattern.rstrip("/")
+
+        # Check if the pattern is intended to match directories specifically
+        if pattern.endswith("/") or pattern in [
+            ".git",
+            ".venv",
+            "dist",
+        ]:  # Add other directory names as needed
+            if (
+                str(relative_path).startswith(directory_pattern + "/")
+                or str(relative_path) == directory_pattern
+            ):
                 return True
         # Handle patterns with a leading slash indicating the root of the repository
-        elif pattern.startswith("/"):
+        if pattern.startswith("/"):
             pattern = pattern.lstrip("/")
             # Check if the pattern matches the start of the relative path
-            if fnmatch(str(relative_path), pattern) or fnmatch(str(relative_path), pattern + "/*"):
+            if fnmatch(str(relative_path), pattern) or fnmatch(
+                str(relative_path), pattern + "/*"
+            ):
                 return True
         # Handle other patterns without a leading slash
         else:
-            if fnmatch(str(relative_path), pattern) or fnmatch(str(relative_path.parent), pattern):
+            if fnmatch(str(relative_path), pattern) or fnmatch(
+                str(relative_path.parent), pattern
+            ):
                 return True
 
     return False
@@ -104,7 +116,6 @@ def create_markdown_file(path, output, gitignore, filter):
     """Create a Markdown file with the content of files in a directory."""
     content = []
     table_of_contents = []
-    
 
     path = Path(path)
     gitignore_path = Path(gitignore) if gitignore else path / ".gitignore"
