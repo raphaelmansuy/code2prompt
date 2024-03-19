@@ -2,10 +2,11 @@ name: Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
 
@@ -24,6 +25,10 @@ jobs:
     - name: Install dependencies
       run: |
         poetry install
+
+    - name: Run tests
+      run: |
+        poetry run pytest
 
     - name: Build package
       run: |
