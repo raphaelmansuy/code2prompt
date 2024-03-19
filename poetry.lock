@@ -26,29 +26,6 @@ files = [
 ]
 
 [[package]]
-name = "docopt"
-version = "0.6.2"
-description = "Pythonic argument parser, that will make you smile"
-optional = false
-python-versions = "*"
-files = [
-    {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
-]
-
-[[package]]
-name = "gitignore"
-version = "0.0.8"
-description = "gitignore command generates .gitingore files from the command line."
-optional = false
-python-versions = "*"
-files = [
-    {file = "gitignore-0.0.8.tar.gz", hash = "sha256:fc74214c6bec2a241a43efd45bc4028500352b5d928f35a4ffd1c3ed59187642"},
-]
-
-[package.dependencies]
-docopt = ">=0.6.2"
-
-[[package]]
 name = "markdown-it-py"
 version = "3.0.0"
 description = "Python port of markdown-it. Markdown parsing, done right!"
@@ -131,4 +108,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8, <4.0"
-content-hash = "d0a839335908495587474ff2107c685fe2651a4160b39ac9cbae10f3c1b70adb"
+content-hash = "78f46e1ee5aa2715bfa8a87719a192e43ee5c8c431d334f9a22722a8e3d2252f"

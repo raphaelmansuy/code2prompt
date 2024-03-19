@@ -29,37 +29,23 @@ def is_ignored(file_path: Path, gitignore_patterns: list, base_path: Path) -> bo
     Returns:
         bool: True if the file path matches any pattern, False otherwise.
     """
-    # Make the file path relative to the base path
     relative_path = file_path.relative_to(base_path)
 
     for pattern in gitignore_patterns:
-        # Normalize directory patterns to match both files and directories
-        directory_pattern = pattern.rstrip("/")
+        pattern = pattern.rstrip("/")  # Remove trailing slash from the pattern
 
-        # Check if the pattern is intended to match directories specifically
-        if pattern.endswith("/") or pattern in [
-            ".git",
-            ".venv",
-            "dist",
-        ]:  # Add other directory names as needed
-            if (
-                str(relative_path).startswith(directory_pattern + "/")
-                or str(relative_path) == directory_pattern
-            ):
-                return True
-        # Handle patterns with a leading slash indicating the root of the repository
         if pattern.startswith("/"):
-            pattern = pattern.lstrip("/")
-            # Check if the pattern matches the start of the relative path
-            if fnmatch(str(relative_path), pattern) or fnmatch(
-                str(relative_path), pattern + "/*"
-            ):
+            if fnmatch(str(relative_path), pattern[1:]):
                 return True
-        # Handle other patterns without a leading slash
+            if fnmatch(str(relative_path.parent), pattern[1:]):
+                return True
         else:
-            if fnmatch(str(relative_path), pattern) or fnmatch(
-                str(relative_path.parent), pattern
-            ):
+            for path in relative_path.parents:
+                if fnmatch(str(path / relative_path.name), pattern):
+                    return True
+                if fnmatch(str(path), pattern):
+                    return True
+            if fnmatch(str(relative_path), pattern):
                 return True
 
     return False
@@ -120,6 +106,7 @@ def create_markdown_file(path, output, gitignore, filter):
     path = Path(path)
     gitignore_path = Path(gitignore) if gitignore else path / ".gitignore"
     gitignore_patterns = parse_gitignore(gitignore_path)
+    gitignore_patterns.add(".git")
 
     for file_path in path.rglob("*"):
         if (
