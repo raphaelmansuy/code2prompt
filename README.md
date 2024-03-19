@@ -5,6 +5,8 @@ Code2Prompt is a powerful command-line tool that simplifies the process of provi
 
 With Code2Prompt, you can easily create a well-structured and informative document that serves as a valuable resource for feeding questions to LLMs, enabling them to better understand and assist with your code-related queries.
 
+![Illustration](./docs/code2Prompt.jpg)
+
 ## Features
 
 - Automatically traverses a directory and its subdirectories to include all relevant files
@@ -140,7 +142,7 @@ To build a distributable package of Code2Prompt using Poetry, follow these steps
 
 ## License
 
-Code2Prompt is released under the MIT License. See [LICENSE](LICENSE) for more information.
+Code2Prompt is released under the MIT License. See [LICENSE](LICENSE.md) for more information.
 
 ## Contributing
 
