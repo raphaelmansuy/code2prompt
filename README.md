@@ -146,7 +146,7 @@ Code2Prompt is released under the MIT License. See [LICENSE](LICENSE.md) for mor
 
 ## Contributing
 
-Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request on the [GitHub repository](https://github.com/raphael.mansuy/code2prompt).
+Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request on the [GitHub repository](https://github.com/raphaelmansuy/code2prompt).
 
 ## Acknowledgements
 
