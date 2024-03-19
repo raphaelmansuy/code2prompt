@@ -1,4 +1,4 @@
-import os
+""" Main module for the code2prompt package. """
 from datetime import datetime
 from pathlib import Path
 from fnmatch import fnmatch
