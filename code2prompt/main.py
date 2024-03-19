@@ -17,10 +17,6 @@ def parse_gitignore(gitignore_path):
     return patterns
 
 
-from pathlib import Path
-from fnmatch import fnmatch
-
-
 def is_ignored(file_path: Path, gitignore_patterns: list, base_path: Path) -> bool:
     """
     Check if a file path matches any pattern in the .gitignore file.
@@ -33,38 +29,25 @@ def is_ignored(file_path: Path, gitignore_patterns: list, base_path: Path) -> bo
     Returns:
         bool: True if the file path matches any pattern, False otherwise.
     """
-    if not file_path or not gitignore_patterns:
-        return False
-
-    # Convert paths to absolute and calculate the relative path
-    file_path = file_path.resolve()
-    base_path = base_path.resolve()
-    try:
-        relative_path = file_path.relative_to(base_path).as_posix()
-    except ValueError:
-        # file_path is not within base_path
-        return False
+    # Make the file path relative to the base path
+    relative_path = file_path.relative_to(base_path)
 
     for pattern in gitignore_patterns:
-        # Normalize directory patterns by removing leading and/or trailing slashes
-        normalized_pattern = pattern.strip("/")
-        match_path = str(relative_path)
-
-        # Check for root directory patterns
-        if pattern.startswith("/"):
-            if match_path == normalized_pattern or match_path.startswith(
-                normalized_pattern + "/"
-            ):
+        # Normalize directory patterns to match both files and directories
+        if pattern.endswith('/'):
+            pattern = pattern.rstrip('/')
+            # Check if the relative path starts with the directory pattern
+            if str(relative_path).startswith(pattern + '/') or str(relative_path) == pattern:
                 return True
-
-        # Check for directory patterns (patterns ending with a slash)
-        elif pattern.endswith("/"):
-            if match_path.startswith(normalized_pattern + "/"):
+        # Handle patterns with a leading slash indicating the root of the repository
+        elif pattern.startswith("/"):
+            pattern = pattern.lstrip("/")
+            # Check if the pattern matches the start of the relative path
+            if fnmatch(str(relative_path), pattern) or fnmatch(str(relative_path), pattern + "/*"):
                 return True
-
-        # Check for file patterns
+        # Handle other patterns without a leading slash
         else:
-            if fnmatch(match_path, pattern) or fnmatch(file_path.name, pattern):
+            if fnmatch(str(relative_path), pattern) or fnmatch(str(relative_path.parent), pattern):
                 return True
 
     return False
@@ -121,13 +104,11 @@ def create_markdown_file(path, output, gitignore, filter):
     """Create a Markdown file with the content of files in a directory."""
     content = []
     table_of_contents = []
+    
 
     path = Path(path)
     gitignore_path = Path(gitignore) if gitignore else path / ".gitignore"
     gitignore_patterns = parse_gitignore(gitignore_path)
-
-    # add the .git directory to the ignored patterns
-    gitignore_patterns.add(".git/**")
 
     for file_path in path.rglob("*"):
         if (
