@@ -17,32 +17,10 @@ With Code2Prompt, you can easily create a well-structured and informative docume
 
 ## How It Works
 
-The following Mermaid diagram illustrates the high-level workflow of Code2Prompt:
+The following diagram illustrates the high-level workflow of Code2Prompt:
 
-```mermaid
-graph TD
-    A[Start] --> B[Parse command-line options]
-    B --> C[Parse .gitignore file]
-    C --> D[Traverse directory and subdirectories]
-    D --> E{Is file ignored?}
-    E -->|Yes| D
-    E -->|No| F{Matches filter pattern?}
-    F -->|No| D
-    F -->|Yes| G{Is binary file?}
-    G -->|Yes| D
-    G -->|No| H[Extract file metadata]
-    H --> I[Read file content]
-    I --> J[Generate file summary]
-    J --> K[Generate code block]
-    K --> L[Append to Markdown content]
-    L --> D
-    D --> M[Generate table of contents]
-    M --> N{Output to file?}
-    N -->|Yes| O[Write Markdown to file]
-    N -->|No| P[Print Markdown to console]
-    O --> Q[End]
-    P --> Q
-```
+![Diagram](./docs/code2prompt.process.excalidraw.png)
+
 
 1. The tool starts by parsing the command-line options provided by the user.
 2. It then parses the .gitignore file (if specified) to obtain a set of patterns for excluding files and directories.
