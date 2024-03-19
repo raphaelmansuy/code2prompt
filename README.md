@@ -142,7 +142,7 @@ To build a distributable package of Code2Prompt using Poetry, follow these steps
 
 ## License
 
-Code2Prompt is released under the MIT License. See [LICENSE](LICENSE.md) for more information.
+Code2Prompt is released under the MIT License. See [LICENSE](./LICENCE.md) for more information.
 
 ## Contributing
 
