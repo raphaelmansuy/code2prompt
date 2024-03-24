@@ -1,8 +1,12 @@
 """ Main module for the code2prompt package. """
+
 from datetime import datetime
 from pathlib import Path
 from fnmatch import fnmatch
 import click
+
+from code2prompt.language_inference import infer_language
+from code2prompt.comment_stripper import strip_comments
 
 
 def parse_gitignore(gitignore_path):
@@ -98,7 +102,14 @@ def is_binary(file_path):
 @click.option(
     "--filter", "-f", type=str, help='Filter pattern to include files (e.g., "*.py").'
 )
-def create_markdown_file(path, output, gitignore, filter):
+@click.option(
+    "--suppress-comments",
+    "-s",
+    is_flag=True,
+    help="Strip comments from the code files.",
+    default=False,
+)
+def create_markdown_file(path, output, gitignore, filter, suppress_comments):
     """Create a Markdown file with the content of files in a directory."""
     content = []
     table_of_contents = []
@@ -127,6 +138,10 @@ def create_markdown_file(path, output, gitignore, filter):
             try:
                 with file_path.open("r", encoding="utf-8") as f:
                     file_content = f.read()
+                    if suppress_comments:
+                        language = infer_language(file_path.name)
+                        if language != "unknown":
+                            file_content = strip_comments(file_content, language)
             except UnicodeDecodeError:
                 # Ignore files that cannot be decoded
                 continue
@@ -158,4 +173,5 @@ def create_markdown_file(path, output, gitignore, filter):
 
 
 if __name__ == "__main__":
+    # pylint: disable=no-value-for-parameter
     create_markdown_file()

@@ -1,3 +1,4 @@
+"""Tests for the comment_stripper module."""
 import re
 from textwrap import dedent
 from code2prompt.comment_stripper import (
@@ -12,6 +13,7 @@ from code2prompt.comment_stripper import (
 
 
 def normalize_whitespace(text):
+    """ Normalize the whitespace in a string."""
     return re.sub(r'\s+', ' ', text.strip())
 
 
