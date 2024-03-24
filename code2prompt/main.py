@@ -152,7 +152,11 @@ def create_markdown_file(path, output, gitignore, filter, suppress_comments):
             file_info += f"- Created: {file_creation_time}\n"
             file_info += f"- Modified: {file_modification_time}\n\n"
 
-            file_code = f"### Code\n```{file_extension}\n{file_content}\n```\n\n"
+            language = infer_language(file_path.name)
+            if language == "unknown":
+                language = format(file_extension[1:])
+
+            file_code = f"### Code\n```{language}\n{file_content}\n```\n\n"
 
             content.append(file_info + file_code)
             table_of_contents.append(
