@@ -14,6 +14,7 @@ With Code2Prompt, you can easily create a well-structured and informative docume
 - Respects .gitignore files to exclude unwanted files and directories
 - Generates a table of contents with links to each file section
 - Provides file metadata such as extension, size, creation time, and modification time
+- Optionally strips comments from code files to focus on the core code
 - Includes the actual code content of each file in fenced code blocks
 - Handles binary files and files with encoding issues gracefully
 
@@ -102,6 +103,7 @@ code2prompt --path /path/to/your/codebase --output output.md
 - `--output` (optional): Name of the output Markdown file. If not provided, the output will be displayed in the console.
 - `--gitignore` (optional): Path to a custom .gitignore file. If not provided, the tool will look for a .gitignore file in the specified directory.
 - `--filter` (optional): Filter pattern to include specific files (e.g., "*.py" to include only Python files).
+- `--suppress-comments` (optional): Strip comments from the code files. If not provided, comments will be included.
 
 ### Examples
 
@@ -118,6 +120,11 @@ code2prompt --path /path/to/your/codebase --output output.md
 3. Generate a Markdown file for a project with a custom .gitignore file:
    ```
    code2prompt --path /path/to/your/project --output project.md --gitignore /path/to/custom/.gitignore
+   ```
+
+4. Generate a Markdown file with comments stripped from code files:
+   ```
+   code2prompt --path /path/to/your/project --output project.md --suppress-comments
    ```
 
 ## Build
