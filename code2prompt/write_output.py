@@ -1,12 +1,14 @@
 import click
 from pathlib import Path
+import pyperclip
 
 def write_output(content, output_path):
     """
-    Writes the generated content to a file or prints it to the console.
+    Writes the generated content to a file or prints it to the console,
+    and copies the content to the clipboard.
 
     Parameters:
-    - content (str): The content to be written or printed.
+    - content (str): The content to be written, printed, and copied.
     - output_path (str): The path to the file where the content should be written.
                          If None, the content is printed to the console.
 
@@ -22,3 +24,9 @@ def write_output(content, output_path):
             click.echo(f"Error writing to output file: {e}", err=True)
     else:
         click.echo(content)
+
+    # Copy content to clipboard
+    try:
+        pyperclip.copy(content)
+    except Exception as e:
+        click.echo(f"Error copying to clipboard: {e}", err=True)
