@@ -116,8 +116,3 @@ This template groups files by language and creates separate sections for Python 
 3. Create user-defined variables for dynamic content that you want to input at runtime.
 4. Use the `files` list to iterate over all processed files and access their properties.
 5. Remember that the `content` of each file is already processed according to the command-line options (e.g., comments stripped if `--suppress-comments` was used).
-
-By leveraging these templating capabilities, you can create highly customized outputs tailored to your specific needs for code analysis and documentation.
-
-Citations:
-[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/585370/cbd51bc7-ed1f-4321-9a7b-b756920ca298/paste.txt
