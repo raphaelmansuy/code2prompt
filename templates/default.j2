@@ -1,0 +1,20 @@
+# Code Analysis Report
+
+# Code summary
+{% for file in files %}- {{ file.path }}
+{% endfor %}
+
+## Files
+
+{% for file in files %}
+## {{ file.path }}
+
+- Language: {{ file.language }}
+- Size: {{ file.size }} bytes
+- Last modified: {{ file.modified }}
+
+```{{ file.language }}
+{{ file.content }}
+```
+
+{% endfor %}
