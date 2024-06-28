@@ -167,3 +167,6 @@ def test_create_markdown_with_exclude():
         assert "file2.py" in output_content
         assert "file3.txt" in output_content  # Assuming we want to include non-Python files by default
         assert "ignore_me.py" not in output_content  # Ensuring excluded file is not in the output
+        
+        
+        

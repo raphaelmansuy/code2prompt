@@ -76,11 +76,13 @@ def create_markdown_file(
                 file_path.stat().st_mtime
             ).strftime("%Y-%m-%d %H:%M:%S")
 
+
+            language = "unknown"
             try:
                 with file_path.open("r", encoding="utf-8") as f:
                     file_content = f.read()
+                    language = infer_language(file_path.name)
                     if suppress_comments:
-                        language = infer_language(file_path.name)
                         if language != "unknown":
                             file_content = strip_comments(file_content, language)
             except UnicodeDecodeError:
@@ -88,13 +90,15 @@ def create_markdown_file(
 
             file_info = f"## File: {file_path}\n\n"
             file_info += f"- Extension: {file_extension}\n"
+            file_info += f"- Language: {language}\n"
             file_info += f"- Size: {file_size} bytes\n"
             file_info += f"- Created: {file_creation_time}\n"
             file_info += f"- Modified: {file_modification_time}\n\n"
-            file_code = f"### Code\n\n\n"
+            file_code = "### Code\n\n\n"
+            file_code += f"```{language}\n{file_content}\n```\n\n"
             content.append(file_info + file_code)
             table_of_contents.append(
-                f"- [{file_path}](#{file_path.as_posix().replace('/', '')})\n"
+                f"- {file_path}\n"
             )
 
     markdown_content = (
