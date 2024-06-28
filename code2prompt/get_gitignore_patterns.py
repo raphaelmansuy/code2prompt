@@ -1,8 +1,5 @@
 from code2prompt.utils.parse_gitignore import parse_gitignore
-
-
 from pathlib import Path
-
 
 def get_gitignore_patterns(path, gitignore):
     """
@@ -14,13 +11,17 @@ def get_gitignore_patterns(path, gitignore):
     to ignore the .git directory itself.
 
     Args:
-        path (Path): The root path of the project where the default .gitignore file is located.
-        gitignore (Optional[str]): An optional path to a specific .gitignore file to use instead of the default.
+    path (Path): The root path of the project where the default .gitignore file is located.
+    gitignore (Optional[str]): An optional path to a specific .gitignore file to use instead of the default.
 
     Returns:
-        Set[str]: A set of gitignore patterns extracted from the .gitignore file.
+    Set[str]: A set of gitignore patterns extracted from the .gitignore file.
     """
-    gitignore_path = Path(gitignore) if gitignore else path / ".gitignore"
+    if gitignore:
+        gitignore_path = Path(gitignore)
+    else:
+        gitignore_path = Path(path) / ".gitignore"
+
     patterns = parse_gitignore(gitignore_path)
     patterns.add(".git")
     return patterns
