@@ -1,13 +1,10 @@
-""" A collection of functions to strip comments from code strings based on the programming language. """
-
 import re
 
-
 def strip_c_style_comments(code: str) -> str:
-    """
-    Strips C-style comments from the given code string.
+    """Strips C-style comments from the given code string.
+    
     Supports single-line comments (//), multi-line comments (/* */), and string literals.
-
+    
     :param code: The code string to strip comments from.
     :return: The code string with C-style comments removed.
     """
@@ -21,24 +18,22 @@ def strip_c_style_comments(code: str) -> str:
         code,
     )
 
-
 def strip_html_style_comments(code: str) -> str:
-    """
-    Strips HTML-style comments from the given code string.
-    Supports both single-line and multi-line comments (<!-- -->).
-
+    """Strips HTML-style comments from the given code string.
+    
+    Supports both single-line and multi-line comments.
+    
     :param code: The code string to strip comments from.
     :return: The code string with HTML-style comments removed.
     """
     pattern = re.compile(r"<!--.*?-->", re.DOTALL)
     return re.sub(pattern, "", code)
 
-
 def strip_python_style_comments(code: str) -> str:
-    """
-    Strips Python-style comments from the given code string.
+    """Strips Python-style comments from the given code string.
+    
     Supports single-line comments (#), multi-line comments (''' ''' or \"\"\" \"\"\"), and string literals.
-
+    
     :param code: The code string to strip comments from.
     :return: The code string with Python-style comments removed.
     """
@@ -54,22 +49,19 @@ def strip_python_style_comments(code: str) -> str:
         code,
     )
 
-
 def strip_shell_style_comments(code: str) -> str:
-    """
-    Strips shell-style comments from the given code string.
+    """Strips shell-style comments from the given code string.
+    
     Supports single-line comments (#) and multi-line comments (: ' ').
-
+    
     :param code: The code string to strip comments from.
     :return: The code string with shell-style comments removed.
     """
     lines = code.split("\n")
     new_lines = []
     in_multiline_comment = False
-
     for line in lines:
-        if line.strip().startswith("#!"):
-            # Preserve shebang lines
+        if line.strip().startswith("#!"):  # Preserve shebang lines
             new_lines.append(line)
         elif in_multiline_comment:
             if line.strip().endswith("'"):
@@ -77,20 +69,18 @@ def strip_shell_style_comments(code: str) -> str:
         elif line.strip().startswith(": '"):
             in_multiline_comment = True
         elif "#" in line:
-            # Remove single-line comments
             line = line.split("#", 1)[0]
             if line.strip():
                 new_lines.append(line)
         else:
             new_lines.append(line)
-
     return "\n".join(new_lines).strip()
 
 def strip_sql_style_comments(code: str) -> str:
-    """
-    Strips SQL-style comments from the given code string.
+    """Strips SQL-style comments from the given code string.
+    
     Supports single-line comments (--), multi-line comments (/* */), and string literals.
-
+    
     :param code: The code string to strip comments from.
     :return: The code string with SQL-style comments removed.
     """
@@ -104,17 +94,17 @@ def strip_sql_style_comments(code: str) -> str:
         code,
     )
 
-
 def strip_matlab_style_comments(code: str) -> str:
-    """
-    Strips MATLAB-style comments from the given code string.
+    """Strips MATLAB-style comments from the given code string.
+    
     Supports single-line comments (%) and string literals.
-
+    
     :param code: The code string to strip comments from.
     :return: The code string with MATLAB-style comments removed.
     """
     pattern = re.compile(
-        r'%.*?$|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"', re.DOTALL | re.MULTILINE
+        r'%.*?$|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"',
+        re.DOTALL | re.MULTILINE,
     )
     return re.sub(
         pattern,
@@ -122,17 +112,17 @@ def strip_matlab_style_comments(code: str) -> str:
         code,
     )
 
-
 def strip_r_style_comments(code: str) -> str:
-    """
-    Strips R-style comments from the given code string.
+    """Strips R-style comments from the given code string.
+    
     Supports single-line comments (#) and string literals.
-
+    
     :param code: The code string to strip comments from.
     :return: The code string with R-style comments removed.
     """
     pattern = re.compile(
-        r'#.*?$|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"', re.DOTALL | re.MULTILINE
+        r'#.*?$|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"',
+        re.DOTALL | re.MULTILINE,
     )
     return re.sub(
         pattern,
@@ -140,11 +130,9 @@ def strip_r_style_comments(code: str) -> str:
         code,
     )
 
-
 def strip_comments(code: str, language: str) -> str:
-    """
-    Strips comments from the given code string based on the specified programming language.
-
+    """Strips comments from the given code string based on the specified programming language.
+    
     :param code: The code string to strip comments from.
     :param language: The programming language of the code.
     :return: The code string with comments removed.

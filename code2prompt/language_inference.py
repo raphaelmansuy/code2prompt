@@ -1,18 +1,13 @@
-""" This module contains the function to infer the programming language based on the file extension. """
-
 import os
 
-
 def infer_language(filename: str) -> str:
-    """
-    Infers the programming language based on the file extension.
-
+    """Infers the programming language based on the file extension.
+    
     :param filename: The name of the file.
     :return: The inferred programming language.
     """
     _, extension = os.path.splitext(filename)
     extension = extension.lower()
-
     if extension in [".c", ".h"]:
         return "c"
     elif extension in [".cpp", ".hpp", ".cc", ".cxx"]:
