@@ -1,6 +1,16 @@
 import os
 
 def infer_language(filename: str) -> str:
+    """
+    Infers the programming language of a given file based on its extension.
+
+    Parameters:
+    - filename (str): The name of the file including its extension.
+
+    Returns:
+    - str: The inferred programming language as a lowercase string, e.g., "python".
+           Returns "unknown" if the language cannot be determined.
+    """
     _, extension = os.path.splitext(filename)
     extension = extension.lower()
     if extension in [".c", ".h"]:
