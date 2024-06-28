@@ -10,7 +10,10 @@ from code2prompt.process_file import process_file
 from code2prompt.write_output import write_output
 from code2prompt.template_processor import load_template, process_template, get_user_inputs
 
+VERSION = "0.5.0" # Define the version of the CLI tool
+
 @click.command()
+@click.version_option(VERSION, '-v', '--version', message='code2prompt version %(version)s')
 @click.option("--path", "-p", type=click.Path(exists=True), required=True, help="Path to the directory to navigate.")
 @click.option("--output", "-o", type=click.Path(), help="Name of the output Markdown file.")
 @click.option("--gitignore", "-g", type=click.Path(exists=True), help="Path to the .gitignore file.")
