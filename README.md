@@ -251,7 +251,7 @@ def read_sensitive_file(filename):
 
 secret = read_sensitive_file('secret.txt')
 print(f"The secret is: {secret}")
-```
+
 
 ## File: /path/to/your/project/utils.py
 Language: python
@@ -264,7 +264,7 @@ def encode_data(data):
 
 def decode_data(encoded_data):
     return base64.b64decode(encoded_data).decode()
-```
+
 
 Based on this codebase, please identify potential security vulnerabilities.
 ```
