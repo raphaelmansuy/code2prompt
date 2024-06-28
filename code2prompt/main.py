@@ -1,112 +1,65 @@
 from datetime import datetime
 from pathlib import Path
-from fnmatch import fnmatch
 import click
 from code2prompt.language_inference import infer_language
 from code2prompt.comment_stripper import strip_comments
+from code2prompt.file_handling import (
+    parse_gitignore,
+    is_ignored,
+    is_filtered,
+    is_binary,
+)
 
-def parse_gitignore(gitignore_path):
-    """Parse the .gitignore file and return a set of patterns."""
-    if not gitignore_path.exists():
-        return set()
-    with gitignore_path.open("r", encoding="utf-8") as file:
-        patterns = set(line.strip() for line in file if line.strip() and not line.startswith("#"))
-    return patterns
-
-def is_ignored(file_path: Path, gitignore_patterns: list, base_path: Path) -> bool:
-    """Check if a file path matches any pattern in the .gitignore file."""
-    relative_path = file_path.relative_to(base_path)
-    for pattern in gitignore_patterns:
-        pattern = pattern.rstrip("/")  # Remove trailing slash from the pattern
-        if pattern.startswith("/"):
-            if fnmatch(str(relative_path), pattern[1:]):
-                return True
-            if fnmatch(str(relative_path.parent), pattern[1:]):
-                return True
-        else:
-            for path in relative_path.parents:
-                if fnmatch(str(path / relative_path.name), pattern):
-                    return True
-                if fnmatch(str(path), pattern):
-                    return True
-            if fnmatch(str(relative_path), pattern):
-                return True
-    return False
-
-def is_filtered(file_path, include_pattern="", exclude_pattern="", case_sensitive=False):
-    """
-    Check if a file path matches the include patterns and doesn't match the exclude patterns.
-    
-    Args:
-        file_path (Path): The path of the file to check.
-        include_pattern (str): Comma-separated list of inclusion patterns.
-        exclude_pattern (str): Comma-separated list of exclusion patterns.
-        case_sensitive (bool): Whether to perform case-sensitive matching.
-    
-    Returns:
-        bool: True if the file should be included, False otherwise.
-    """
-    def match_patterns(file_name, patterns):
-        return any(fnmatch(file_name, pattern) for pattern in patterns)
-
-    file_name = file_path.name
-    if not case_sensitive:
-        file_name = file_name.lower()
-    
-    include_patterns = [p.strip().lower() for p in (include_pattern or "").split(',') if p.strip()]
-    exclude_patterns = [p.strip().lower() for p in (exclude_pattern or "").split(',') if p.strip()]
-    
-    if not include_patterns:
-        include_match = True
-    else:
-        include_match = match_patterns(file_name, include_patterns)
-    
-    exclude_match = match_patterns(file_name, exclude_patterns)
-    
-    return include_match and not exclude_match
-
-def is_binary(file_path):
-    """Determines if the specified file is a binary file."""
-    try:
-        with open(file_path, "rb") as file:
-            chunk = file.read(1024)
-            return b"\x00" in chunk
-    except IOError:
-        print(f"Error: The file at {file_path} could not be opened.")
-        return False
 
 @click.command()
 @click.option(
-    "--path", "-p", type=click.Path(exists=True), required=True, help="Path to the directory to navigate."
+    "--path",
+    "-p",
+    type=click.Path(exists=True),
+    required=True,
+    help="Path to the directory to navigate.",
 )
 @click.option(
     "--output", "-o", type=click.Path(), help="Name of the output Markdown file."
 )
 @click.option(
-    "--gitignore", "-g", type=click.Path(exists=True), help="Path to the .gitignore file."
+    "--gitignore",
+    "-g",
+    type=click.Path(exists=True),
+    help="Path to the .gitignore file.",
 )
 @click.option(
-    "--filter", "-f", type=str, help='Comma-separated filter patterns to include files (e.g., "*.py,*.js").'
+    "--filter",
+    "-f",
+    type=str,
+    help='Comma-separated filter patterns to include files (e.g., "*.py,*.js").',
 )
 @click.option(
-    "--exclude", "-e", type=str, help='Comma-separated patterns to exclude files (e.g., "*.txt,*.md").'
+    "--exclude",
+    "-e",
+    type=str,
+    help='Comma-separated patterns to exclude files (e.g., "*.txt,*.md").',
 )
 @click.option(
     "--case-sensitive", is_flag=True, help="Perform case-sensitive pattern matching."
 )
 @click.option(
-    "--suppress-comments", "-s", is_flag=True, help="Strip comments from the code files.", default=False
+    "--suppress-comments",
+    "-s",
+    is_flag=True,
+    help="Strip comments from the code files.",
+    default=False,
 )
-def create_markdown_file(path, output, gitignore, filter, exclude, suppress_comments, case_sensitive):
-    """Create a Markdown file with the content of files in a directory."""
+def create_markdown_file(
+    path, output, gitignore, filter, exclude, suppress_comments, case_sensitive
+):
     content = []
     table_of_contents = []
     path = Path(path)
-    
     gitignore_path = Path(gitignore) if gitignore else path / ".gitignore"
     gitignore_patterns = parse_gitignore(gitignore_path)
     gitignore_patterns.add(".git")
-    
+
     for file_path in path.rglob("*"):
         if (
             file_path.is_file()
@@ -116,8 +69,13 @@ def create_markdown_file(path, output, gitignore, filter, exclude, suppress_comm
         ):
             file_extension = file_path.suffix
             file_size = file_path.stat().st_size
-            file_creation_time = datetime.fromtimestamp(file_path.stat().st_ctime).strftime("%Y-%m-%d %H:%M:%S")
-            file_modification_time = datetime.fromtimestamp(file_path.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+            file_creation_time = datetime.fromtimestamp(
+                file_path.stat().st_ctime
+            ).strftime("%Y-%m-%d %H:%M:%S")
+            file_modification_time = datetime.fromtimestamp(
+                file_path.stat().st_mtime
+            ).strftime("%Y-%m-%d %H:%M:%S")
+
             try:
                 with file_path.open("r", encoding="utf-8") as f:
                     file_content = f.read()
@@ -127,16 +85,21 @@ def create_markdown_file(path, output, gitignore, filter, exclude, suppress_comm
                             file_content = strip_comments(file_content, language)
             except UnicodeDecodeError:
                 continue
+
             file_info = f"## File: {file_path}\n\n"
             file_info += f"- Extension: {file_extension}\n"
             file_info += f"- Size: {file_size} bytes\n"
             file_info += f"- Created: {file_creation_time}\n"
             file_info += f"- Modified: {file_modification_time}\n\n"
-            file_code = f"### Code\n```{file_extension}\n{file_content}\n```\n\n"
+            file_code = f"### Code\n\n\n"
             content.append(file_info + file_code)
-            table_of_contents.append(f"- [{file_path}](#{file_path.as_posix().replace('/', '')})\n")
-    
-    markdown_content = "# Table of Contents\n" + "".join(table_of_contents) + "\n" + "".join(content)
+            table_of_contents.append(
+                f"- [{file_path}](#{file_path.as_posix().replace('/', '')})\n"
+            )
+
+    markdown_content = (
+        "# Table of Contents\n" + "".join(table_of_contents) + "\n" + "".join(content)
+    )
     if output:
         output_path = Path(output)
         with output_path.open("w", encoding="utf-8") as md_file:
@@ -145,5 +108,8 @@ def create_markdown_file(path, output, gitignore, filter, exclude, suppress_comm
     else:
         click.echo(markdown_content)
 
+
 if __name__ == "__main__":
+    # pylint: disable=no-value-for-parameter
+    # pylint: disable=E1120
     create_markdown_file()
