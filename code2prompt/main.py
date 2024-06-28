@@ -1,9 +1,12 @@
 from pathlib import Path
 import click
-from code2prompt.file_handling import (
-    parse_gitignore, is_ignored, is_filtered, is_binary
+from code2prompt.utils.is_binary import (
+    is_binary
 )
-from code2prompt.generate_markdown_content import generate_markdown_content
+from code2prompt.utils.generate_markdown_content import generate_markdown_content
+from code2prompt.utils.is_filtered import is_filtered
+from code2prompt.utils.is_ignored import is_ignored
+from code2prompt.utils.parse_gitignore import parse_gitignore
 from code2prompt.process_file import process_file
 from code2prompt.write_output import write_output
 

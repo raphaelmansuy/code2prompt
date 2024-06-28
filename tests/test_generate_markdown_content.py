@@ -1,6 +1,6 @@
 
 
-from code2prompt.generate_markdown_content import generate_markdown_content
+from code2prompt.utils.generate_markdown_content import generate_markdown_content
 
 
 def test_generate_markdown_content():

@@ -1,6 +1,6 @@
 from code2prompt.comment_stripper import strip_comments
-from code2prompt.file_handling import add_line_numbers
-from code2prompt.language_inference import infer_language
+from code2prompt.utils.add_line_numbers import add_line_numbers
+from code2prompt.utils.language_inference import infer_language
 from datetime import datetime
 
 def process_file(file_path, suppress_comments, line_number, no_codeblock):

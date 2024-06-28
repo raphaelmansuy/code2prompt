@@ -1,4 +1,4 @@
-from code2prompt.language_inference import infer_language
+from code2prompt.utils.language_inference import infer_language
 
 def test_infer_language():
     """ Test the infer_language function."""

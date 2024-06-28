@@ -9,6 +9,8 @@ readme = "README.md"
 python = ">=3.8, <4.0"
 rich = "^13.7.1"
 click = "^8.1.7"
+jinja2 = "^3.1.4"
+prompt-toolkit = "^3.0.47"
 
 [tool.poetry.scripts]
 code2prompt = "code2prompt.main:create_markdown_file"

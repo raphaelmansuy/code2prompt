@@ -2,8 +2,11 @@ import os
 import tempfile
 from pathlib import Path
 from click.testing import CliRunner
-from code2prompt.file_handling import parse_gitignore, is_ignored, is_filtered, is_binary
+from code2prompt.utils.is_binary import is_binary
+from code2prompt.utils.is_filtered import is_filtered
+from code2prompt.utils.is_ignored import is_ignored
 from code2prompt.main import create_markdown_file
+from code2prompt.utils.parse_gitignore import parse_gitignore
 
 def test_parse_gitignore():
     with tempfile.NamedTemporaryFile(mode='w', delete=False) as temp_file:
