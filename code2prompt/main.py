@@ -1,10 +1,7 @@
 from pathlib import Path
 import click
 from code2prompt.file_handling import (
-    parse_gitignore,
-    is_ignored,
-    is_filtered,
-    is_binary
+    parse_gitignore, is_ignored, is_filtered, is_binary
 )
 from code2prompt.generate_markdown_content import generate_markdown_content
 from code2prompt.process_file import process_file
@@ -19,7 +16,8 @@ from code2prompt.write_output import write_output
 @click.option("--case-sensitive", is_flag=True, help="Perform case-sensitive pattern matching.")
 @click.option("--suppress-comments", "-s", is_flag=True, help="Strip comments from the code files.", default=False)
 @click.option("--line-number", "-ln", is_flag=True, help="Add line numbers to source code blocks.", default=False)
-def create_markdown_file(path, output, gitignore, filter, exclude, suppress_comments, case_sensitive, line_number):
+@click.option("--no-codeblock", is_flag=True, help="Disable wrapping code inside markdown code blocks.")
+def create_markdown_file(path, output, gitignore, filter, exclude, suppress_comments, case_sensitive, line_number, no_codeblock):
     path = Path(path)
     gitignore_path = Path(gitignore) if gitignore else path / ".gitignore"
     gitignore_patterns = parse_gitignore(gitignore_path)
@@ -33,11 +31,11 @@ def create_markdown_file(path, output, gitignore, filter, exclude, suppress_comm
             and is_filtered(file_path, filter, exclude, case_sensitive)
             and not is_binary(file_path)
         ):
-            result = process_file(file_path, suppress_comments, line_number)
+            result = process_file(file_path, suppress_comments, line_number, no_codeblock)
             if result:
                 files_data.append(result)
 
-    markdown_content = generate_markdown_content(files_data)
+    markdown_content = generate_markdown_content(files_data, no_codeblock)
     write_output(markdown_content, output)
 
 if __name__ == "__main__":
