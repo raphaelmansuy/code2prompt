@@ -8,50 +8,55 @@ from code2prompt.file_handling import (
     is_ignored,
     is_filtered,
     is_binary,
+    add_line_numbers
 )
-
 
 @click.command()
 @click.option(
-    "--path",
-    "-p",
+    "--path", "-p",
     type=click.Path(exists=True),
     required=True,
     help="Path to the directory to navigate.",
 )
 @click.option(
-    "--output", "-o", type=click.Path(), help="Name of the output Markdown file."
+    "--output", "-o",
+    type=click.Path(),
+    help="Name of the output Markdown file."
 )
 @click.option(
-    "--gitignore",
-    "-g",
+    "--gitignore", "-g",
     type=click.Path(exists=True),
     help="Path to the .gitignore file.",
 )
 @click.option(
-    "--filter",
-    "-f",
+    "--filter", "-f",
     type=str,
     help='Comma-separated filter patterns to include files (e.g., "*.py,*.js").',
 )
 @click.option(
-    "--exclude",
-    "-e",
+    "--exclude", "-e",
     type=str,
     help='Comma-separated patterns to exclude files (e.g., "*.txt,*.md").',
 )
 @click.option(
-    "--case-sensitive", is_flag=True, help="Perform case-sensitive pattern matching."
+    "--case-sensitive",
+    is_flag=True,
+    help="Perform case-sensitive pattern matching."
 )
 @click.option(
-    "--suppress-comments",
-    "-s",
+    "--suppress-comments", "-s",
     is_flag=True,
     help="Strip comments from the code files.",
     default=False,
 )
+@click.option(
+    "--line-number", "-ln",
+    is_flag=True,
+    help="Add line numbers to source code blocks.",
+    default=False,
+)
 def create_markdown_file(
-    path, output, gitignore, filter, exclude, suppress_comments, case_sensitive
+    path, output, gitignore, filter, exclude, suppress_comments, case_sensitive, line_number
 ):
     content = []
     table_of_contents = []
@@ -75,16 +80,19 @@ def create_markdown_file(
             file_modification_time = datetime.fromtimestamp(
                 file_path.stat().st_mtime
             ).strftime("%Y-%m-%d %H:%M:%S")
-
-
             language = "unknown"
+
             try:
                 with file_path.open("r", encoding="utf-8") as f:
                     file_content = f.read()
-                    language = infer_language(file_path.name)
-                    if suppress_comments:
-                        if language != "unknown":
-                            file_content = strip_comments(file_content, language)
+                language = infer_language(file_path.name)
+                if suppress_comments:
+                    if language != "unknown":
+                        file_content = strip_comments(file_content, language)
+                
+                if line_number:
+                    file_content = add_line_numbers(file_content)
+
             except UnicodeDecodeError:
                 continue
 
@@ -94,16 +102,20 @@ def create_markdown_file(
             file_info += f"- Size: {file_size} bytes\n"
             file_info += f"- Created: {file_creation_time}\n"
             file_info += f"- Modified: {file_modification_time}\n\n"
+
             file_code = "### Code\n\n\n"
             file_code += f"```{language}\n{file_content}\n```\n\n"
+
             content.append(file_info + file_code)
-            table_of_contents.append(
-                f"- {file_path}\n"
-            )
+            table_of_contents.append(f"- {file_path}\n")
 
     markdown_content = (
-        "# Table of Contents\n" + "".join(table_of_contents) + "\n" + "".join(content)
+        "# Table of Contents\n"
+        + "".join(table_of_contents)
+        + "\n"
+        + "".join(content)
     )
+
     if output:
         output_path = Path(output)
         with output_path.open("w", encoding="utf-8") as md_file:
@@ -111,7 +123,6 @@ def create_markdown_file(
         click.echo(f"Markdown file '{output_path}' created successfully.")
     else:
         click.echo(markdown_content)
-
 
 if __name__ == "__main__":
     # pylint: disable=no-value-for-parameter
