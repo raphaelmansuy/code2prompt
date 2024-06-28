@@ -33,29 +33,37 @@ def is_ignored(file_path: Path, gitignore_patterns: list, base_path: Path) -> bo
                 return True
     return False
 
-def is_filtered(file_path, filter_pattern, case_sensitive=False):
+def is_filtered(file_path, include_pattern="", exclude_pattern="", case_sensitive=False):
     """
-    Check if a file path matches any of the filter patterns.
+    Check if a file path matches the include patterns and doesn't match the exclude patterns.
     
     Args:
         file_path (Path): The path of the file to check.
-        filter_pattern (str): Comma-separated list of filter patterns.
+        include_pattern (str): Comma-separated list of inclusion patterns.
+        exclude_pattern (str): Comma-separated list of exclusion patterns.
         case_sensitive (bool): Whether to perform case-sensitive matching.
     
     Returns:
-        bool: True if the file matches any pattern, False otherwise.
+        bool: True if the file should be included, False otherwise.
     """
-    if not filter_pattern:
-        return True
-    
-    patterns = [p.strip() for p in filter_pattern.split(',')]
+    def match_patterns(file_name, patterns):
+        return any(fnmatch(file_name, pattern) for pattern in patterns)
+
     file_name = file_path.name
-    
     if not case_sensitive:
         file_name = file_name.lower()
-        patterns = [p.lower() for p in patterns]
     
-    return any(fnmatch(file_name, pattern) for pattern in patterns)
+    include_patterns = [p.strip().lower() for p in (include_pattern or "").split(',') if p.strip()]
+    exclude_patterns = [p.strip().lower() for p in (exclude_pattern or "").split(',') if p.strip()]
+    
+    if not include_patterns:
+        include_match = True
+    else:
+        include_match = match_patterns(file_name, include_patterns)
+    
+    exclude_match = match_patterns(file_name, exclude_patterns)
+    
+    return include_match and not exclude_match
 
 def is_binary(file_path):
     """Determines if the specified file is a binary file."""
@@ -81,25 +89,29 @@ def is_binary(file_path):
     "--filter", "-f", type=str, help='Comma-separated filter patterns to include files (e.g., "*.py,*.js").'
 )
 @click.option(
+    "--exclude", "-e", type=str, help='Comma-separated patterns to exclude files (e.g., "*.txt,*.md").'
+)
+@click.option(
     "--case-sensitive", is_flag=True, help="Perform case-sensitive pattern matching."
 )
 @click.option(
     "--suppress-comments", "-s", is_flag=True, help="Strip comments from the code files.", default=False
 )
-def create_markdown_file(path, output, gitignore, filter, suppress_comments, case_sensitive):
+def create_markdown_file(path, output, gitignore, filter, exclude, suppress_comments, case_sensitive):
     """Create a Markdown file with the content of files in a directory."""
     content = []
     table_of_contents = []
     path = Path(path)
+    
     gitignore_path = Path(gitignore) if gitignore else path / ".gitignore"
     gitignore_patterns = parse_gitignore(gitignore_path)
     gitignore_patterns.add(".git")
-
+    
     for file_path in path.rglob("*"):
         if (
             file_path.is_file()
             and not is_ignored(file_path, gitignore_patterns, path)
-            and is_filtered(file_path, filter, case_sensitive)
+            and is_filtered(file_path, filter, exclude, case_sensitive)
             and not is_binary(file_path)
         ):
             file_extension = file_path.suffix
@@ -115,7 +127,6 @@ def create_markdown_file(path, output, gitignore, filter, suppress_comments, cas
                             file_content = strip_comments(file_content, language)
             except UnicodeDecodeError:
                 continue
-
             file_info = f"## File: {file_path}\n\n"
             file_info += f"- Extension: {file_extension}\n"
             file_info += f"- Size: {file_size} bytes\n"
@@ -124,7 +135,7 @@ def create_markdown_file(path, output, gitignore, filter, suppress_comments, cas
             file_code = f"### Code\n```{file_extension}\n{file_content}\n```\n\n"
             content.append(file_info + file_code)
             table_of_contents.append(f"- [{file_path}](#{file_path.as_posix().replace('/', '')})\n")
-
+    
     markdown_content = "# Table of Contents\n" + "".join(table_of_contents) + "\n" + "".join(content)
     if output:
         output_path = Path(output)
