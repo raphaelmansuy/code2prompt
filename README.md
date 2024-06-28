@@ -207,9 +207,8 @@ You are a {{ role }} tasked with analyzing the following codebase:
 ## File: {{ file.path }}
 Language: {{ file.language }}
 Content:
-```{{ file.language }}
+{{ file.language }}
 {{ file.content }}
-```
 
 {% endfor %}
 
