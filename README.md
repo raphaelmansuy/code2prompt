@@ -111,7 +111,7 @@ Alternatively, you can install Code2Prompt using pipx, a tool for installing and
 
 2. Install Code2Prompt using pipx:
    ```
-   pipx install git+https://github.com/raphael.mansuy/code2prompt.git
+   pipx install git+https://github.com/raphaelmansuy/code2prompt.git
    ```
 
    This command will clone the Code2Prompt repository and install it in an isolated environment managed by pipx.
