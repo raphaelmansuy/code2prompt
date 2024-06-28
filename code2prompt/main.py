@@ -1,6 +1,6 @@
 import click
 from pathlib import Path
-import tiktoken
+from code2prompt.count_tokens_1 import count_tokens
 from code2prompt.utils.is_binary import is_binary
 from code2prompt.utils.generate_markdown_content import generate_markdown_content
 from code2prompt.utils.is_filtered import is_filtered
@@ -143,24 +143,6 @@ def generate_content(files_data, options):
         user_inputs = get_user_inputs(template_content)
         return process_template(template_content, files_data, user_inputs)
     return generate_markdown_content(files_data, options['no_codeblock'])
-
-def count_tokens(text: str, encoding: str) -> int:
-    """
-    Count the number of tokens in the given text using the specified encoding.
-
-    Args:
-        text (str): The text to tokenize and count.
-        encoding (str): The encoding to use for tokenization.
-
-    Returns:
-        int: The number of tokens in the text.
-    """
-    try:
-        encoder = tiktoken.get_encoding(encoding)
-        return len(encoder.encode(text))
-    except Exception as e:
-        click.echo(f"Error counting tokens: {str(e)}", err=True)
-        return 0
 
 if __name__ == "__main__":
     # pylint: disable=no-value-for-parameter
