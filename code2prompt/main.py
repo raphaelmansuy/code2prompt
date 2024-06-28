@@ -1,6 +1,6 @@
 import click
 from pathlib import Path
-from code2prompt.count_tokens_1 import count_tokens
+from code2prompt.count_tokens import count_tokens
 from code2prompt.utils.is_binary import is_binary
 from code2prompt.utils.generate_markdown_content import generate_markdown_content
 from code2prompt.utils.is_filtered import is_filtered
