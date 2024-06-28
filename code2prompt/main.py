@@ -6,7 +6,7 @@ from code2prompt.process_files import process_files
 from code2prompt.write_output import write_output
 from code2prompt.create_template_directory import create_templates_directory
 
-VERSION = "0.6.0"  # Define the version of the CLI tool
+VERSION = "0.6.1"  # Define the version of the CLI tool
 
 @click.command()
 @click.version_option(
