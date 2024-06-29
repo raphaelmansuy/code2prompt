@@ -288,6 +288,7 @@ Example `.code2promptrc`:
   "filter": "*.py,*.js",
   "exclude": "tests/*,docs/*"
 }
+```
 
 ## Troubleshooting
 
