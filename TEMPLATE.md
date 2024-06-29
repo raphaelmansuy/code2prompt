@@ -89,9 +89,7 @@ In this example, `project_name` and `analysis_date` are user-defined variables. 
 {% for file in python_files %}
 ### {{ file.path }}
 
-``````python
 {{ file.content }}
-``````
 
 {% endfor %}
 
@@ -100,9 +98,7 @@ In this example, `project_name` and `analysis_date` are user-defined variables. 
 {% for file in js_files %}
 ### {{ file.path }}
 
-```javascript
 {{ file.content }}
-```
 
 {% endfor %}
 ```
