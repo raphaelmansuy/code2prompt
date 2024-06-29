@@ -2,6 +2,10 @@
 
 Code2Prompt is a powerful command-line tool that generates comprehensive prompts from codebases, designed to streamline interactions between developers and Large Language Models (LLMs) for code analysis, documentation, and improvement tasks.
 
+⭐ If you find Code2Prompt useful, consider giving us a star on GitHub! It helps us reach more developers and improve the tool. ⭐
+
+
+
 [![PyPI version](https://badge.fury.io/py/code2prompt.svg)](https://badge.fury.io/py/code2prompt)
 
 ![](./docs/code2Prompt.jpg)
