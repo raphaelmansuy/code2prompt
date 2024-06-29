@@ -4,8 +4,9 @@ from code2prompt.core.generate_content import generate_content
 from code2prompt.core.process_files import process_files
 from code2prompt.core.write_output import write_output
 from code2prompt.utils.create_template_directory import create_templates_directory
+from code2prompt.utils.logging_utils import log_token_count
 
-VERSION = "0.6.3"  # Define the version of the CLI tool
+VERSION = "0.6.4"  # Define the version of the CLI tool
 
 @click.command()
 @click.version_option(
@@ -112,7 +113,7 @@ def create_markdown_file(**options):
 
     if options["tokens"]:
         token_count = count_tokens(content, options["encoding"])
-        click.echo(f"Token count: {token_count}")
+        log_token_count(token_count)
 
     write_output(content, options["output"])
 
