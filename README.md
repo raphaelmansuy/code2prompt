@@ -180,9 +180,8 @@ Example custom template (code_review.j2):
 
 ### Code:
 
-```{{ file.language }}
+{{ file.language }}
 {{ file.content }}
-```
 
 ### Review Notes:
 
