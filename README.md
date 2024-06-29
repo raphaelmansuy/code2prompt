@@ -198,7 +198,19 @@ Example custom template (code_review.j2):
 - Areas for improvement: [Add your observations]
 ```
 
-## Templating system documentation
+
+### Creating Template Examples
+
+Code2Prompt provides a convenient way to generate example templates for customizing your output. Use the `--create-templates` command to create a `templates` directory in your current working folder, populated with sample Jinja2 templates. These examples serve as a starting point for creating your own custom templates. To use this feature, simply run:
+
+```bash
+code2prompt --create-templates
+```
+
+This command will create a `templates` directory containing example files like `basic.j2`, `detailed.j2`, and `custom.md`. You can then modify these templates or create new ones to tailor the output to your specific needs.
+
+
+### Templates documentions
 
 A full documentation of the templating system is available at [Documentation Templating](./TEMPLATE.md)
 
@@ -225,6 +237,7 @@ pip install code2prompt llm
    ```bash
    code2prompt --path /path/to/your/script.py | llm "Suggest refactoring improvements for this code"
    ```
+
 
 ### Advanced Use Cases
 
