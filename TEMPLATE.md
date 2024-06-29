@@ -89,9 +89,9 @@ In this example, `project_name` and `analysis_date` are user-defined variables. 
 {% for file in python_files %}
 ### {{ file.path }}
 
-```python
+``````python
 {{ file.content }}
-```
+``````
 
 {% endfor %}
 
