@@ -1,264 +1,306 @@
-
 # Code2Prompt
 
-Code2Prompt is a powerful command-line tool that simplifies the process of providing context to Large Language Models (LLMs) by generating a comprehensive Markdown file containing the content of your codebase. 
+Code2Prompt is a powerful command-line tool that generates comprehensive prompts from codebases, designed to streamline interactions between developers and Large Language Models (LLMs) for code analysis, documentation, and improvement tasks.
 
-With Code2Prompt, you can easily create a well-structured and informative document that serves as a valuable resource for feeding questions to LLMs, enabling them to better understand and assist with your code-related queries.
+[![PyPI version](https://badge.fury.io/py/code2prompt.svg)](https://badge.fury.io/py/code2prompt)
 
 ![](./docs/code2Prompt.jpg)
 
+
+## Table of Contents
+
+1. [Why Code2Prompt?](#why-code2prompt)
+2. [Features](#features)
+3. [Installation](#installation)
+4. [Quick Start](#quick-start)
+5. [Usage](#usage)
+6. [Options](#options)
+7. [Examples](#examples)
+8. [Templating System](#templating-system)
+9. [Integration with LLM CLI](#integration-with-llm-cli)
+10. [GitHub Actions Integration](#github-actions-integration)
+11. [Troubleshooting](#troubleshooting)
+12. [Contributing](#contributing)
+13. [License](#license)
+
+## Why Code2Prompt?
+
+When working with Large Language Models on software development tasks, providing extensive context about the codebase is crucial. Code2Prompt addresses this need by:
+
+- Offering a holistic view of your project, enabling LLMs to better understand the overall structure and dependencies.
+- Allowing for more accurate recommendations and suggestions from LLMs.
+- Maintaining consistency in coding style and conventions across the project.
+- Facilitating better interdependency analysis and refactoring suggestions.
+- Enabling more contextually relevant documentation generation.
+- Helping LLMs learn and apply project-specific patterns and idioms.
+
+By generating a comprehensive Markdown file containing the content of your codebase, Code2Prompt simplifies the process of providing context to LLMs, making it an invaluable tool for developers working with AI-assisted coding tools.
+
 ## Features
 
-- Automatically traverses a directory and its subdirectories to include all relevant files
-- Supports filtering files based on patterns (e.g., "*.py" to include only Python files)
-- Respects .gitignore files to exclude unwanted files and directories
-- Generates a table of contents with links to each file section
-- Provides file metadata such as extension, size, creation time, and modification time
-- Optionally strips comments from code files to focus on the core code
-- Includes the actual code content of each file in fenced code blocks
-- Handles binary files and files with encoding issues gracefully
-- Supports custom Jinja2 templates for flexible output formatting
-- Offers token counting functionality for generated prompts
-
+- Process single files or entire directories
+- Support for multiple programming languages
+- Gitignore integration
+- Comment stripping
+- Line number addition
+- Custom output formatting using Jinja2 templates
+- Token counting for AI model compatibility
+- Clipboard copying of generated content
+- Automatic traversal of directories and subdirectories
+- File filtering based on patterns
+- File metadata inclusion (extension, size, creation time, modification time)
+- Graceful handling of binary files and encoding issues
 
 ## Installation
 
-There are two ways to install Code2Prompt:
+Choose one of the following methods to install Code2Prompt:
+
+### Using pip (recommended)
+
+```bash
+pip install code2prompt
+```
 
 ### Using Poetry
 
-Code2Prompt is built using Poetry, a dependency management and packaging tool for Python. To install Code2Prompt using Poetry, follow these steps:
-
-1. Make sure you have Poetry installed. If you don't have it installed, you can install it by running:
-   ```
+1. Ensure you have Poetry installed:
+   ```bash
    curl -sSL https://install.python-poetry.org | python3 -
    ```
 
-2. Clone the Code2Prompt repository:
-   ```
-   git clone https://github.com/raphael.mansuy/code2prompt.git
-   ```
-
-3. Navigate to the project directory:
-   ```
-   cd code2prompt
-   ```
-
-4. Install the dependencies using Poetry:
-   ```
-   poetry install
+2. Install Code2Prompt:
+   ```bash
+   poetry add code2prompt
    ```
 
 ### Using pipx
 
-Alternatively, you can install Code2Prompt using pipx, a tool for installing and running Python applications in isolated environments. To install Code2Prompt using pipx, follow these steps:
+```bash
+pipx install code2prompt
+```
 
-1. Make sure you have pipx installed. If you don't have it installed, you can install it by running:
-   ```
-   python3 -m pip install --user pipx
-   python3 -m pipx ensurepath
-   ```
+## Quick Start
 
-2. Install Code2Prompt using pipx:
-   ```
-   pipx install git+https://github.com/raphaelmansuy/code2prompt.git
+1. Generate a prompt from a single Python file:
+   ```bash
+   code2prompt --path /path/to/your/script.py
    ```
 
-   Or
-
-   ```
-   pipx install code2prompt
-   ```
-
-   This command will clone the Code2Prompt repository and install it in an isolated environment managed by pipx.
-
-3. After installation, you can run Code2Prompt using the `code2prompt` command:
-   ```
-   code2prompt --path /path/to/your/codebase --output output.md
+2. Process an entire project directory and save the output:
+   ```bash
+   code2prompt --path /path/to/your/project --output project_summary.md
    ```
 
-Using pipx provides a convenient way to install and run Code2Prompt without affecting your system-wide Python installation.
+3. Generate a prompt for multiple files, excluding tests:
+   ```bash
+   code2prompt --path /path/to/src --path /path/to/lib --exclude "*/tests/*" --output codebase_summary.md
+   ```
 
 ## Usage
 
-To generate a Markdown file with the content of your codebase, use the following command:
+The basic syntax for Code2Prompt is:
 
+```bash
+code2prompt --path /path/to/your/code [OPTIONS]
 ```
-code2prompt --path /path/to/your/codebase --output output.md
+
+For multiple paths:
+
+```bash
+code2prompt --path /path/to/dir1 --path /path/to/file2.py [OPTIONS]
 ```
 
-### Command-line Options
+## Options
 
-- `--path` or `-p` (required): Path to the directory containing your codebase.
-- `--output` or `-o` (optional): Name of the output Markdown file. If not provided, the output will be displayed in the console.
-- `--gitignore` or `-g` (optional): Path to a custom .gitignore file. If not provided, the tool will look for a .gitignore file in the specified directory.
-- `--filter` or `-f` (optional): Comma-separated filter patterns to include specific files (e.g., "*.py,*.js" to include only Python and JavaScript files).
-- `--exclude` or `-e` (optional): Comma-separated patterns to exclude files (e.g., "*.txt,*.md" to exclude text and Markdown files).
-- `--case-sensitive` (optional): Perform case-sensitive pattern matching.
-- `--suppress-comments` or `-s` (optional): Strip comments from the code files. If not provided, comments will be included.
-- `--line-number` or `-ln` (optional): Add line numbers to source code blocks.
-- `--no-codeblock` (optional): Disable wrapping code inside markdown code blocks.
-- `--template` or `-t` (optional): Path to a Jinja2 template file for custom prompt generation.
-- `--tokens` (optional): Display the token count of the generated prompt.
-- `--encoding` (optional): Specify the tokenizer encoding to use (default: 'cl100k_base').
+| Option | Short | Description |
+|--------|-------|-------------|
+| `--path` | `-p` | Path(s) to the directory or file to process (required, multiple allowed) |
+| `--output` | `-o` | Name of the output Markdown file |
+| `--gitignore` | `-g` | Path to the .gitignore file |
+| `--filter` | `-f` | Comma-separated filter patterns to include files (e.g., "*.py,*.js") |
+| `--exclude` | `-e` | Comma-separated patterns to exclude files (e.g., "*.txt,*.md") |
+| `--case-sensitive` | | Perform case-sensitive pattern matching |
+| `--suppress-comments` | `-s` | Strip comments from the code files |
+| `--line-number` | `-ln` | Add line numbers to source code blocks |
+| `--no-codeblock` | | Disable wrapping code inside markdown code blocks |
+| `--template` | `-t` | Path to a Jinja2 template file for custom prompt generation |
+| `--tokens` | | Display the token count of the generated prompt |
+| `--encoding` | | Specify the tokenizer encoding to use (default: "cl100k_base") |
+| `--create-templates` | | Create a templates directory with example templates |
+| `--version` | `-v` | Show the version and exit |
 
-### Examples
+## Examples
 
-1. Generate a Markdown file for a Python project:
-   ```
-   code2prompt --path /path/to/your/python/project --output python_project.md --filter "*.py"
-   ```
-
-2. Generate a Markdown file for a web development project:
-   ```
-   code2prompt --path /path/to/your/web/project --output web_project.md --filter "*.js,*.html,*.css"
-   ```
-
-3. Generate a Markdown file for a project with a custom .gitignore file:
-   ```
-   code2prompt --path /path/to/your/project --output project.md --gitignore /path/to/custom/.gitignore
+1. Generate documentation for a Python library:
+   ```bash
+   code2prompt --path /path/to/library --output library_docs.md --suppress-comments --line-number --filter "*.py"
    ```
 
-4. Generate a Markdown file with comments stripped from code files:
-   ```
-   code2prompt --path /path/to/your/project --output project.md --suppress-comments
-   ```
-
-5. Generate a Markdown file using a custom template:
-   ```
-   code2prompt --path /path/to/your/project --output project.md --template /path/to/custom/template.jinja2
+2. Prepare a codebase summary for a code review, focusing on JavaScript and TypeScript files:
+   ```bash
+   code2prompt --path /path/to/project --filter "*.js,*.ts" --exclude "node_modules/*,dist/*" --template code_review.j2 --output code_review.md
    ```
 
-6. Generate a Markdown file and display token count:
+3. Create input for an AI model to suggest improvements, focusing on a specific directory:
+   ```bash
+   code2prompt --path /path/to/src/components --suppress-comments --tokens --encoding cl100k_base --output ai_input.md
    ```
-   code2prompt --path /path/to/your/project --output project.md --tokens
+
+4. Analyze comment density across a multi-language project:
+   ```bash
+   code2prompt --path /path/to/project --template comment_density.j2 --output comment_analysis.md --filter "*.py,*.js,*.java"
+   ```
+
+5. Generate a prompt for a specific set of files, adding line numbers:
+   ```bash
+   code2prompt --path /path/to/important_file1.py --path /path/to/important_file2.js --line-number --output critical_files.md
    ```
 
 ## Templating System
 
-Code2Prompt includes a powerful templating system that allows you to customize the output format using Jinja2 templates. This feature provides flexibility in generating prompts tailored to specific use cases or LLM requirements.
+Code2Prompt supports custom output formatting using Jinja2 templates. 
 
-### How It Works
+To use a custom template:
 
-1. **Template Loading**: When you specify a template file using the `--template` option, Code2Prompt loads the Jinja2 template from the specified file.
+```bash
+code2prompt --path /path/to/code --template /path/to/your/template.j2
+```
 
-2. **Variable Extraction**: The system extracts user-defined variables from the template. These are placeholders in the template that you want to fill with custom values.
-
-3. **User Input**: For each extracted variable, Code2Prompt prompts the user to enter a value.
-
-4. **Data Preparation**: The system prepares a context dictionary containing:
-   - `files`: A list of dictionaries, each representing a processed file with its metadata and content.
-   - User-defined variables and their input values.
-
-5. **Template Rendering**: The Jinja2 template is rendered using the prepared context, producing the final output.
-
-### Example
-
-Let's say you have a template file named `custom_prompt.jinja2` with the following content:
+Example custom template (code_review.j2):
 
 ```jinja2
-You are a {{ role }} tasked with analyzing the following codebase:
+# Code Review Summary
 
 {% for file in files %}
-## File: {{ file.path }}
-Language: {{ file.language }}
-Content:
-{{ file.language }}
+## {{ file.path }}
+
+- **Language**: {{ file.language }}
+- **Size**: {{ file.size }} bytes
+- **Last Modified**: {{ file.modified }}
+
+### Code:
+
+```{{ file.language }}
 {{ file.content }}
+```
+
+### Review Notes:
+
+- [ ] Check for proper error handling
+- [ ] Verify function documentation
+- [ ] Look for potential performance improvements
 
 {% endfor %}
 
-Based on this codebase, please {{ task }}.
+## Overall Project Health:
+
+- Total files reviewed: {{ files|length }}
+- Primary languages: [List top 3 languages]
+- Areas for improvement: [Add your observations]
 ```
 
-You can use this template with Code2Prompt as follows:
+## Templating system documentation
+
+A full documentation of the templating system is available at [Documentation Templating](./TEMPLATE.md)
+
+## Integration with LLM CLI
+
+Code2Prompt can be seamlessly integrated with Simon Willison's [llm](https://github.com/simonw/llm) CLI tool to leverage the power of large language models for code analysis and improvement.
+
+### Installation
+
+First, ensure you have both Code2Prompt and llm installed:
 
 ```bash
-code2prompt --path /path/to/your/project --template custom_prompt.jinja2
+pip install code2prompt llm
 ```
 
-When you run this command, Code2Prompt will:
+### Basic Usage
 
-1. Load the `custom_prompt.jinja2` template.
-2. Detect the user-defined variables: `role` and `task`.
-3. Prompt you to enter values for these variables:
+1. Generate a code summary and analyze it with an LLM:
+   ```bash
+   code2prompt --path /path/to/your/project | llm "Analyze this codebase and provide insights on its structure and potential improvements"
    ```
-   Enter value for role: senior software engineer
-   Enter value for task: identify potential security vulnerabilities
+
+2. Process a specific file and get refactoring suggestions:
+   ```bash
+   code2prompt --path /path/to/your/script.py | llm "Suggest refactoring improvements for this code"
    ```
-4. Process the files in the specified path.
-5. Render the template with the file data and user inputs.
 
-The resulting output might look like this:
+### Advanced Use Cases
 
+1. Code Review Assistant:
+   ```bash
+   code2prompt --path /path/to/project --filter "*.py" | llm "Perform a code review on this Python project. Identify potential bugs, suggest improvements for code quality, and highlight any security concerns."
+   ```
+
+2. Documentation Generator:
+   ```bash
+   code2prompt --path /path/to/project --suppress-comments | llm "Generate detailed documentation for this project. Include an overview of the project structure, main components, and how they interact. Provide examples of how to use key functions and classes."
+   ```
+
+3. Refactoring Suggestions:
+   ```bash
+   code2prompt --path /path/to/complex_module.py | llm "Analyze this Python module and suggest refactoring opportunities. Focus on improving readability, reducing complexity, and enhancing maintainability."
+   ```
+
+## GitHub Actions Integration
+
+You can integrate Code2Prompt and llm into your GitHub Actions workflow to automatically analyze your codebase on every push. Here's an example workflow:
+
+```yaml
+name: Code Analysis
+on: [push]
+jobs:
+  analyze-code:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        pip install code2prompt llm
+    - name: Analyze codebase
+      run: |
+        code2prompt --path . | llm "Perform a comprehensive analysis of this codebase. Identify areas for improvement, potential bugs, and suggest optimizations." > analysis.md
+    - name: Upload analysis
+      uses: actions/upload-artifact@v2
+      with:
+        name: code-analysis
+        path: analysis.md
 ```
-You are a senior software engineer tasked with analyzing the following codebase:
 
-## File: /path/to/your/project/main.py
-Language: python
-Content:
-```python
-import os
+This workflow will generate a code analysis report on every push to your repository.
 
-def read_sensitive_file(filename):
-    with open(filename, 'r') as f:
-        return f.read()
+## Troubleshooting
 
-secret = read_sensitive_file('secret.txt')
-print(f"The secret is: {secret}")
+1. **Issue**: Code2Prompt is not recognizing my .gitignore file.
+   **Solution**: Ensure you're running Code2Prompt from the root of your project, or specify the path to your .gitignore file using the `--gitignore` option.
+
+2. **Issue**: The generated output is too large for my AI model.
+   **Solution**: Use the `--tokens` option to check the token count, and consider using more specific `--filter` or `--exclude` options to reduce the amount of processed code.
 
 
-## File: /path/to/your/project/utils.py
-Language: python
-Content:
-```python
-import base64
+3. **Issue**: Encoding-related errors when processing files.
+   **Solution**: Try specifying a different encoding with the `--encoding` option, e.g., `--encoding utf-8`.
 
-def encode_data(data):
-    return base64.b64encode(data.encode()).decode()
-
-def decode_data(encoded_data):
-    return base64.b64decode(encoded_data).decode()
-
-
-Based on this codebase, please identify potential security vulnerabilities.
-```
-
-This templating system allows you to create custom prompts that can be easily adapted for different analysis tasks, code review scenarios, or any other purpose where you need to present code to an LLM in a structured format.
-
-
-## Build
-
-To build a distributable package of Code2Prompt using Poetry, follow these steps:
-
-1. Make sure you are in the project directory.
-
-2. Run the following command to build the package:
-   ```
-   poetry build
-   ```
-
-   This command will create a distributable package in the `dist` directory.
-
-3. You can then install the package using pip:
-   ```
-   pip install dist/code2prompt-<version>.tar.gz
-   ```
-
-   Replace `<version>` with the actual version number of the package.
-
-## License
-
-Code2Prompt is released under the MIT License. See [LICENSE](./LICENCE.md) for more information.
+4. **Issue**: Some files are not being processed.
+   **Solution**: Check if the files are binary or if they match any exclusion patterns. Use the `--case-sensitive` option if your patterns are case-sensitive.
 
 ## Contributing
 
-Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request on the [GitHub repository](https://github.com/raphaelmansuy/code2prompt).
+Contributions to Code2Prompt are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
-## Acknowledgements
+## License
 
-Code2Prompt was inspired by the need to provide better context to LLMs when asking code-related questions. We would like to thank the open-source community for their valuable contributions.
+Code2Prompt is released under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-If you have any questions or need further assistance, please don't hesitate to reach out. Happy coding!
+---
 
-Made with ❤️ by Raphël MANSUY
+Made with ❤️ by Raphaël MANSUY
+
+This comprehensive README provides a detailed guide to using Code2Prompt, including its features, installation methods, usage examples, and integration with other tools like llm and GitHub Actions. It addresses various use cases and provides troubleshooting tips to help users get the most out of the tool.
+
