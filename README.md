@@ -333,6 +333,3 @@ Code2Prompt is released under the MIT License. See the [LICENSE](LICENSE) file f
 ---
 
 Made with ❤️ by Raphaël MANSUY
-
-This comprehensive README provides a detailed guide to using Code2Prompt, including its features, installation methods, usage examples, and integration with other tools like llm and GitHub Actions. It addresses various use cases and provides troubleshooting tips to help users get the most out of the tool.
-
