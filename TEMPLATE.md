@@ -39,9 +39,9 @@ In your Jinja2 template, you have access to the following variables:
 - Size: {{ file.size }} bytes
 - Last modified: {{ file.modified }}
 
-```{{ file.language }}
+{{ file.language }}
 {{ file.content }}
-```
+`
 
 {% endfor %}
 ```
@@ -67,9 +67,9 @@ Total files analyzed: {{ files|length }}
 {% for file in files %}
 ### {{ file.path }}
 
-```{{ file.language }}
+{{ file.language }}
 {{ file.content }}
-```
+
 
 {% endfor %}
 ```
