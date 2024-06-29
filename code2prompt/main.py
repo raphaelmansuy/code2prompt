@@ -4,10 +4,10 @@ from code2prompt.core.generate_content import generate_content
 from code2prompt.core.process_files import process_files
 from code2prompt.core.write_output import write_output
 from code2prompt.utils.create_template_directory import create_templates_directory
-from code2prompt.utils.logging_utils import log_token_count
+from code2prompt.utils.logging_utils import log_token_count, log_error
 from code2prompt.utils.config import load_config, merge_options
 
-VERSION = "0.6.4"  # Define the version of the CLI tool
+VERSION = "0.6.5"  # Define the version of the CLI tool
 
 DEFAULT_OPTIONS = {
     "path": [],
@@ -34,7 +34,6 @@ DEFAULT_OPTIONS = {
     "--path",
     "-p",
     type=click.Path(exists=True),
-    required=True,
     multiple=True,  # Allow multiple paths
     help="Path(s) to the directory or file to process.",
 )
@@ -122,19 +121,18 @@ def create_markdown_file(**cli_options):
 
     ## Load configuration from .code2promptrc files
     config = load_config(".")
-    
-    print(config)
-
 
     # Merge options: CLI takes precedence over config, which takes precedence over defaults
-  # Merge options: CLI takes precedence over config, which takes precedence over defaults
     options = merge_options(cli_options, config, DEFAULT_OPTIONS)
-  
-    
-    print(options)
 
     if options["create_templates"]:
         create_templates_directory()
+        return
+
+    if not options["path"]:
+        log_error(
+            "Error: No path specified. Please provide a path using --path option or in .code2promptrc file."
+        )
         return
 
     all_files_data = []
