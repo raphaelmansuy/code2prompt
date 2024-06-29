@@ -274,6 +274,21 @@ jobs:
 
 This workflow will generate a code analysis report on every push to your repository.
 
+## Configuration File
+
+Code2Prompt supports a configuration file named `.code2promptrc` for setting default options. You can place this file in your project directory or home directory. The file should be in JSON format.
+
+Example `.code2promptrc`:
+
+```json
+{
+  "suppress_comments": true,
+  "line_number": true,
+  "encoding": "cl100k_base",
+  "filter": "*.py,*.js",
+  "exclude": "tests/*,docs/*"
+}
+
 ## Troubleshooting
 
 1. **Issue**: Code2Prompt is not recognizing my .gitignore file.

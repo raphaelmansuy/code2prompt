@@ -5,53 +5,73 @@ from code2prompt.core.process_files import process_files
 from code2prompt.core.write_output import write_output
 from code2prompt.utils.create_template_directory import create_templates_directory
 from code2prompt.utils.logging_utils import log_token_count
+from code2prompt.utils.config import load_config, merge_options
 
 VERSION = "0.6.4"  # Define the version of the CLI tool
+
+DEFAULT_OPTIONS = {
+    "path": [],
+    "output": None,
+    "gitignore": None,
+    "filter": None,
+    "exclude": None,
+    "case_sensitive": False,
+    "suppress_comments": False,
+    "line_number": False,
+    "no_codeblock": False,
+    "template": None,
+    "tokens": False,
+    "encoding": "cl100k_base",
+    "create_templates": False,
+}
+
 
 @click.command()
 @click.version_option(
     VERSION, "-v", "--version", message="code2prompt version %(version)s"
 )
 @click.option(
-    "--path", "-p",
+    "--path",
+    "-p",
     type=click.Path(exists=True),
     required=True,
     multiple=True,  # Allow multiple paths
     help="Path(s) to the directory or file to process.",
 )
 @click.option(
-    "--output", "-o",
-    type=click.Path(),
-    help="Name of the output Markdown file."
+    "--output", "-o", type=click.Path(), help="Name of the output Markdown file."
 )
 @click.option(
-    "--gitignore", "-g",
+    "--gitignore",
+    "-g",
     type=click.Path(exists=True),
     help="Path to the .gitignore file.",
 )
 @click.option(
-    "--filter", "-f",
+    "--filter",
+    "-f",
     type=str,
     help='Comma-separated filter patterns to include files (e.g., "*.py,*.js").',
 )
 @click.option(
-    "--exclude", "-e",
+    "--exclude",
+    "-e",
     type=str,
     help='Comma-separated patterns to exclude files (e.g., "*.txt,*.md").',
 )
 @click.option(
-    "--case-sensitive",
-    is_flag=True,
-    help="Perform case-sensitive pattern matching."
+    "--case-sensitive", is_flag=True, help="Perform case-sensitive pattern matching."
 )
 @click.option(
-    "--suppress-comments", "-s",
+    "--suppress-comments",
+    "-s",
     is_flag=True,
     help="Strip comments from the code files.",
     default=False,
 )
 @click.option(
-    "--line-number", "-ln",
+    "--line-number",
+    "-ln",
     is_flag=True,
     help="Add line numbers to source code blocks.",
     default=False,
@@ -62,14 +82,13 @@ VERSION = "0.6.4"  # Define the version of the CLI tool
     help="Disable wrapping code inside markdown code blocks.",
 )
 @click.option(
-    "--template", "-t",
+    "--template",
+    "-t",
     type=click.Path(exists=True),
     help="Path to a Jinja2 template file for custom prompt generation.",
 )
 @click.option(
-    "--tokens",
-    is_flag=True,
-    help="Display the token count of the generated prompt."
+    "--tokens", is_flag=True, help="Display the token count of the generated prompt."
 )
 @click.option(
     "--encoding",
@@ -82,7 +101,7 @@ VERSION = "0.6.4"  # Define the version of the CLI tool
     is_flag=True,
     help="Create a templates directory with example templates.",
 )
-def create_markdown_file(**options):
+def create_markdown_file(**cli_options):
     """
     Creates a Markdown file based on the provided options.
 
@@ -100,13 +119,27 @@ def create_markdown_file(**options):
     Returns:
     None
     """
+
+    ## Load configuration from .code2promptrc files
+    config = load_config(".")
+    
+    print(config)
+
+
+    # Merge options: CLI takes precedence over config, which takes precedence over defaults
+  # Merge options: CLI takes precedence over config, which takes precedence over defaults
+    options = merge_options(cli_options, config, DEFAULT_OPTIONS)
+  
+    
+    print(options)
+
     if options["create_templates"]:
         create_templates_directory()
         return
 
     all_files_data = []
-    for path in options['path']:
-        files_data = process_files({**options, 'path': path})
+    for path in options["path"]:
+        files_data = process_files({**options, "path": path})
         all_files_data.extend(files_data)
 
     content = generate_content(all_files_data, options)
@@ -116,6 +149,7 @@ def create_markdown_file(**options):
         log_token_count(token_count)
 
     write_output(content, options["output"])
+
 
 if __name__ == "__main__":
     # pylint: disable=no-value-for-parameter
