@@ -1,12 +1,11 @@
 import click
-from pathlib import Path
-from code2prompt.count_tokens import count_tokens
-from code2prompt.generate_content import generate_content
-from code2prompt.process_files import process_files
-from code2prompt.write_output import write_output
-from code2prompt.create_template_directory import create_templates_directory
+from code2prompt.utils.count_tokens import count_tokens
+from code2prompt.core.generate_content import generate_content
+from code2prompt.core.process_files import process_files
+from code2prompt.core.write_output import write_output
+from code2prompt.utils.create_template_directory import create_templates_directory
 
-VERSION = "0.6.2"  # Define the version of the CLI tool
+VERSION = "0.6.3"  # Define the version of the CLI tool
 
 @click.command()
 @click.version_option(

@@ -1,4 +1,4 @@
-from code2prompt.template_processor import get_user_inputs, load_template, process_template
+from code2prompt.core.template_processor import get_user_inputs, load_template, process_template
 from code2prompt.utils.generate_markdown_content import generate_markdown_content
 
 

@@ -1,7 +1,7 @@
 from pathlib import Path
-from code2prompt.get_gitignore_patterns import get_gitignore_patterns
-from code2prompt.process_file import process_file
-from code2prompt.should_process_file import should_process_file
+from code2prompt.utils.get_gitignore_patterns import get_gitignore_patterns
+from code2prompt.core.process_file import process_file
+from code2prompt.utils.should_process_file import should_process_file
 
 def process_files(options):
     """

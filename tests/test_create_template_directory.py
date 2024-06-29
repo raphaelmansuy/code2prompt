@@ -1,7 +1,7 @@
 import pytest
 import os
 from pathlib import Path
-from code2prompt.create_template_directory import create_templates_directory
+from code2prompt.utils.create_template_directory import create_templates_directory
 
 
 @pytest.fixture

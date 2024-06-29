@@ -20,56 +20,6 @@ With Code2Prompt, you can easily create a well-structured and informative docume
 - Supports custom Jinja2 templates for flexible output formatting
 - Offers token counting functionality for generated prompts
 
-## How It Works
-
-The following diagram illustrates the high-level workflow of Code2Prompt:
-
-Diagram
-
-1. The tool starts by parsing the command-line options provided by the user.
-2. It then parses the .gitignore file (if specified) to obtain a set of patterns for excluding files and directories.
-3. The tool traverses the specified directory and its subdirectories, processing each file encountered.
-4. For each file, it checks if the file is ignored based on the .gitignore patterns. If ignored, it skips the file and moves to the next one.
-5. If the file is not ignored, it checks if the file matches the filter pattern (if provided). If the file doesn't match the filter, it skips the file and moves to the next one.
-6. If the file matches the filter pattern, it checks if the file is a binary file. If it is, it skips the file and moves to the next one.
-7. If the file is not a binary file, the tool extracts the file metadata (extension, size, creation time, modification time).
-8. It then reads the file content and generates a file summary and code block.
-9. The file summary, code block, and metadata are appended to the Markdown content.
-10. Steps 4-9 are repeated for each file in the directory and its subdirectories.
-11. After processing all files, the tool generates a table of contents based on the file paths.
-12. If a custom template is provided, the tool processes the template with the collected data.
-13. If token counting is enabled, the tool counts the tokens in the generated content.
-14. If an output file is specified, the generated Markdown content is written to the file. Otherwise, it is printed to the console.
-15. The tool ends its execution.
-
-## Project Structure
-
-The Code2Prompt project is organized as follows:
-
-- `code2prompt/`: Main package directory
-  - `__init__.py`: Package initialization
-  - `main.py`: Entry point of the application
-  - `process_file.py`: File processing logic
-  - `template_processor.py`: Custom template processing
-  - `write_output.py`: Output writing functionality
-  - `utils/`: Utility functions
-    - `add_line_numbers.py`: Function to add line numbers to code
-    - `generate_markdown_content.py`: Markdown content generation
-    - `is_binary.py`: Binary file detection
-    - `is_filtered.py`: File filtering logic
-    - `is_ignored.py`: Gitignore pattern matching
-    - `language_inference.py`: Programming language inference
-    - `parse_gitignore.py`: Gitignore file parsing
-  - `comment_stripper/`: Comment removal functionality
-    - `__init__.py`: Subpackage initialization
-    - `strip_comments.py`: Main comment stripping logic
-    - `c_style.py`: C-style comment removal
-    - `html_style.py`: HTML-style comment removal
-    - `python_style.py`: Python-style comment removal
-    - `r_style.py`: R-style comment removal
-    - `shell_style.py`: Shell-style comment removal
-    - `sql_style.py`: SQL-style comment removal
-    - `matlab_style.py`: MATLAB-style comment removal
 
 ## Installation
 
@@ -112,6 +62,12 @@ Alternatively, you can install Code2Prompt using pipx, a tool for installing and
 2. Install Code2Prompt using pipx:
    ```
    pipx install git+https://github.com/raphaelmansuy/code2prompt.git
+   ```
+
+   Or
+
+   ```
+   pipx install code2prompt
    ```
 
    This command will clone the Code2Prompt repository and install it in an isolated environment managed by pipx.

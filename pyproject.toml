@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "code2prompt"
-version = "0.6.2"
+version = "0.6.3"
 description = ""
 authors = ["Raphael MANSUY <raphael.mansuy@gmail.com>"]
 readme = "README.md"
