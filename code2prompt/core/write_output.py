@@ -1,6 +1,12 @@
-import click
 from pathlib import Path
+import click
 import pyperclip
+from code2prompt.utils.logging_utils import (
+    log_output_created,
+    log_error,
+    log_clipboard_copy,
+)
+
 
 def write_output(content, output_path):
     """
@@ -19,14 +25,17 @@ def write_output(content, output_path):
         try:
             with Path(output_path).open("w", encoding="utf-8") as output_file:
                 output_file.write(content)
-            click.echo(f"Output file '{output_path}' created successfully.")
+            log_output_created(output_path)
         except IOError as e:
-            click.echo(f"Error writing to output file: {e}", err=True)
+            log_error(f"Error writing to output file: {e}")
+
     else:
         click.echo(content)
 
     # Copy content to clipboard
     try:
         pyperclip.copy(content)
-    except Exception as e:
-        click.echo(f"Error copying to clipboard: {e}", err=True)
+        log_clipboard_copy(success=True)
+
+    except Exception as _e:
+        log_clipboard_copy(success=False)

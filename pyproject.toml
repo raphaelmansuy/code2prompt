@@ -1,22 +1,36 @@
 [tool.poetry]
 name = "code2prompt"
-version = "0.6.3"
-description = ""
+version = "0.6.4"
+description = "A tool to convert code snippets into AI prompts for documentation or explanation purposes."
 authors = ["Raphael MANSUY <raphael.mansuy@gmail.com>"]
+license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/raphaelmansuy/code2prompt"
+repository = "https://github.com/raphaelmansuy/code2prompt"
+keywords = ["ai", "prompt", "code", "documentation","llm"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
 
 [tool.poetry.dependencies]
-python = ">=3.8, <4.0"
-rich = "^13.7.1"
-click = "^8.1.7"
-jinja2 = "^3.1.4"
-prompt-toolkit = "^3.0.47"
-tiktoken = "^0.7.0"
-pyperclip = "^1.9.0"
+python = "^3.8,<4.0"
+rich = "^13.7.1"  # For rich text and beautiful formatting
+click = "^8.1.7"  # For creating beautiful command line interfaces
+jinja2 = "^3.1.4"  # For template rendering
+prompt-toolkit = "^3.0.47"  # For building powerful interactive command line applications
+tiktoken = "^0.7.0"  # For tokenization tasks
+pyperclip = "^1.9.0"  # For clipboard operations
+colorama = "^0.4.6"  # For colored terminal text output
 
 [tool.poetry.scripts]
 code2prompt = "code2prompt.main:create_markdown_file"
-
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
