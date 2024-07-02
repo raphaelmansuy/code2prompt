@@ -1,7 +1,11 @@
 import pytest
+
+
 import os
 from pathlib import Path
+
 from code2prompt.utils.create_template_directory import create_templates_directory
+
 
 
 @pytest.fixture
@@ -11,6 +15,7 @@ def temp_dir(tmp_path):
     os.chdir(tmp_path)
     yield tmp_path
     os.chdir(original_cwd)
+
 
 def test_create_templates_directory_existing(temp_dir, monkeypatch):
     # Create the templates directory beforehand
