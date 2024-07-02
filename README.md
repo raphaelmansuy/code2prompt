@@ -211,7 +211,16 @@ Code2Prompt provides a convenient way to generate example templates for customiz
 code2prompt --create-templates
 ```
 
-This command will create a `templates` directory containing example files like `basic.j2`, `detailed.j2`, and `custom.md`. You can then modify these templates or create new ones to tailor the output to your specific needs.
+This command will create a `templates` directory.
+
+The `templates` directory contains a set of Jinja2 template files that provide structured formats for various AI-assisted tasks. These templates include:
+
+- [default.j2](./templates/default.j2): A general-purpose template that can be used as a starting point for custom AI interactions.
+- [analyze-code.j2](./templates/analyze-code.j2): A template for conducting detailed code analysis, helping developers understand and improve their codebase.
+- [code-review.j2](./templates/code-review.j2): A template designed to facilitate thorough code reviews, ensuring consistent and comprehensive feedback.
+- [create-readme.j2](./templates/create-readme.j2): A template to assist in generating well-structured README files for projects, improving documentation quality.
+- [improve-this-prompt.j2](./templates/improve-this-prompt.j2): A template focused on refining and enhancing AI prompts, helping users create more effective queries.
+
 
 
 ### Templates documentions
