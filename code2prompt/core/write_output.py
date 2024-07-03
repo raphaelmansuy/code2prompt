@@ -8,7 +8,7 @@ from code2prompt.utils.logging_utils import (
 )
 
 
-def write_output(content, output_path):
+def write_output(content, output_path, copy_to_clipboard=True):
     """
     Writes the generated content to a file or prints it to the console,
     and copies the content to the clipboard.
@@ -17,6 +17,7 @@ def write_output(content, output_path):
     - content (str): The content to be written, printed, and copied.
     - output_path (str): The path to the file where the content should be written.
                          If None, the content is printed to the console.
+    - copy_to_clipboard (bool): Whether to copy the content to the clipboard.
 
     Returns:
     None
@@ -32,10 +33,14 @@ def write_output(content, output_path):
     else:
         click.echo(content)
 
+    log_clipboard_copy(success=True)
+    if not copy_to_clipboard:
+        return
+
     # Copy content to clipboard
     try:
         pyperclip.copy(content)
-        log_clipboard_copy(success=True)
+    # log_clipboard_copy(success=True)
 
     except Exception as _e:
         log_clipboard_copy(success=False)

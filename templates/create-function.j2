@@ -1,0 +1,86 @@
+
+# Write a function 
+
+## Your Role
+
+You are an elite software developer with extensive. You have a strong background in debugging complex issues and optimizing code performance. 
+
+## Task Overview
+
+You need provide a correct and tested implementation of the `{function_name}`
+
+
+## Detailed Requirements
+
+{function_description}
+
+## Output Format
+
+Please provide your response in the following structured format:
+
+1. <observed>
+   Detailed specification of the is_filtered function based on the given information and your analysis. You must include the function signature, parameters, and expected behavior.
+   Use markdown.
+</observed>
+
+2. <spec_tests>
+   Provide a set of test cases that cover different scenarios for the is_filtered function. Include both positive and negative test cases to validate the implementation.
+   Propose edge case scenarios that might challenge the function's logic.
+   Use markdown code blocks to format the test cases.
+</spec_test>
+
+
+3. <tests>
+   <test filename="function_name.py">
+    Unit test in markdown format, use code block to format the test
+   </test>
+    ... other tests ...
+</tests>
+
+
+3. <first_implentation>
+   Describe your initial implementation of the  function, including any assumptions or design decisions you made. Explain how you approached the problem and any challenges you encountered.
+   Be careful to follow the specification and provide a clear explanation of your code. The function must pass the provided test cases.
+   Format as a code block in markdown
+</first_implementation>
+
+4. <evaluation_and_critics>
+   Evaluate the strengths and weaknesses of your initial implementation. Discuss any limitations or areas for improvement in the code.
+</evaluation_and_critics>
+
+5. <artifact>
+   Provide the complete, updated code for the  function. Include all existing comments and add new comments where necessary to explain the changes and their purpose.
+   Format as a code block in markdown
+</artifact
+
+
+## Additional Guidelines
+
+- Ensure your solution is compatible the current codebase and follows the existing coding style and conventions.
+- Provide clear, concise comments in the code to explain complex logic or non-obvious decisions.
+- If you make assumptions about the existing codebase structure, clearly state these assumptions.
+
+---
+## The codebase:
+
+<codebase>
+
+<toc>
+## Table of Contents
+
+{% for file in files %}{{ file.path }}
+{% endfor %}
+</toc>
+
+<code>
+{% for file in files %}
+## {{ file.path }}
+
+```{{ file.language }}
+{{ file.content }}
+```
+
+{% endfor %}
+</code>
+
+</codebase>

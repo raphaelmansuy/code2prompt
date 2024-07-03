@@ -63,12 +63,14 @@ def setup_logger(name='code2prompt', level=logging.INFO):
     local_logger = logging.getLogger(name)
     local_logger.setLevel(level)
 
-    # Create handlers
-    c_handler = logging.StreamHandler(sys.stderr)
-    c_handler.setFormatter(ColorfulFormatter())
+    # Only add handler if there are none to prevent duplicate logging
+    if not local_logger.handlers:
+        # Create handlers
+        c_handler = logging.StreamHandler(sys.stderr)
+        c_handler.setFormatter(ColorfulFormatter())
 
-    # Add handlers to the logger
-    local_logger.addHandler(c_handler)
+        # Add handlers to the logger
+        local_logger.addHandler(c_handler)
 
     return local_logger
 
@@ -94,7 +96,8 @@ def log_info(message):
     """
     Logs an informational-level message.
 
-    This function logs a message at the INFO level, which is used to provide general information about the program's operation without implying any particular priority.
+    This function logs a message at the INFO level, which is used to provide general information
+    about the program's operation without implying any particular priority.
 
     Args:
         message (str): The message to log.
@@ -108,7 +111,8 @@ def log_warning(message):
     """
     Logs a warning-level message.
 
-    This function logs a message at the WARNING level, indicating that something unexpected happened, but did not stop the execution of the program.
+    This function logs a message at the WARNING level, indicating that something unexpected
+    happened, but did not stop the execution of the program.
 
     Args:
         message (str): The message to log as a warning.
@@ -122,7 +126,8 @@ def log_error(message):
     """
     Logs an error-level message.
 
-    This function logs a message at the ERROR level, indicating that an error occurred that prevented the program from continuing normally.
+    This function logs a message at the ERROR level, indicating that an error occurred
+    that prevented the program from continuing normally.
 
     Args:
         message (str): The message to log as an error.
@@ -136,7 +141,8 @@ def log_critical(message):
     """
     Logs a critical-level message.
 
-    This function logs a message at the CRITICAL level, indicating a severe error that prevents the program from functioning correctly.
+    This function logs a message at the CRITICAL level, indicating a severe error
+    that prevents the program from functioning correctly.
 
     Args:
         message (str): The message to log as a critical error.
