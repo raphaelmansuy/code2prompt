@@ -129,6 +129,101 @@ code2prompt --path /path/to/dir1 --path /path/to/file2.py [OPTIONS]
 | `--create-templates` | | Create a templates directory with example templates |
 | `--version` | `-v` | Show the version and exit |
 
+
+## Command Parameters
+
+### `--filter` or `-f` and `--exclude` or `-e`
+
+The `--filter` and `--exclude` options allow you to specify patterns for files or directories that should be included in or excluded from processing, respectively.
+
+#### Syntax:
+```
+--filter "PATTERN1,PATTERN2,..."
+--exclude "PATTERN1,PATTERN2,..."
+```
+or
+```
+-f "PATTERN1,PATTERN2,..."
+-e "PATTERN1,PATTERN2,..."
+```
+
+#### Description:
+- Both options accept a comma-separated list of patterns.
+- Patterns can include wildcards (`*`) and directory indicators (`**`).
+- Case-sensitive by default (use `--case-sensitive` flag to change this behavior).
+- `--exclude` patterns take precedence over `--filter` patterns.
+
+#### Examples:
+
+1. Include only Python files:
+   ```
+   --filter "**.py"
+   ```
+
+2. Exclude all Markdown files:
+   ```
+   --exclude "**.md"
+   ```
+
+3. Include specific file types in the src directory:
+   ```
+   --filter "src/**.{js,ts}"
+   ```
+
+4. Exclude multiple file types and a specific directory:
+   ```
+   --exclude "**.log,**.tmp,**/node_modules/**"
+   ```
+
+5. Include all files except those in 'test' directories:
+   ```
+   --filter "**" --exclude "**/test/**"
+   ```
+
+6. Complex filtering (include JavaScript files, exclude minified and test files):
+   ```
+   --filter "**.js" --exclude "**.min.js,**test**.js"
+   ```
+
+7. Include specific files across all directories:
+   ```
+   --filter "**/config.json,**/README.md"
+   ```
+
+8. Exclude temporary files and directories:
+   ```
+   --exclude "**/.cache/**,**/tmp/**,**.tmp"
+   ```
+
+9. Include source files but exclude build output:
+   ```
+   --filter "src/**/*.{js,ts}" --exclude "**/dist/**,**/build/**"
+   ```
+
+10. Exclude version control and IDE-specific files:
+    ```
+    --exclude "**/.git/**,**/.vscode/**,**/.idea/**"
+    ```
+
+#### Important Notes:
+
+- Always use double quotes around patterns to prevent shell interpretation of special characters.
+- Patterns are matched against the full path of each file, relative to the project root.
+- The `**` wildcard matches any number of directories.
+- Single `*` matches any characters within a single directory or filename.
+- Use commas to separate multiple patterns within the same option.
+- Combine `--filter` and `--exclude` for fine-grained control over which files are processed.
+
+#### Best Practices:
+
+1. Start with broader patterns and refine as needed.
+2. Test your patterns on a small subset of your project first.
+3. Use the `--case-sensitive` flag if you need to distinguish between similarly named files with different cases.
+4. When working with complex projects, consider using a configuration file to manage your filter and exclude patterns.
+
+By using the `--filter` and `--exclude` options effectively and safely (with proper quoting), you can precisely control which files are processed in your project, ensuring both accuracy and security in your command execution.
+
+
 ## Examples
 
 1. Generate documentation for a Python library:
