@@ -280,6 +280,6 @@ Code2Prompt is released under the MIT License. See the [LICENSE](LICENSE) file f
 ⭐ If you find Code2Prompt useful, please give us a star on GitHub! It helps us reach more developers and improve the tool. ⭐
 
 ## Project Growth
-[![Star History Chart](https://api.star-history.com/svg?repos=username/code2prompt&type=Date)](https://star-history.com/#username/code2prompt&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=raphaelmansuy/code2prompt&type=Date)](https://star-history.com/#raphaelmansuy/code2prompt&Date)
 
 Made with ❤️ by Raphaël MANSUY
