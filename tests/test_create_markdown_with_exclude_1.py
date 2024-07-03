@@ -17,7 +17,7 @@ def test_create_markdown_with_exclude():
         (temp_dir_path / "file3.txt").write_text("Text content")
         (temp_dir_path / "ignore_me.py").write_text("# This should be ignored")
 
-        exclude_option = "ignore_me.py"
+        exclude_option = "**/ignore_me.py"
         output_file = temp_dir_path / "output_with_exclude.md"
         result = runner.invoke(create_markdown_file, ['-p', temp_dir, '-o', str(output_file), '-e', exclude_option])
 

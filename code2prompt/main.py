@@ -159,7 +159,7 @@ def create_markdown_file(**cli_options):
         token_count = count_tokens(content, options["encoding"])
         log_token_count(token_count)
 
-    write_output(content, options["output"])
+    write_output(content, options["output"], copy_to_clipboard=True)
 
 
 if __name__ == "__main__":

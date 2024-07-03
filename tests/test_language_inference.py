@@ -24,4 +24,4 @@ def test_infer_language():
     assert infer_language("query.sql") == "sql"
     assert infer_language("script.m") == "matlab"
     assert infer_language("script.r") == "r"
-    assert infer_language("file.txt") == "unknown"
+    assert infer_language("file.txt") == "plaintext"
