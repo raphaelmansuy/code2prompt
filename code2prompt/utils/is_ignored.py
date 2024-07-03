@@ -2,7 +2,21 @@ from fnmatch import fnmatch
 from pathlib import Path
 
 
+from pathlib import Path
+from fnmatch import fnmatch
+
 def is_ignored(file_path: Path, gitignore_patterns: list, base_path: Path) -> bool:
+    """
+    Check if a file is ignored based on gitignore patterns.
+
+    Args:
+        file_path (Path): The path of the file to check.
+        gitignore_patterns (list): List of gitignore patterns.
+        base_path (Path): The base path to resolve relative paths.
+
+    Returns:
+        bool: True if the file is ignored, False otherwise.
+    """
     relative_path = file_path.relative_to(base_path)
     for pattern in gitignore_patterns:
         pattern = pattern.rstrip("/")

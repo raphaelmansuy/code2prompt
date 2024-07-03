@@ -115,6 +115,10 @@ def infer_language(filename: str) -> str:
         ".conf": "ini",
         ".dockerfile": "dockerfile",
         ".docker": "dockerfile",
+        '.txt': 'plaintext',
+        '.csv': 'csv',
+        '.tsv': 'tsv',
+        '.log': 'log'
     }
 
     return language_map.get(extension, "unknown")
