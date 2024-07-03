@@ -9,7 +9,7 @@ from code2prompt.utils.create_template_directory import create_templates_directo
 from code2prompt.utils.logging_utils import setup_logger, log_token_count, log_error
 
 
-VERSION = "0.6.6"
+VERSION = "0.6.7"
 
 DEFAULT_OPTIONS = {
     "path": [],

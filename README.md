@@ -8,7 +8,6 @@
 
 Code2Prompt is a powerful command-line tool that generates comprehensive prompts from codebases, designed to streamline interactions between developers and Large Language Models (LLMs) for code analysis, documentation, and improvement tasks.
 
-![Code2Prompt Logo](./docs/code2Prompt.jpg)
 
 ## Table of Contents
 
