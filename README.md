@@ -2,7 +2,6 @@
 
 [![PyPI version](https://badge.fury.io/py/code2prompt.svg)](https://badge.fury.io/py/code2prompt)
 
-[![Build Status](https://github.com/raphaelmansuy/code2prompt/workflows/CI/badge.svg)](https://github.com/raphaelmansuy/code2prompt/actions)
 [![GitHub Stars](https://img.shields.io/github/stars/raphaelmansuy/code2prompt.svg)](https://github.com/raphaelmansuy/code2prompt/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/raphaelmansuy/code2prompt.svg)](https://github.com/raphaelmansuy/code2prompt/network/members)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
