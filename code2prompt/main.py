@@ -1,13 +1,15 @@
+import logging
 import click
+from code2prompt.utils.config import load_config, merge_options
 from code2prompt.utils.count_tokens import count_tokens
 from code2prompt.core.generate_content import generate_content
 from code2prompt.core.process_files import process_files
 from code2prompt.core.write_output import write_output
 from code2prompt.utils.create_template_directory import create_templates_directory
-from code2prompt.utils.logging_utils import log_token_count, log_error
-from code2prompt.utils.config import load_config, merge_options
+from code2prompt.utils.logging_utils import setup_logger, log_token_count, log_error
 
-VERSION = "0.6.5"  # Define the version of the CLI tool
+
+VERSION = "0.6.6"
 
 DEFAULT_OPTIONS = {
     "path": [],
@@ -23,6 +25,7 @@ DEFAULT_OPTIONS = {
     "tokens": False,
     "encoding": "cl100k_base",
     "create_templates": False,
+    "log_level": "INFO",  # Add default log level
 }
 
 
@@ -34,7 +37,7 @@ DEFAULT_OPTIONS = {
     "--path",
     "-p",
     type=click.Path(exists=True),
-    multiple=True,  # Allow multiple paths
+    multiple=True,
     help="Path(s) to the directory or file to process.",
 )
 @click.option(
@@ -100,6 +103,14 @@ DEFAULT_OPTIONS = {
     is_flag=True,
     help="Create a templates directory with example templates.",
 )
+@click.option(
+    "--log-level",
+    type=click.Choice(
+        ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], case_sensitive=False
+    ),
+    default="INFO",
+    help="Set the logging level.",
+)
 def create_markdown_file(**cli_options):
     """
     Creates a Markdown file based on the provided options.
@@ -113,17 +124,19 @@ def create_markdown_file(**cli_options):
     **options (dict): Key-value pairs of options to customize the behavior of the function.
     Possible keys include 'path', 'output', 'gitignore', 'filter', 'exclude', 'case_sensitive',
     'suppress_comments', 'line_number', 'no_codeblock', 'template', 'tokens', 'encoding',
-    and 'create_templates'.
+    'create_templates', and 'log_level'.
 
     Returns:
     None
     """
-
-    ## Load configuration from .code2promptrc files
+    # Load configuration from .code2promptrc files
     config = load_config(".")
 
     # Merge options: CLI takes precedence over config, which takes precedence over defaults
     options = merge_options(cli_options, config, DEFAULT_OPTIONS)
+
+    # Set up logger with the specified log level
+    _logger = setup_logger(level=getattr(logging, options["log_level"].upper()))
 
     if options["create_templates"]:
         create_templates_directory()
