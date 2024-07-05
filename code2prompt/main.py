@@ -11,7 +11,7 @@ from code2prompt.utils.create_template_directory import create_templates_directo
 from code2prompt.utils.logging_utils import setup_logger, log_token_count, log_error
 
 
-VERSION = "0.6.8"
+VERSION = "0.6.9"
 
 DEFAULT_OPTIONS = {
     "path": [],
@@ -163,11 +163,12 @@ def create_markdown_file(**cli_options):
 
     content = generate_content(all_files_data, options)
 
+    token_count = None
     if options["tokens"]:
         token_count = count_tokens(content, options["encoding"])
-        log_token_count(token_count)
 
-    write_output(content, options["output"], copy_to_clipboard=True)
+    write_output(content, options["output"], copy_to_clipboard=True, token_count=token_count)
+
 
 
 if __name__ == "__main__":
