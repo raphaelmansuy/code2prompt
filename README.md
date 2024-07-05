@@ -330,6 +330,25 @@ jobs:
         path: analysis.md
 ```
 
+## Understanding Tokens and Token Types in Code2Prompt
+
+Tokens are the basic units of text that language models process. They can be words, parts of words, or even punctuation marks. Different tokenizer encodings split text into tokens in various ways. Code2Prompt supports multiple token types through its `--encoding` option, with "cl100k_base" as the default. This encoding, used by models like GPT-3.5 and GPT-4, is adept at handling code and technical content. Other common encodings include "p50k_base" (used by earlier GPT-3 models) and "r50k_base" (used by models like CodeX).
+
+To count tokens in your generated prompt, use the `--tokens` flag:
+
+```bash
+code2prompt --path /your/project --tokens
+```
+
+For a specific encoding:
+
+```bash
+code2prompt --path /your/project --tokens --encoding p50k_base
+```
+
+Understanding token counts is crucial when working with AI models that have token limits, ensuring your prompts fit within the model's context window.
+
+
 ## Configuration File
 
 Code2Prompt supports a `.code2promptrc` configuration file in JSON format for setting default options. Place this file in your project or home directory.
