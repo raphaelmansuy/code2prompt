@@ -26,31 +26,39 @@ Code2Prompt is a powerful command-line tool that generates comprehensive prompts
 13. [Contributing](#contributing)
 14. [License](#license)
 
-## Why Code2Prompt?
+# Code2Prompt: Transform Your Codebase into AI-Ready Prompts
 
-When working with Large Language Models on software development tasks, providing extensive context about the codebase is crucial. Code2Prompt addresses this need by:
+[![PyPI version](https://badge.fury.io/py/code2prompt.svg)](https://badge.fury.io/py/code2prompt)
+[![GitHub Stars](https://img.shields.io/github/stars/raphaelmansuy/code2prompt.svg)](https://github.com/raphaelmansuy/code2prompt/stargazers)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-- Offering a holistic view of your project, enabling LLMs to better understand the overall structure and dependencies.
-- Allowing for more accurate recommendations and suggestions from LLMs.
-- Maintaining consistency in coding style and conventions across the project.
-- Facilitating better interdependency analysis and refactoring suggestions.
-- Enabling more contextually relevant documentation generation.
-- Helping LLMs learn and apply project-specific patterns and idioms.
+## Supercharge Your AI-Assisted Development
 
-## Features
+Code2Prompt is a powerful, open-source command-line tool that bridges the gap between your codebase and Large Language Models (LLMs). By converting your entire project into a comprehensive, AI-friendly prompt, Code2Prompt enables you to leverage the full potential of AI for code analysis, documentation, and improvement tasks.
 
-- Process single files or entire directories
-- Support for multiple programming languages
-- Gitignore integration
-- Comment stripping
-- Line number addition
-- Custom output formatting using Jinja2 templates
-- Token counting for AI model compatibility
-- Clipboard copying of generated content
-- Automatic traversal of directories and subdirectories
-- File filtering based on patterns
-- File metadata inclusion (extension, size, creation time, modification time)
-- Graceful handling of binary files and encoding issues
+### 🚀 Key Features
+
+- **Holistic Codebase Representation**: Generate a well-structured Markdown prompt that captures your entire project's essence.
+- **Intelligent Source Tree Generation**: Create a clear, hierarchical view of your codebase structure.
+- **Customizable Prompt Templates**: Tailor your output using Jinja2 templates to suit specific AI tasks.
+- **Smart Token Management**: Count and optimize tokens to ensure compatibility with various LLM token limits.
+- **Gitignore Integration**: Respect your project's .gitignore rules for accurate representation.
+- **Flexible File Handling**: Filter and exclude files using powerful glob patterns.
+- **Clipboard Ready**: Instantly copy generated prompts to your clipboard for quick AI interactions.
+- **Multiple Output Options**: Save to file or display in the console.
+- **Enhanced Code Readability**: Add line numbers to source code blocks for precise referencing.
+
+### 💡 Why Code2Prompt?
+
+- **Contextual Understanding**: Provide LLMs with a comprehensive view of your project for more accurate suggestions and analysis.
+- **Consistency Boost**: Maintain coding style and conventions across your entire project.
+- **Efficient Refactoring**: Enable better interdependency analysis and smarter refactoring recommendations.
+- **Improved Documentation**: Generate contextually relevant documentation that truly reflects your codebase.
+- **Pattern Recognition**: Help LLMs learn and apply your project-specific patterns and idioms.
+
+Transform the way you interact with AI for software development. With Code2Prompt, harness the full power of your codebase in every AI conversation.
+
+Ready to elevate your AI-assisted development? Let's dive in! 🏊‍♂️
 
 ## Installation
 
