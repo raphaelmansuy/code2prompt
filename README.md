@@ -269,11 +269,11 @@ code2prompt --create-templates
 
 This creates a `templates` directory with sample Jinja2 templates, including:
 
-- `default.j2`: A general-purpose template
-- `analyze-code.j2`: For detailed code analysis
-- `code-review.j2`: For thorough code reviews
-- `create-readme.j2`: To assist in generating README files
-- `improve-this-prompt.j2`: For refining AI prompts
+- [default.j2](./code2prompt//templates/default.j2): A general-purpose template
+- [analyze-code.j2](./code2prompt/templates/analyze-code.j2): For detailed code analysis
+- [code-review.j2](./code2prompt/templates/code-review.j2): For thorough code reviews
+- [create-readme.j2](./code2prompt/templates/create-readme.j2): To assist in generating README files
+- [improve-this-prompt.j2](./code2prompt/templates/improve-this-prompt.j2): For refining AI prompts
 
 For full template documentation, see [Documentation Templating](./TEMPLATE.md).
 

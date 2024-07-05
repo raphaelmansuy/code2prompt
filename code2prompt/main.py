@@ -1,4 +1,6 @@
+from importlib import resources
 import logging
+from pathlib import Path
 import click
 from code2prompt.utils.config import load_config, merge_options
 from code2prompt.utils.count_tokens import count_tokens
@@ -9,7 +11,7 @@ from code2prompt.utils.create_template_directory import create_templates_directo
 from code2prompt.utils.logging_utils import setup_logger, log_token_count, log_error
 
 
-VERSION = "0.6.7"
+VERSION = "0.6.8"
 
 DEFAULT_OPTIONS = {
     "path": [],
@@ -139,7 +141,13 @@ def create_markdown_file(**cli_options):
     _logger = setup_logger(level=getattr(logging, options["log_level"].upper()))
 
     if options["create_templates"]:
-        create_templates_directory()
+        cwd = Path.cwd()
+        templates_dir = cwd / "templates"
+        package_templates_dir = resources.files("code2prompt").joinpath("templates")
+
+        create_templates_directory(
+            package_templates_dir=package_templates_dir, templates_dir=templates_dir
+        )
         return
 
     if not options["path"]:

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "code2prompt"
-version = "0.6.7"
+version = "0.6.8"
 description = "A tool to convert code snippets into AI prompts for documentation or explanation purposes."
 authors = ["Raphael MANSUY <raphael.mansuy@gmail.com>"]
 license = "MIT"
@@ -18,6 +18,9 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
+include = [
+    "code2prompt/templates/**/*",
+]
 
 [tool.poetry.dependencies]
 python = "^3.8,<4.0"
@@ -28,6 +31,7 @@ prompt-toolkit = "^3.0.47"  # For building powerful interactive command line app
 tiktoken = "^0.7.0"  # For tokenization tasks
 pyperclip = "^1.9.0"  # For clipboard operations
 colorama = "^0.4.6"  # For colored terminal text output
+tqdm = "^4.66.4"
 
 [tool.poetry.scripts]
 code2prompt = "code2prompt.main:create_markdown_file"
@@ -39,3 +43,6 @@ ipykernel = "^6.29.4"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.setuptools]
+package-data = {"code2prompt" = ["templates/**/*"]}
