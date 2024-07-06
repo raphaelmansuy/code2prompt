@@ -386,6 +386,13 @@ Example `.code2promptrc`:
 3. **Issue**: Some files are not being processed.
    **Solution**: Check for binary files or exclusion patterns. Use `--case-sensitive` if needed.
 
+## Roadmap
+
+   - [ ] Include system in template to promote re-usability of sub templates.
+   - [ ] Tokens count for Anthropic Models and other models such LLama3 or Mistral
+   - [ ] Cost Estimations for main LLM providers based in token count
+   - [ ] Integration with qllm (Quantalogic LLM)
+
 ## Contributing
 
 Contributions to Code2Prompt are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
