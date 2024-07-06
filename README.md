@@ -383,10 +383,7 @@ Example `.code2promptrc`:
 2. **Issue**: The generated output is too large for my AI model.
    **Solution**: Use `--tokens` to check the count, and refine `--filter` or `--exclude` options.
 
-3. **Issue**: Encoding-related errors when processing files.
-   **Solution**: Try a different encoding with `--encoding`, e.g., `--encoding utf-8`.
-
-4. **Issue**: Some files are not being processed.
+3. **Issue**: Some files are not being processed.
    **Solution**: Check for binary files or exclusion patterns. Use `--case-sensitive` if needed.
 
 ## Contributing
