@@ -402,4 +402,4 @@ Code2Prompt is released under the MIT License. See the [LICENSE](LICENSE) file f
 ## Project Growth
 [![Star History Chart](https://api.star-history.com/svg?repos=raphaelmansuy/code2prompt&type=Date)](https://star-history.com/#raphaelmansuy/code2prompt&Date)
 
-Made with ❤️ by Raphaël MANSUY. Founder of [Quantalogic](https://www.quantalogic.app). Creator of [qllm]([https://](https://github.com/quantalogic/qllm).
+Made with ❤️ by Raphaël MANSUY. Founder of [Quantalogic](https://www.quantalogic.app). Creator of [qllm](https://github.com/quantalogic/qllm).
