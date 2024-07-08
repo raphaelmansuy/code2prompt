@@ -277,7 +277,7 @@ For full template documentation, see [Documentation Templating](./TEMPLATE.md).
 
 ## Integration with LLM CLI
 
-Code2Prompt can be integrated with Simon Willison's [llm](https://github.com/simonw/llm) CLI tool for enhanced code analysis.
+Code2Prompt can be integrated with Simon Willison's [llm](https://github.com/simonw/llm) CLI tool for enhanced code analysis or [Quantalogic](https://www.quantalogic.app) [qllm](https://github.com/quantalogic/qllm)
 
 ### Installation
 
