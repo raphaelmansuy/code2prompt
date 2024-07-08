@@ -380,7 +380,7 @@ Example `.code2promptrc`:
    - [ ] Include system in template to promote re-usability of sub templates.
    - [ ] Tokens count for Anthropic Models and other models such LLama3 or Mistral
    - [ ] Cost Estimations for main LLM providers based in token count
-   - [ ] Integration with qllm (Quantalogic LLM)
+   - [ ] Integration with [qllm](https://github.com/quantalogic/qllm) (Quantalogic LLM)
    - [ ] Embedding of file summary in SQL-Lite
    - [ ] Intelligence selection of file based on an LLM
    - [ ] Git power tools (Git diff integration / PR Assisted Review)
