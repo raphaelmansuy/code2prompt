@@ -279,7 +279,7 @@ For full template documentation, see [Documentation Templating](./TEMPLATE.md).
 
 ## Integration with LLM CLI
 
-Code2Prompt can be integrated with Simon Willison's [llm](https://github.com/simonw/llm) CLI tool for enhanced code analysis or [Quantalogic](https://www.quantalogic.app) [qllm](https://github.com/quantalogic/qllm)
+Code2Prompt can be integrated with Simon Willison's [llm](https://github.com/simonw/llm) CLI tool for enhanced code analysis or [qllm](https://github.com/quantalogic/qllm), or for the Rust lovers [hiramu-cli](https://github.com/raphaelmansuy/hiramu-cli). 
 
 ### Installation
 
@@ -402,4 +402,4 @@ Code2Prompt is released under the MIT License. See the [LICENSE](LICENSE) file f
 ## Project Growth
 [![Star History Chart](https://api.star-history.com/svg?repos=raphaelmansuy/code2prompt&type=Date)](https://star-history.com/#raphaelmansuy/code2prompt&Date)
 
-Made with ❤️ by Raphaël MANSUY
+Made with ❤️ by Raphaël MANSUY. Founder of [Quantalogic](https://www.quantalogic.app). Creator of [qllm]([https://](https://github.com/quantalogic/qllm).
