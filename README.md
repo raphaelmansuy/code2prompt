@@ -66,24 +66,12 @@ Ready to elevate your AI-assisted development? Let's dive in! 🏊‍♂️
 
 Choose one of the following methods to install Code2Prompt:
 
-### Using pip (recommended)
+### Using pip 
 
 ```bash
 pip install code2prompt
 ```
-
-### Using Poetry
-
-1. Ensure you have Poetry installed:
-   ```bash
-   curl -sSL https://install.python-poetry.org | python3 -
-   ```
-2. Install Code2Prompt:
-   ```bash
-   poetry add code2prompt
-   ```
-
-### Using pipx
+### Using [pipx](https://github.com/pypa/pipx) (recommended)
 
 ```bash
 pipx install code2prompt
@@ -388,10 +376,14 @@ Example `.code2promptrc`:
 
 ## Roadmap
 
+   - [ ] Interractive filtering
    - [ ] Include system in template to promote re-usability of sub templates.
    - [ ] Tokens count for Anthropic Models and other models such LLama3 or Mistral
    - [ ] Cost Estimations for main LLM providers based in token count
    - [ ] Integration with qllm (Quantalogic LLM)
+   - [ ] Embedding of file summary in SQL-Lite
+   - [ ] Intelligence selection of file based on an LLM
+   - [ ] Git power tools (Git diff integration / PR Assisted Review)
 
 ## Contributing
 
