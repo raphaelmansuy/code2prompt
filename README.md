@@ -349,6 +349,20 @@ code2prompt --path /your/project --tokens --encoding p50k_base
 Understanding token counts is crucial when working with AI models that have token limits, ensuring your prompts fit within the model's context window.
 
 
+### Token Price Estimation
+
+Code2Prompt now includes a powerful feature for estimating token prices across various AI providers and models. Use the `--price` option in conjunction with `--tokens` to display a comprehensive breakdown of estimated costs. This feature calculates prices based on both input and output tokens, with input tokens determined by your codebase and a default of 1000 output tokens (customizable via `--output-tokens`). You can specify a particular provider or model, or view prices across all available options. This functionality helps developers make informed decisions about AI model usage and cost management. For example:
+
+```bash
+code2prompt --path /your/project --tokens --price --provider openai --model gpt-4
+```
+
+This command will analyze your project, count the tokens, and provide a detailed price estimation for OpenAI's GPT-4 model.
+
+![](./docs/screen-example2.png)
+
+
+
 ## Configuration File
 
 Code2Prompt supports a `.code2promptrc` configuration file in JSON format for setting default options. Place this file in your project or home directory.

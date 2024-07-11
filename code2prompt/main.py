@@ -2,16 +2,17 @@ from importlib import resources
 import logging
 from pathlib import Path
 import click
+from tabulate import tabulate
 from code2prompt.utils.config import load_config, merge_options
 from code2prompt.utils.count_tokens import count_tokens
 from code2prompt.core.generate_content import generate_content
 from code2prompt.core.process_files import process_files
 from code2prompt.core.write_output import write_output
 from code2prompt.utils.create_template_directory import create_templates_directory
-from code2prompt.utils.logging_utils import setup_logger, log_token_count, log_error
+from code2prompt.utils.logging_utils import setup_logger, log_token_count, log_error, log_info
+from code2prompt.utils.price_calculator import load_token_prices, calculate_prices
 
-
-VERSION = "0.6.9"
+VERSION = "0.6.10"
 
 DEFAULT_OPTIONS = {
     "path": [],
@@ -27,55 +28,56 @@ DEFAULT_OPTIONS = {
     "tokens": False,
     "encoding": "cl100k_base",
     "create_templates": False,
-    "log_level": "INFO",  # Add default log level
+    "log_level": "INFO",
+    "price": False,
+    "provider": None,
+    "model": None,
+    "output_tokens": 1000,  # Default output token count
 }
-
 
 @click.command()
 @click.version_option(
     VERSION, "-v", "--version", message="code2prompt version %(version)s"
 )
 @click.option(
-    "--path",
-    "-p",
+    "--path", "-p",
     type=click.Path(exists=True),
     multiple=True,
     help="Path(s) to the directory or file to process.",
 )
 @click.option(
-    "--output", "-o", type=click.Path(), help="Name of the output Markdown file."
+    "--output", "-o",
+    type=click.Path(),
+    help="Name of the output Markdown file."
 )
 @click.option(
-    "--gitignore",
-    "-g",
+    "--gitignore", "-g",
     type=click.Path(exists=True),
     help="Path to the .gitignore file.",
 )
 @click.option(
-    "--filter",
-    "-f",
+    "--filter", "-f",
     type=str,
     help='Comma-separated filter patterns to include files (e.g., "*.py,*.js").',
 )
 @click.option(
-    "--exclude",
-    "-e",
+    "--exclude", "-e",
     type=str,
     help='Comma-separated patterns to exclude files (e.g., "*.txt,*.md").',
 )
 @click.option(
-    "--case-sensitive", is_flag=True, help="Perform case-sensitive pattern matching."
+    "--case-sensitive",
+    is_flag=True,
+    help="Perform case-sensitive pattern matching."
 )
 @click.option(
-    "--suppress-comments",
-    "-s",
+    "--suppress-comments", "-s",
     is_flag=True,
     help="Strip comments from the code files.",
     default=False,
 )
 @click.option(
-    "--line-number",
-    "-ln",
+    "--line-number", "-ln",
     is_flag=True,
     help="Add line numbers to source code blocks.",
     default=False,
@@ -86,13 +88,14 @@ DEFAULT_OPTIONS = {
     help="Disable wrapping code inside markdown code blocks.",
 )
 @click.option(
-    "--template",
-    "-t",
+    "--template", "-t",
     type=click.Path(exists=True),
     help="Path to a Jinja2 template file for custom prompt generation.",
 )
 @click.option(
-    "--tokens", is_flag=True, help="Display the token count of the generated prompt."
+    "--tokens",
+    is_flag=True,
+    help="Display the token count of the generated prompt."
 )
 @click.option(
     "--encoding",
@@ -108,10 +111,32 @@ DEFAULT_OPTIONS = {
 @click.option(
     "--log-level",
     type=click.Choice(
-        ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], case_sensitive=False
+        ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        case_sensitive=False
     ),
     default="INFO",
     help="Set the logging level.",
+)
+@click.option(
+    "--price",
+    is_flag=True,
+    help="Display the estimated price of tokens based on provider and model.",
+)
+@click.option(
+    "--provider",
+    type=str,
+    help="Specify the provider for price calculation.",
+)
+@click.option(
+    "--model",
+    type=str,
+    help="Specify the model for price calculation.",
+)
+@click.option(
+    "--output-tokens",
+    type=int,
+    default=1000,
+    help="Specify the number of output tokens for price calculation.",
 )
 def create_markdown_file(**cli_options):
     """
@@ -123,13 +148,13 @@ def create_markdown_file(**cli_options):
     The output file name and location can be customized through the options.
 
     Args:
-    **options (dict): Key-value pairs of options to customize the behavior of the function.
-    Possible keys include 'path', 'output', 'gitignore', 'filter', 'exclude', 'case_sensitive',
-    'suppress_comments', 'line_number', 'no_codeblock', 'template', 'tokens', 'encoding',
-    'create_templates', and 'log_level'.
+        **options (dict): Key-value pairs of options to customize the behavior of the function.
+        Possible keys include 'path', 'output', 'gitignore', 'filter', 'exclude', 'case_sensitive',
+        'suppress_comments', 'line_number', 'no_codeblock', 'template', 'tokens', 'encoding',
+        'create_templates', 'log_level', 'price', 'provider', 'model', and 'output_tokens'.
 
     Returns:
-    None
+        None
     """
     # Load configuration from .code2promptrc files
     config = load_config(".")
@@ -144,9 +169,9 @@ def create_markdown_file(**cli_options):
         cwd = Path.cwd()
         templates_dir = cwd / "templates"
         package_templates_dir = resources.files("code2prompt").joinpath("templates")
-
         create_templates_directory(
-            package_templates_dir=package_templates_dir, templates_dir=templates_dir
+            package_templates_dir=package_templates_dir,
+            templates_dir=templates_dir
         )
         return
 
@@ -164,13 +189,47 @@ def create_markdown_file(**cli_options):
     content = generate_content(all_files_data, options)
 
     token_count = None
-    if options["tokens"]:
+    if options["tokens"] or options["price"]:
         token_count = count_tokens(content, options["encoding"])
+        log_token_count(token_count)
 
-    write_output(content, options["output"], copy_to_clipboard=True, token_count=token_count)
+
+    write_output(content, options["output"], copy_to_clipboard=True)
+    
+    if options["price"]:
+        display_price_table(options, token_count)
 
 
+def display_price_table(options, token_count):
+    """
+    Display a table with price estimates for the given token count.
+
+    Args:
+        options (dict): The options dictionary containing pricing-related settings.
+        token_count (int): The number of tokens to calculate prices for.
+    """
+    if token_count is None:
+        log_error("Error: Token count is required for price calculation.")
+        return
+
+    token_prices = load_token_prices()
+    if not token_prices:
+        return
+
+    output_token_count = options["output_tokens"]
+
+    table_data = calculate_prices(token_prices, token_count, output_token_count, options["provider"], options["model"])
+
+    if not table_data:
+        log_error("Error: No matching provider or model found")
+        return
+
+    headers = ["Provider", "Model", "Price for 1K Input Tokens", "Number of Input Tokens", "Total Price"]
+    table = tabulate(table_data, headers=headers, tablefmt="grid")
+    log_info("\n✨ Estimated Token Prices: (All prices are in USD, it is an estimate as the current token implementation is based on OpenAI's GPT-3)")
+    log_info("\n")
+    log_info(table)
+    log_info("\n📝 Note: The prices are based on the token count and the provider's pricing model.")
 
 if __name__ == "__main__":
-    # pylint: disable=no-value-for-parameter
     create_markdown_file()
