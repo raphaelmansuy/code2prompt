@@ -1,0 +1,254 @@
+{
+    "providers": [
+      {
+        "name": "OpenAI",
+        "models": [
+          {
+            "name": "GPT-4o",
+            "input_price": 0.005,
+            "output_price": 0.015
+          },
+          {
+            "name": "GPT-4 (8K)",
+            "input_price": 0.03,
+            "output_price": 0.06
+          },
+          {
+            "name": "GPT-4 Turbo",
+            "input_price": 0.01,
+            "output_price": 0.03
+          },
+          {
+            "name": "GPT-3.5-turbo",
+            "input_price": 0.0005,
+            "output_price": 0.0015
+          }
+        ]
+      },
+      {
+        "name": "Anthropic",
+        "models": [
+          {
+            "name": "Claude 3 (Opus)",
+            "input_price": 0.015,
+            "output_price": 0.075
+          },
+          {
+            "name": "Claude 3.5 (Sonnet)",
+            "input_price": 0.003,
+            "output_price": 0.015
+          },
+          {
+            "name": "Claude 3 (Haiku)",
+            "input_price": 0.00025,
+            "output_price": 0.00125
+          }
+        ]
+      },
+      {
+        "name": "Google",
+        "models": [
+          {
+            "name": "Gemini 1.5 Pro",
+            "input_price": 0.0035,
+            "output_price": 0.007
+          },
+          {
+            "name": "Gemini 1.5 Flash",
+            "input_price": 0.00035,
+            "output_price": 0.0007
+          }
+        ]
+      },
+      {
+        "name": "Groq",
+        "models": [
+          {
+            "name": "Llama 3 70b",
+            "input_price": 0.00059,
+            "output_price": 0.00079
+          },
+          {
+            "name": "Mixtral 8x7B",
+            "input_price": 0.00024,
+            "output_price": 0.00024
+          }
+        ]
+      },
+      {
+        "name": "Replicate",
+        "models": [
+          {
+            "name": "Llama 3 70b",
+            "input_price": 0.00065,
+            "output_price": 0.00275
+          },
+          {
+            "name": "Mixtral 8x7B",
+            "input_price": 0.0003,
+            "output_price": 0.001
+          }
+        ]
+      },
+      {
+        "name": "Mistral",
+        "models": [
+          {
+            "name": "mistral-large-2402",
+            "input_price": 0.004,
+            "output_price": 0.012
+          },
+          {
+            "name": "codestral-2405",
+            "input_price": 0.001,
+            "output_price": 0.003
+          },
+          {
+            "name": "Mixtral 8x22B",
+            "input_price": 0.002,
+            "output_price": 0.006
+          },
+          {
+            "name": "Mixtral 8x7B",
+            "input_price": 0.0007,
+            "output_price": 0.0007
+          }
+        ]
+      },
+      {
+        "name": "Together.AI",
+        "models": [
+          {
+            "name": "Mixtral 8x7B",
+            "input_price": 0.0006,
+            "output_price": 0.0006
+          },
+          {
+            "name": "Llama 3 70b",
+            "input_price": 0.0009,
+            "output_price": 0.0009
+          }
+        ]
+      },
+      {
+        "name": "Perplexity",
+        "models": [
+          {
+            "name": "Llama 3 70b",
+            "input_price": 0.001,
+            "output_price": 0.001
+          },
+          {
+            "name": "Mixtral 8x7B",
+            "input_price": 0.0006,
+            "output_price": 0.0006
+          }
+        ]
+      },
+      {
+        "name": "Cohere",
+        "models": [
+          {
+            "name": "Command R+",
+            "input_price": 0.003,
+            "output_price": 0.015
+          },
+          {
+            "name": "Command R",
+            "input_price": 0.0005,
+            "output_price": 0.0015
+          }
+        ]
+      },
+      {
+        "name": "Deepseek",
+        "models": [
+          {
+            "name": "deepseek-chat",
+            "input_price": 0.00014,
+            "output_price": 0.00028
+          },
+          {
+            "name": "deepseek-coder",
+            "input_price": 0.00014,
+            "output_price": 0.00028
+          }
+        ]
+      },
+      {
+        "name": "Anyscale",
+        "models": [
+          {
+            "name": "Mixtral 8x7B",
+            "input_price": 0.0005,
+            "output_price": 0.0005
+          },
+          {
+            "name": "Llama 3 70b",
+            "input_price": 0.001,
+            "output_price": 0.001
+          }
+        ]
+      },
+      {
+        "name": "IBM WatsonX",
+        "models": [
+          {
+            "name": "Llama 3 70b",
+            "input_price": 0.0018,
+            "output_price": 0.0018
+          }
+        ]
+      },
+      {
+        "name": "Fireworks",
+        "models": [
+          {
+            "name": "Llama 3 70b",
+            "input_price": 0.0009,
+            "output_price": 0.0009
+          },
+          {
+            "name": "Mixtral 8x7B",
+            "input_price": 0.0005,
+            "output_price": 0.0005
+          }
+        ]
+      },
+      {
+        "name": "01.ai",
+        "models": [
+          {
+            "name": "Yi-Large",
+            "input_price": 0.003,
+            "output_price": 0.003
+          }
+        ]
+      },
+      {
+        "name": "Writer",
+        "models": [
+          {
+            "name": "Palmyra X 003",
+            "input_price": 0.0075,
+            "output_price": 0.0225
+          },
+          {
+            "name": "Palmyra X 32k",
+            "input_price": 0.001,
+            "output_price": 0.002
+          },
+          {
+            "name": "Palmyra X 002",
+            "input_price": 0.001,
+            "output_price": 0.002
+          },
+          {
+            "name": "Palmyra X 002 32k",
+            "input_price": 0.001,
+            "output_price": 0.002
+          }
+        ]
+      }
+    ]
+  }
