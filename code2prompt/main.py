@@ -1,8 +1,10 @@
 from importlib import resources
 import logging
 from pathlib import Path
+
 import click
 from tabulate import tabulate
+
 from code2prompt.utils.config import load_config, merge_options
 from code2prompt.utils.count_tokens import count_tokens
 from code2prompt.core.generate_content import generate_content
@@ -11,9 +13,12 @@ from code2prompt.core.write_output import write_output
 from code2prompt.utils.create_template_directory import create_templates_directory
 from code2prompt.utils.logging_utils import setup_logger, log_token_count, log_error, log_info
 from code2prompt.utils.price_calculator import load_token_prices, calculate_prices
+from code2prompt.utils.analyzer import analyze_codebase, format_flat_output, format_tree_output, get_extension_list
 
-VERSION = "0.6.12"
+# Version number of the code2prompt tool
+VERSION = "0.6.13"
 
+# Default options for the tool
 DEFAULT_OPTIONS = {
     "path": [],
     "output": None,
@@ -33,6 +38,8 @@ DEFAULT_OPTIONS = {
     "provider": None,
     "model": None,
     "output_tokens": 1000,  # Default output token count
+    "analyze": False,
+    "format": "flat"
 }
 
 @click.command()
@@ -138,6 +145,17 @@ DEFAULT_OPTIONS = {
     default=1000,
     help="Specify the number of output tokens for price calculation.",
 )
+@click.option(
+    "--analyze",
+    is_flag=True,
+    help="Analyze the codebase and provide a summary of file extensions.",
+)
+@click.option(
+    "--format",
+    type=click.Choice(["flat", "tree"]),
+    default="flat",
+    help="Format of the analysis output (flat or tree-like).",
+)
 def create_markdown_file(**cli_options):
     """
     Creates a Markdown file based on the provided options.
@@ -149,9 +167,10 @@ def create_markdown_file(**cli_options):
 
     Args:
         **options (dict): Key-value pairs of options to customize the behavior of the function.
-        Possible keys include 'path', 'output', 'gitignore', 'filter', 'exclude', 'case_sensitive',
-        'suppress_comments', 'line_number', 'no_codeblock', 'template', 'tokens', 'encoding',
-        'create_templates', 'log_level', 'price', 'provider', 'model', and 'output_tokens'.
+            Possible keys include 'path', 'output', 'gitignore', 'filter', 'exclude',
+            'case_sensitive', 'suppress_comments', 'line_number', 'no_codeblock', 'template',
+            'tokens', 'encoding', 'create_templates', 'log_level', 'price', 'provider', 'model',
+            'output_tokens', 'analyze', and 'format'.
 
     Returns:
         None
@@ -181,6 +200,23 @@ def create_markdown_file(**cli_options):
         )
         return
 
+    if options["analyze"]:
+        for path in options["path"]:
+            extension_counts, extension_dirs = analyze_codebase(path)
+            if "No files found" in extension_counts:
+                click.echo("No files found")
+            else:
+                if options["format"] == "flat":
+                    output = format_flat_output(extension_counts)
+                else:
+                    output = format_tree_output(extension_dirs)
+                
+                click.echo(output)
+            
+            click.echo("\nComma-separated list of extensions:")
+            click.echo(get_extension_list(extension_counts))
+        return
+
     all_files_data = []
     for path in options["path"]:
         files_data = process_files({**options, "path": path})
@@ -193,12 +229,10 @@ def create_markdown_file(**cli_options):
         token_count = count_tokens(content, options["encoding"])
         log_token_count(token_count)
 
-
     write_output(content, options["output"], copy_to_clipboard=True)
-    
+
     if options["price"]:
         display_price_table(options, token_count)
-
 
 def display_price_table(options, token_count):
     """
@@ -217,7 +251,6 @@ def display_price_table(options, token_count):
         return
 
     output_token_count = options["output_tokens"]
-
     table_data = calculate_prices(token_prices, token_count, output_token_count, options["provider"], options["model"])
 
     if not table_data:
@@ -226,6 +259,7 @@ def display_price_table(options, token_count):
 
     headers = ["Provider", "Model", "Price for 1K Input Tokens", "Number of Input Tokens", "Total Price"]
     table = tabulate(table_data, headers=headers, tablefmt="grid")
+
     log_info("\n✨ Estimated Token Prices: (All prices are in USD, it is an estimate as the current token implementation is based on OpenAI's Tokenizer)")
     log_info("\n")
     log_info(table)
