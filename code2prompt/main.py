@@ -12,7 +12,7 @@ from code2prompt.utils.create_template_directory import create_templates_directo
 from code2prompt.utils.logging_utils import setup_logger, log_token_count, log_error, log_info
 from code2prompt.utils.price_calculator import load_token_prices, calculate_prices
 
-VERSION = "0.6.11"
+VERSION = "0.6.12"
 
 DEFAULT_OPTIONS = {
     "path": [],

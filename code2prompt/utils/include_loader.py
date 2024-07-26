@@ -4,9 +4,12 @@ from jinja2 import BaseLoader, TemplateNotFound
 import threading
 from contextlib import contextmanager
 
+
 class CircularIncludeError(Exception):
     """Exception raised when a circular include is detected in templates."""
+
     pass
+
 
 class IncludeLoader(BaseLoader):
     """
@@ -21,7 +24,7 @@ class IncludeLoader(BaseLoader):
         include_stack (threading.local): Thread-local storage for the include stack.
     """
 
-    def __init__(self, path: str, encoding: str = 'utf-8'):
+    def __init__(self, path: str, encoding: str = "utf-8"):
         """
         Initialize the IncludeLoader.
 
@@ -35,7 +38,7 @@ class IncludeLoader(BaseLoader):
 
     @contextmanager
     def _include_stack_context(self, path):
-        if not hasattr(self.include_stack, 'stack'):
+        if not hasattr(self.include_stack, "stack"):
             self.include_stack.stack = set()
         if path in self.include_stack.stack:
             raise CircularIncludeError(f"Circular include detected: {path}")
@@ -45,37 +48,23 @@ class IncludeLoader(BaseLoader):
         finally:
             self.include_stack.stack.remove(path)
 
-    def get_source(self, environment: 'jinja2.Environment', template: str) -> Tuple[str, str, Callable[[], bool]]:
-        """
-        Get the source of a template.
-
-        This method resolves the template path, checks for circular includes,
-        and reads the template content.
-
-        Args:
-            environment (jinja2.Environment): The Jinja2 environment.
-            template (str): The name of the template to load.
-
-        Returns:
-            Tuple[str, str, Callable[[], bool]]: A tuple containing the template source,
-            the template path, and a function that always returns True.
-
-        Raises:
-            TemplateNotFound: If the template file doesn't exist.
-            CircularIncludeError: If a circular include is detected.
-            IOError: If there's an error reading the template file.
-        """
+    def get_source(
+        self, environment: "jinja2.Environment", template: str
+    ) -> Tuple[str, str, Callable[[], bool]]:
         path: str = os.path.join(self.path, template)
         if not os.path.exists(path):
-            raise TemplateNotFound(template)
+            raise TemplateNotFound(f"{template} (searched in {self.path})")
 
         with self._include_stack_context(path):
             try:
-                with open(path, 'r', encoding=self.encoding) as f:
+                with open(path, "r", encoding=self.encoding) as f:
                     source: str = f.read()
             except IOError as e:
-                raise TemplateNotFound(template, message=f"Error reading template file: {e}")
-            return source, path, lambda: True
+                raise TemplateNotFound(
+                    template, message=f"Error reading template file: {e}"
+                ) from e
+
+        return source, path, lambda: True
 
     def list_templates(self) -> List[str]:
         """

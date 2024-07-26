@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+## [0.6.12]
+    - Fix bugs in input variables and include
+
 ## [0.6.11]
     - Support of dynamic variable such as {{input:var1}} in template
     - Support {% incliude "./file1.txt" } feature
