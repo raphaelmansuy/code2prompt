@@ -404,26 +404,6 @@ Start from this codebase:
 
 <codebase>
 
-<toc>
-## Table of Contents
-
-{% for file in files %}{{ file.path }}
-{% endfor %}
-</toc>
-
-<code>
-{% for file in files %}
-## {{ file.path }}
-
-```{{ file.language }}
-{{ file.content }}
-```
-
-{% endfor %}
-</code>
-
-</codebase>
-
 
 ```
 
