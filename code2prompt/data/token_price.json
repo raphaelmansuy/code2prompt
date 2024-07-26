@@ -1,4 +1,5 @@
 {
+    "description": "This file contains the price of tokens for different models. Prices are in USD for 1000 tokens.",
     "providers": [
       {
         "name": "OpenAI",
@@ -7,6 +8,11 @@
             "name": "GPT-4o",
             "input_price": 0.005,
             "output_price": 0.015
+          },
+          {
+            "name": "GPT4o-mini",
+            "input_price": 0.000015,
+            "output_price": 0.00006
           },
           {
             "name": "GPT-4 (8K)",

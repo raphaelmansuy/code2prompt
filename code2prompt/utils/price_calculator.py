@@ -71,9 +71,9 @@ def calculate_prices(token_prices, input_token_count, output_token_count, provid
             table_data.append([
                 provider_data["name"],
                 model_data["name"],
-                f"${input_price:.6f}",
+                f"${input_price:.7f}",
                 input_token_count,
-                f"${total_price:.2f}"
+                f"${total_price:.7f}"
             ])
     
     return table_data
