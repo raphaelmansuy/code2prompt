@@ -436,7 +436,31 @@ The tool will generate a tailored prompt for an AI to create a detailed plan for
 
 
 
+Certainly! I'll write a paragraph explaining the include feature with an example, tailored to the context of code2prompt and based on the provided README.md file content.
 
+## Include File Feature
+
+The code2prompt project now supports a powerful "include file" feature, enhancing template modularity and reusability. This feature allows you to seamlessly incorporate external file content into your main template using the `{% include %}` directive. For example, in the main `analyze-code.j2` template, you can break down complex sections into smaller, manageable files:
+
+```jinja2
+# Elite Code Analyzer and Improvement Strategist 2.0
+
+{% include 'sections/role_and_goal.j2' %}
+
+{% include 'sections/core_competencies.j2' %}
+
+## Task Breakdown
+
+1. Initial Assessment
+{% include 'tasks/initial_assessment.j2' %}
+
+2. Multi-Dimensional Analysis (Utilize Tree of Thought)
+{% include 'tasks/multi_dimensional_analysis.j2' %}
+
+// ... other sections ...
+```
+
+This approach allows you to organize your template structure more efficiently, improving maintainability and allowing for easy updates to specific sections without modifying the entire template. The include feature supports both relative and absolute paths, making it flexible for various project structures. By leveraging this feature, you can significantly reduce code duplication, improve template management, and create a more modular and scalable structure for your code2prompt templates.
 
 ## Configuration File
 
