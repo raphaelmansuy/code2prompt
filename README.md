@@ -364,7 +364,66 @@ This command will analyze your project, count the tokens, and provide a detailed
 ![](./docs/screen-example2.png)
 
 
+## 🔥 Analyzing Codebases
 
+code2prompt now offers a powerful feature to analyze codebases and provide a summary of file extensions. Use the `--analyze` option along with the `-p` (path) option to get an overview of your project's file composition. For example:
+
+```
+code2prompt --analyze -p code2prompt
+```
+
+Result:
+
+```
+.j2: 6 files
+.json: 1 file
+.py: 33 files
+.pyc: 56 files
+
+Comma-separated list of extensions:
+.j2,.json,.py,.pyc
+```
+
+This command will analyze the 'code2prompt' directory and display a summary of all file extensions found, including their counts. You can choose between two output formats:
+
+- Flat format (default): Lists all unique extensions alphabetically with their file counts.
+- Tree-like format: Displays extensions in a directory tree structure with counts at each level.
+
+To use the tree-like format, add the `--format tree` option:
+
+```
+code2prompt --analyze -p code2prompt --format tree
+```
+
+Result: 
+
+```
+└── code2prompt
+    ├── utils
+    │   ├── .py
+    │   └── __pycache__
+    │       └── .pyc
+    ├── .py
+    ├── core
+    │   ├── .py
+    │   └── __pycache__
+    │       └── .pyc
+    ├── comment_stripper
+    │   ├── .py
+    │   └── __pycache__
+    │       └── .pyc
+    ├── __pycache__
+    │   └── .pyc
+    ├── templates
+    │   └── .j2
+    └── data
+        └── .json
+
+Comma-separated list of extensions:
+.j2,.json,.py,.pyc
+```
+
+The analysis also generates a comma-separated list of file extensions, which can be easily copied and used with the `--filter` option for more targeted code processing.
 
 ## 🔥 Feature Highlight: Dynamic Variable Extraction for Prompt Generation
 

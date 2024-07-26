@@ -4,16 +4,17 @@ from fnmatch import fnmatch
 def is_filtered(file_path: Path, include_pattern: str = "", exclude_pattern: str = "", case_sensitive: bool = False) -> bool:
     """
     Determine if a file should be filtered based on include and exclude patterns.
-    
+
     Parameters:
     - file_path (Path): Path to the file to check
     - include_pattern (str): Comma-separated list of patterns to include files
     - exclude_pattern (str): Comma-separated list of patterns to exclude files
     - case_sensitive (bool): Whether to perform case-sensitive pattern matching
-    
+
     Returns:
     - bool: True if the file should be included, False if it should be filtered out
     """
+
     def match_pattern(path: str, pattern: str) -> bool:
         if "**" in pattern:
             parts = pattern.split("**")
