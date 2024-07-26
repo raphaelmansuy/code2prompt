@@ -51,6 +51,8 @@ Code2Prompt is a powerful, open-source command-line tool that bridges the gap be
 - **Clipboard Ready**: Instantly copy generated prompts to your clipboard for quick AI interactions.
 - **Multiple Output Options**: Save to file or display in the console.
 - **Enhanced Code Readability**: Add line numbers to source code blocks for precise referencing.
+- **Include file**: Support of template import
+- **Input variables**: Support of Input Variables in templates.
 
 ### 💡 Why Code2Prompt?
 
@@ -364,7 +366,7 @@ This command will analyze your project, count the tokens, and provide a detailed
 
 
 
-## Feature Highlight: Dynamic Variable Extraction for Prompt Generation
+## 🔥 Feature Highlight: Dynamic Variable Extraction for Prompt Generation
 
 `code2prompt` offers a powerful feature for dynamic variable extraction from templates, allowing for interactive and customizable prompt generation. Using the syntax `{{input:variable_name}}`, you can easily define variables that will prompt users for input during execution. 
 
@@ -435,12 +437,11 @@ For example, if a user inputs:
 The tool will generate a tailored prompt for an AI to create a detailed plan for this specific Chrome extension. This feature is particularly useful for developers, product managers, or anyone looking to quickly generate customized AI prompts for various projects or ideas.
 
 
+## 🔥 Feature Highligth "Include File" Feature
 
-Certainly! I'll write a paragraph explaining the include feature with an example, tailored to the context of code2prompt and based on the provided README.md file content.
+The code2prompt project now supports a powerful "include file" feature, enhancing template modularity and reusability.
 
-## Include File Feature
-
-The code2prompt project now supports a powerful "include file" feature, enhancing template modularity and reusability. This feature allows you to seamlessly incorporate external file content into your main template using the `{% include %}` directive. For example, in the main `analyze-code.j2` template, you can break down complex sections into smaller, manageable files:
+ This feature allows you to seamlessly incorporate external file content into your main template using the `{% include %}` directive. For example, in the main `analyze-code.j2` template, you can break down complex sections into smaller, manageable files:
 
 ```jinja2
 # Elite Code Analyzer and Improvement Strategist 2.0
@@ -492,7 +493,8 @@ Example `.code2promptrc`:
 ## Roadmap
 
    - [ ] Interractive filtering
-   - [ ] Include system in template to promote re-usability of sub templates.
+   - [X] Include system in template to promote re-usability of sub templates.
+   - [X] Support of input variables
    - [ ] Tokens count for Anthropic Models and other models such LLama3 or Mistral
    - [X] Cost Estimations for main LLM providers based in token count
    - [ ] Integration with [qllm](https://github.com/quantalogic/qllm) (Quantalogic LLM)
