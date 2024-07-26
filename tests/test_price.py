@@ -1,8 +1,6 @@
 import pytest
-from pathlib import Path
 from unittest.mock import patch, mock_open
 from code2prompt.utils.price_calculator import load_token_prices, calculate_prices
-from code2prompt.main import create_markdown_file
 
 # Mock JSON data
 MOCK_JSON_DATA = '''
@@ -61,27 +59,57 @@ def test_load_token_prices_invalid_json():
         with pytest.raises(RuntimeError, match="Error loading token prices"):
             load_token_prices()
 
-def test_calculate_prices_specific_provider_model(mock_token_prices):
+def test_calculate_prices_single_price_model(mock_token_prices):
     result = calculate_prices(mock_token_prices, 1000, 1000, "provider1", "model1")
     assert len(result) == 1
-    assert result[0][0] == "provider1"
-    assert result[0][1] == "model1"
-    assert result[0][2] == "$0.100000"
-    assert result[0][3] == 1000
-    assert result[0][4] == "$0.20"
+    assert result[0] == ("provider1", "model1", "$0.1000000000", 2000, "$0.2000000000")
+
+def test_calculate_prices_dual_price_model(mock_token_prices):
+    result = calculate_prices(mock_token_prices, 1000, 2000, "provider1", "model2")
+    assert len(result) == 1
+    assert result[0] == ("provider1", "model2", "$0.3000000000 (input) / $0.4000000000 (output)", 3000, "$1.1000000000")
 
 def test_calculate_prices_all_providers_models(mock_token_prices):
     result = calculate_prices(mock_token_prices, 1000, 1000)
     assert len(result) == 4
+    assert set(row[0] for row in result) == {"provider1", "provider2"}
+    assert set(row[1] for row in result) == {"model1", "model2"}
 
 def test_calculate_prices_specific_provider(mock_token_prices):
     result = calculate_prices(mock_token_prices, 1000, 1000, "provider1")
     assert len(result) == 2
     assert all(row[0] == "provider1" for row in result)
+    assert set(row[1] for row in result) == {"model1", "model2"}
 
 def test_calculate_prices_zero_tokens(mock_token_prices):
     result = calculate_prices(mock_token_prices, 0, 0)
-    assert all(row[4] == "$0.00" for row in result)
+    assert len(result) == 4
+    assert all(row[4] == "$0.0000000000" for row in result)
 
+def test_calculate_prices_different_input_output_tokens(mock_token_prices):
+    result = calculate_prices(mock_token_prices, 1000, 2000, "provider2", "model1")
+    assert len(result) == 1
+    assert result[0] == ("provider2", "model1", "$0.3000000000 (input) / $0.4000000000 (output)", 3000, "$1.1000000000")
 
+def test_calculate_prices_non_existent_provider(mock_token_prices):
+    result = calculate_prices(mock_token_prices, 1000, 1000, "non_existent_provider")
+    assert len(result) == 0
 
+def test_calculate_prices_non_existent_model(mock_token_prices):
+    result = calculate_prices(mock_token_prices, 1000, 1000, "provider1", "non_existent_model")
+    assert len(result) == 0
+
+def test_calculate_prices_large_numbers(mock_token_prices):
+    result = calculate_prices(mock_token_prices, 1000000, 1000000, "provider1", "model1")
+    assert len(result) == 1
+    assert result[0] == ("provider1", "model1", "$0.1000000000", 2000000, "$200.0000000000")
+
+def test_calculate_prices_small_numbers(mock_token_prices):
+    result = calculate_prices(mock_token_prices, 1, 1, "provider1", "model1")
+    assert len(result) == 1
+    assert result[0] == ("provider1", "model1", "$0.1000000000", 2, "$0.0002000000")
+
+def test_calculate_prices_floating_point_precision(mock_token_prices):
+    result = calculate_prices(mock_token_prices, 1000, 1000, "provider2", "model1")
+    assert len(result) == 1
+    assert result[0] == ("provider2", "model1", "$0.3000000000 (input) / $0.4000000000 (output)", 2000, "$0.7000000000")

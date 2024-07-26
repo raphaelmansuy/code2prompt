@@ -31,49 +31,57 @@ def calculate_price(token_count, price_per_1000):
     """
     return (token_count / 1_000) * price_per_1000
 
-def calculate_prices(token_prices, input_token_count, output_token_count, provider=None, model=None):
+def calculate_prices(token_prices, input_tokens, output_tokens, provider=None, model=None):
     """
-    Calculate the prices based on the token prices, input and output token counts, provider, and model.
+    Calculate the prices for a given number of input and output tokens based on token prices.
 
     Args:
         token_prices (dict): A dictionary containing token prices for different providers and models.
-        input_token_count (int): The number of input tokens.
-        output_token_count (int): The number of output tokens.
-        provider (str, optional): The name of the provider. If specified, only prices for this provider will be calculated. Defaults to None.
-        model (str, optional): The name of the model. If specified, only prices for this model will be calculated. Defaults to None.
+        input_tokens (int): The number of input tokens.
+        output_tokens (int): The number of output tokens.
+        provider (str, optional): The name of the provider. If specified, only prices for the specified provider will be calculated. Defaults to None.
+        model (str, optional): The name of the model. If specified, only prices for the specified model will be calculated. Defaults to None.
 
     Returns:
-        list: A list of lists containing the calculated prices for each provider and model. Each inner list contains the following information:
-            - Provider name
-            - Model name
-            - Input price
-            - Input token count
-            - Total price
+        list: A list of tuples containing the provider name, model name, price per token, total tokens, and total price for each calculation.
+
     """
-    table_data = []
-    for provider_data in token_prices["providers"]:
-        # Convert both strings to lowercase for case-insensitive comparison
-        if provider and provider_data["name"].lower() != provider.lower():
+def calculate_prices(token_prices, input_tokens, output_tokens, provider=None, model=None):
+    results = []
+    
+    for p in token_prices["providers"]:
+        if provider and p["name"] != provider:
             continue
-        for model_data in provider_data["models"]:
-            # Convert both strings to lowercase for case-insensitive comparison
-            if model and model_data["name"].lower() != model.lower():
+        
+        for m in p["models"]:
+            if model and m["name"] != model:
                 continue
             
-            input_price = model_data.get("input_price", model_data.get("price", 0))
-            output_price = model_data.get("output_price", model_data.get("price", 0))
+            total_tokens = input_tokens + output_tokens
             
-            total_price = (
-                calculate_price(input_token_count, input_price) +
-                calculate_price(output_token_count, output_price)
+            if "price" in m:
+                # Single price for both input and output tokens
+                price = m["price"]
+                total_price = (price * total_tokens) / 1000
+                price_info = f"${price:.10f}"
+            elif "input_price" in m and "output_price" in m:
+                # Separate prices for input and output tokens
+                input_price = m["input_price"]
+                output_price = m["output_price"]
+                total_price = ((input_price * input_tokens) + (output_price * output_tokens)) / 1000
+                price_info = f"${input_price:.10f} (input) / ${output_price:.10f} (output)"
+            else:
+                # Skip models with unexpected price structure
+                continue
+            
+            result = (
+                p["name"],                  # Provider name
+                m["name"],                  # Model name
+                price_info,                 # Price information
+                total_tokens,               # Total number of tokens
+                f"${total_price:.10f}"      # Total price
             )
             
-            table_data.append([
-                provider_data["name"],
-                model_data["name"],
-                f"${input_price:.7f}",
-                input_token_count,
-                f"${total_price:.7f}"
-            ])
+            results.append(result)
     
-    return table_data
+    return results
