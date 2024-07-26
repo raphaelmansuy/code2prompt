@@ -12,7 +12,7 @@ from code2prompt.utils.create_template_directory import create_templates_directo
 from code2prompt.utils.logging_utils import setup_logger, log_token_count, log_error, log_info
 from code2prompt.utils.price_calculator import load_token_prices, calculate_prices
 
-VERSION = "0.6.10"
+VERSION = "0.6.11"
 
 DEFAULT_OPTIONS = {
     "path": [],
@@ -226,7 +226,7 @@ def display_price_table(options, token_count):
 
     headers = ["Provider", "Model", "Price for 1K Input Tokens", "Number of Input Tokens", "Total Price"]
     table = tabulate(table_data, headers=headers, tablefmt="grid")
-    log_info("\n✨ Estimated Token Prices: (All prices are in USD, it is an estimate as the current token implementation is based on OpenAI's GPT-3)")
+    log_info("\n✨ Estimated Token Prices: (All prices are in USD, it is an estimate as the current token implementation is based on OpenAI's Tokenizer)")
     log_info("\n")
     log_info(table)
     log_info("\n📝 Note: The prices are based on the token count and the provider's pricing model.")

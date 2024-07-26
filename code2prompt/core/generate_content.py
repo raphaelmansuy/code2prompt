@@ -22,5 +22,5 @@ def generate_content(files_data, options):
     if options['template']:
         template_content = load_template(options['template'])
         user_inputs = get_user_inputs(template_content)
-        return process_template(template_content, files_data, user_inputs)
+        return process_template(template_content, files_data, user_inputs, options['template'])
     return generate_markdown_content(files_data, options['no_codeblock'])
