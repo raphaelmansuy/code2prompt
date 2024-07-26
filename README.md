@@ -363,6 +363,81 @@ This command will analyze your project, count the tokens, and provide a detailed
 
 
 
+
+## Feature Highlight: Dynamic Variable Extraction for Prompt Generation
+
+`code2prompt` offers a powerful feature for dynamic variable extraction from templates, allowing for interactive and customizable prompt generation. Using the syntax `{{input:variable_name}}`, you can easily define variables that will prompt users for input during execution. 
+
+This is particularly useful for creating flexible templates for various purposes, such as generating AI prompts for Chrome extensions. Here's an example:
+
+```jinja2
+# AI Prompt Generator for Chrome Extension
+
+Generate a prompt for an AI to create a Chrome extension with the following specifications:
+
+Extension Name: {{input:extension_name}}
+Main Functionality: {{input:main_functionality}}
+Target Audience: {{input:target_audience}}
+
+## Prompt:
+
+You are an experienced Chrome extension developer. Create a detailed plan for a Chrome extension named "{{input:extension_name}}" that {{input:main_functionality}}. This extension is designed for {{input:target_audience}}.
+
+Your response should include:
+
+1. A brief description of the extension's purpose and functionality
+2. Key features (at least 3)
+3. User interface design considerations
+4. Potential challenges in development and how to overcome them
+5. Security and privacy considerations
+6. A basic code structure for the main components (manifest.json, background script, content script, etc.)
+
+Ensure that your plan is detailed, technically sound, and tailored to the needs of {{input:target_audience}}.
+
+Start from this codebase:
+
+---- 
+
+## The codebase:
+
+<codebase>
+
+<toc>
+## Table of Contents
+
+{% for file in files %}{{ file.path }}
+{% endfor %}
+</toc>
+
+<code>
+{% for file in files %}
+## {{ file.path }}
+
+```{{ file.language }}
+{{ file.content }}
+```
+
+{% endfor %}
+</code>
+
+</codebase>
+
+
+```
+
+When you run `code2prompt` with this template, it will automatically detect the `{{input:variable_name}}` patterns and prompt the user to provide values for each variable (extension_name, main_functionality, and target_audience). This allows for flexible and interactive prompt generation, making it easy to create customized AI prompts for various Chrome extension ideas.
+
+For example, if a user inputs:
+- Extension Name: "ProductivityBoost"
+- Main Functionality: "tracks time spent on different websites and provides productivity insights"
+- Target Audience: "professionals working from home"
+
+The tool will generate a tailored prompt for an AI to create a detailed plan for this specific Chrome extension. This feature is particularly useful for developers, product managers, or anyone looking to quickly generate customized AI prompts for various projects or ideas.
+
+
+
+
+
 ## Configuration File
 
 Code2Prompt supports a `.code2promptrc` configuration file in JSON format for setting default options. Place this file in your project or home directory.

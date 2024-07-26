@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+## [0.6.11]
+    - Support of dynamic variable such as {{input:var1}} in template
+    - Fix. Only a variable one time
+    - Update and improve price table
+
 ## [0.6.9]
     - Improve display --tokens
 
