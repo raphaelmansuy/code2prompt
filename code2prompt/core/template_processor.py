@@ -1,5 +1,7 @@
 from typing import OrderedDict
-from jinja2 import Template, Environment, FileSystemLoader
+import os 
+from jinja2 import Environment, FileSystemLoader
+from code2prompt.utils.include_loader import CircularIncludeError, IncludeLoader
 from prompt_toolkit import prompt
 import re
 
@@ -27,13 +29,18 @@ def get_user_inputs(template_content):
     
     return user_inputs
 
-def process_template(template_content, files_data, user_inputs):
-    """ Process the Jinja2 template with the given data and user inputs. """
+
+def process_template(template_content, files_data, user_inputs, template_path):
     try:
-        # Replace {{input:variable}} with {{variable}} for Jinja2 processing
-        processed_content = re.sub(r'{{\s*input:([^{}]+?)\s*}}', r'{{\1}}', template_content)
-        
-        template = Template(processed_content)
+        template_dir = os.path.dirname(template_path)
+        env = Environment(
+            loader=IncludeLoader(template_dir),
+            autoescape=True,
+            keep_trailing_newline=True
+        )
+        template = env.from_string(template_content)
         return template.render(files=files_data, **user_inputs)
+    except CircularIncludeError as e:
+        raise ValueError(f"Circular include detected: {str(e)}")
     except Exception as e:
-        raise ValueError(f"Error processing template: {e}") from e
+        raise ValueError(f"Error processing template: {e}")
