@@ -1,6 +1,5 @@
 # code2prompt/main.py
 
-import logging
 from pathlib import Path
 import click
 
@@ -8,7 +7,6 @@ from code2prompt.config import Configuration
 from code2prompt.commands.generate import GenerateCommand
 from code2prompt.commands.analyze import AnalyzeCommand
 from code2prompt.print_help import print_help
-from code2prompt.utils.create_template_directory import create_templates_directory
 from code2prompt.utils.logging_utils import setup_logger
 from code2prompt.version import VERSION
 

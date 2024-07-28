@@ -1,5 +1,5 @@
 import os
-from typing import List, Tuple, Callable, Optional, Set
+from typing import List, Tuple, Callable
 from jinja2 import BaseLoader, TemplateNotFound
 import threading
 from contextlib import contextmanager

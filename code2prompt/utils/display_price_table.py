@@ -1,4 +1,3 @@
-from code2prompt.config import Configuration
 from code2prompt.utils.price_calculator import calculate_prices, load_token_prices
 
 import click
