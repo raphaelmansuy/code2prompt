@@ -2,7 +2,7 @@ import json
 from typing import List, Optional
 from pathlib import Path
 from functools import lru_cache
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class PriceModel(BaseModel):
@@ -35,8 +35,10 @@ class PriceResult(BaseModel):
     price_output: float
     total_tokens: int
     total_price: float
+    
+    model_config = ConfigDict(protected_namespaces=())
 
-    model_config = {"json_encoders": {float: lambda v: f"${v:.10f}"}}
+
 
 
 @lru_cache(maxsize=1)
@@ -97,11 +99,11 @@ def calculate_prices(
     total_tokens = input_tokens + output_tokens
 
     for provider_data in token_prices.providers:
-        if provider and provider_data.name != provider:
+        if provider and provider_data.name.lower() != provider.lower():
             continue
 
         for model_data in provider_data.models:
-            if model and model_data.name != model:
+            if model and model_data.name.lower() != model.lower():
                 continue
 
             if model_data.price is not None:
