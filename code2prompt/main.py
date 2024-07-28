@@ -7,7 +7,6 @@ import click
 from code2prompt.config import Configuration
 from code2prompt.commands.generate import GenerateCommand
 from code2prompt.commands.analyze import AnalyzeCommand
-from code2prompt.utils.display_price_table import display_price_table
 from code2prompt.print_help import print_help
 from code2prompt.utils.create_template_directory import create_templates_directory
 from code2prompt.utils.logging_utils import setup_logger
@@ -138,8 +137,6 @@ def generate(ctx, **options):
     command = GenerateCommand(config, logger)
     command.execute()
 
-    #if config.price:
-    #    display_price_table(config, command.token_count)
 
 
 @cli.command()

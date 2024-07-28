@@ -46,5 +46,7 @@ class GenerateCommand(BaseCommand):
         """Handle token counting and price calculation if enabled."""
         token_count = count_tokens(content, self.config.encoding)
         log_token_count(token_count)
-        display_price_table(self.config, token_count)
+        model = self.config.model
+        provider = self.config.provider
+        display_price_table(token_count, provider, model, self.config.output_tokens)
 
