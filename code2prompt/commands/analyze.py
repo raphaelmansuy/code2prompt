@@ -1,8 +1,7 @@
 # code2prompt/commands/analyze.py
 
 from pathlib import Path
-from typing import Dict, List, Tuple
-from collections import defaultdict
+from typing import Dict
 
 from code2prompt.commands.base_command import BaseCommand
 from code2prompt.utils.analyzer import analyze_codebase, format_flat_output, format_tree_output, get_extension_list
@@ -57,36 +56,10 @@ class AnalyzeCommand(BaseCommand):
             int: The total number of tokens.
         """
         total_tokens = 0
-        for ext, count in extension_counts.items():
+        for _ext, count in extension_counts.items():
             # This is a simplified token count. You might want to implement a more
             # sophisticated counting method based on the file type.
             total_tokens += count * 100  # Assuming an average of 100 tokens per file
 
         return total_tokens
 
-def analyze_codebase(path: Path) -> Tuple[Dict[str, int], Dict[str, List[str]]]:
-    """
-    Analyze the codebase and return file extension information.
-
-    Args:
-        path (Path): The path to the codebase directory.
-
-    Returns:
-        Tuple[Dict[str, int], Dict[str, List[str]]]: A tuple containing:
-            - A dictionary of file extensions and their counts.
-            - A dictionary of file extensions and the directories containing them.
-    """
-    extension_counts = defaultdict(int)
-    extension_dirs = defaultdict(set)
-
-    for file_path in path.rglob('*'):
-        if file_path.is_file():
-            ext = file_path.suffix.lower()
-            if ext:
-                extension_counts[ext] += 1
-                extension_dirs[ext].add(str(file_path.parent))
-
-    if not extension_counts:
-        return {}, {}
-
-    return dict(extension_counts), {k: list(v) for k, v in extension_dirs.items()}
