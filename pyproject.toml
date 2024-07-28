@@ -33,13 +33,16 @@ pyperclip = "^1.9.0"  # For clipboard operations
 colorama = "^0.4.6"  # For colored terminal text output
 tqdm = "^4.66.4"
 tabulate = "^0.9.0"
+pydantic = "^2.8.2"
 
 [tool.poetry.scripts]
-code2prompt = "code2prompt.main:create_markdown_file"
+code2prompt = "code2prompt.main:cli"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
 ipykernel = "^6.29.4"
+vulture = "^2.11"
+pylint = "^3.2.6"
 
 [build-system]
 requires = ["poetry-core"]
