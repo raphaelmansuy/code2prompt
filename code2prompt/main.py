@@ -8,13 +8,14 @@ from tabulate import tabulate
 from code2prompt.config import Configuration
 from code2prompt.commands.generate import GenerateCommand
 from code2prompt.commands.analyze import AnalyzeCommand
+from code2prompt.print_help import print_help
 from code2prompt.utils.create_template_directory import create_templates_directory
 from code2prompt.utils.logging_utils import setup_logger
 from code2prompt.utils.price_calculator import load_token_prices, calculate_prices
+from code2prompt.version import VERSION
 
-VERSION = "0.6.13"
 
-@click.group()
+@click.group(invoke_without_command=True)
 @click.version_option(VERSION, "-v", "--version", message="code2prompt version %(version)s")
 @click.option("--config", type=click.Path(exists=True, dir_okay=False), help="Path to configuration file")
 @click.pass_context
@@ -25,6 +26,9 @@ def cli(ctx, config):
         ctx.obj['config'] = Configuration.load_from_file(Path(config))
     else:
         ctx.obj['config'] = Configuration()
+
+    if ctx.invoked_subcommand is None:
+        print_help(ctx)
 
 @cli.command()
 @click.option("--path", "-p", type=click.Path(exists=True), multiple=True, help="Path(s) to the directory or file to process.")
@@ -103,4 +107,4 @@ def display_price_table(config: Configuration, token_count: int):
     click.echo("\n📝 Note: The prices are based on the token count and the provider's pricing model.")
 
 if __name__ == "__main__":
-    cli()
+    cli(standalone_mode=False)
