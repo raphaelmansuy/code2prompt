@@ -144,6 +144,7 @@ code2prompt --path /path/to/dir1 --path /path/to/file2.py [OPTIONS]
 | `--encoding` | | Specify the tokenizer encoding to use (default: "cl100k_base") |
 | `--create-templates` | | Create a templates directory with example templates |
 | `--version` | `-v` | Show the version and exit |
+| `--log-level` | | Set the logging level (e.g., DEBUG, INFO, WARNING, ERROR, CRITICAL) |
 
 ## Command Parameters
 
