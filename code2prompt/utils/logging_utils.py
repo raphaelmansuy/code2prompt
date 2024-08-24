@@ -10,9 +10,9 @@ def setup_logger(level="INFO"):
     ch = colorlog.StreamHandler()
     ch.setLevel(level)
 
-    # Create formatter
+    # Create formatter with a more structured format
     formatter = colorlog.ColoredFormatter(
-        '%(log_color)s%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        '%(log_color)s[%(asctime)s] %(levelname)s: %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
     ch.setFormatter(formatter)
