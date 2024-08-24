@@ -1,5 +1,6 @@
 import logging
 import colorlog
+import sys
 
 def setup_logger(level="INFO"):
     """Set up the logger with the specified logging level."""
@@ -37,8 +38,10 @@ def log_clipboard_copy(success):
     logger = logging.getLogger()
     if success:
         logger.info("Content copied to clipboard successfully.")
+        print("Content copied to clipboard successfully.", file=sys.stderr)
     else:
         logger.error("Failed to copy content to clipboard.")
+        print("Failed to copy content to clipboard.", file=sys.stderr)
 
 def log_token_count(token_count):
     """Log the token count."""
