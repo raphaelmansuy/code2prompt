@@ -1,16 +1,20 @@
 import logging
+import colorlog
 
 def setup_logger(level="INFO"):
     """Set up the logger with the specified logging level."""
-    logger = logging.getLogger()
+    logger = colorlog.getLogger()
     logger.setLevel(level)
 
     # Create console handler
-    ch = logging.StreamHandler()
+    ch = colorlog.StreamHandler()
     ch.setLevel(level)
 
     # Create formatter
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = colorlog.ColoredFormatter(
+        '%(log_color)s%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
     ch.setFormatter(formatter)
 
     # Add the handler to the logger
