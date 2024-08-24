@@ -17,3 +17,8 @@ def setup_logger(level="INFO"):
     logger.addHandler(ch)
 
     return logger
+
+def log_error(message):
+    """Log an error message."""
+    logger = logging.getLogger()
+    logger.error(message)
