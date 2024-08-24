@@ -1,4 +1,8 @@
 {
   "suppress_comments": false,
-  "line_number": false
+  "line_number": false,
+  "log_level": "INFO",
+  "encoding": "cl100k_base",
+  "filter": "*.py,*.js",
+  "exclude": "tests/*,docs/*"
 }
