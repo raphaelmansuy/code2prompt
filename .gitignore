@@ -6,3 +6,4 @@ __pycache__
 .DS_Store
 .tasks
 cli.log
+.aider*
