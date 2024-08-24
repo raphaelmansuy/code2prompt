@@ -22,3 +22,8 @@ def log_error(message):
     """Log an error message."""
     logger = logging.getLogger()
     logger.error(message)
+
+def log_output_created(output_path):
+    """Log a message indicating that an output file has been created."""
+    logger = logging.getLogger()
+    logger.info(f"Output file created: {output_path}")
