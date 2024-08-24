@@ -48,3 +48,15 @@ def log_token_count(token_count):
     """Log the token count."""
     logger = logging.getLogger()
     logger.info(f"Token count: {token_count}")
+
+def log_token_prices(prices):
+    """Log the estimated token prices."""
+    logger = logging.getLogger()
+    header = "─────────────────────────────────────────────────── Estimated Token Prices ───────────────────────────────────────────────────"
+    print(header)
+    print("┏━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓")
+    print("┃             ┃                     ┃   Input Price ┃  Output Price ┃         Tokens ┃               Price $ ┃            ┃")
+    print("┡━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩")
+    for price in prices:
+        print(f"│ {price['provider']: <11} │ {price['model']: <19} │ {price['input_price']: >13} │ {price['output_price']: >13} │ {price['tokens_in']: >13} | {price['tokens_out']: >13} │ {price['input_cost']: >12} | {price['output_cost']: >12} │ {price['total_cost']: >12} │")
+    print("└─────────────┴─────────────────────┴─────────────────┴─────────────────┴────────────────┴─────────────────────┴────────────┘")
