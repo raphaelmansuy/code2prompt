@@ -116,7 +116,7 @@ def cli(ctx, config):
     type=click.Choice(
         ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], case_sensitive=False
     ),
-    default="INFO",
+    default="WARNING",
     help="Set the logging level.",
 )
 @click.option(
