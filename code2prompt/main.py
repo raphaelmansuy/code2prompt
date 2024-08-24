@@ -22,7 +22,16 @@ from code2prompt.version import VERSION
 )
 @click.pass_context
 def cli(ctx, config):
-    """code2prompt CLI tool"""
+    """code2prompt CLI tool
+
+    This command-line interface (CLI) tool allows users to generate prompts from codebases,
+    analyze code structure, and manage configurations. It provides various options for customizing
+    the output and behavior of the tool.
+
+    Args:
+        ctx: The Click context object.
+        config: Optional path to a configuration file.
+    """
     ctx.obj = {}
     if config:
         ctx.obj["config"] = Configuration.load_from_file(Path(config))
@@ -124,7 +133,15 @@ def cli(ctx, config):
 )
 @click.pass_context
 def generate(ctx, **options):
-    """Generate markdown from code files"""
+    """Generate markdown from code files
+
+    This command processes the specified code files or directories and generates a Markdown
+    output file containing prompts based on the code structure and content.
+
+    Args:
+        ctx: The Click context object.
+        options: Various options for customizing the generation process.
+    """
     config = ctx.obj["config"].merge(options)
     logger = setup_logger(level=config.log_level)
 
@@ -134,7 +151,6 @@ def generate(ctx, **options):
 
     command = GenerateCommand(config, logger)
     command.execute()
-
 
 
 @cli.command()
@@ -153,7 +169,15 @@ def generate(ctx, **options):
 )
 @click.pass_context
 def analyze(ctx, **options):
-    """Analyze codebase structure"""
+    """Analyze codebase structure
+
+    This command analyzes the structure of the specified codebase and provides an output
+    in either a flat or tree-like format, summarizing the files and their relationships.
+
+    Args:
+        ctx: The Click context object.
+        options: Various options for customizing the analysis output.
+    """
     config = ctx.obj["config"].merge(options)
     logger = setup_logger(level=config.log_level)
     command = AnalyzeCommand(config, logger)
