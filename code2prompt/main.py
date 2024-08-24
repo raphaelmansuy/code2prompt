@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import click
+import logging
 
 from code2prompt.config import Configuration
 from code2prompt.commands.generate import GenerateCommand
@@ -38,6 +39,8 @@ def cli(ctx, config):
     else:
         ctx.obj["config"] = Configuration()
 
+    logging.info("CLI initialized with config: %s", ctx.obj["config"])
+    
     if ctx.invoked_subcommand is None:
         print_help(ctx)
 
@@ -145,12 +148,11 @@ def generate(ctx, **options):
     config = ctx.obj["config"].merge(options)
     logger = setup_logger(level=config.log_level)
 
-    # if config.create_templates:
-    #    create_templates_directory()
-    #    return
+    logger.info("Generating markdown with options: %s", options)
 
     command = GenerateCommand(config, logger)
     command.execute()
+    logger.info("Markdown generation completed.")
 
 
 @cli.command()
@@ -180,8 +182,12 @@ def analyze(ctx, **options):
     """
     config = ctx.obj["config"].merge(options)
     logger = setup_logger(level=config.log_level)
+
+    logger.info("Analyzing codebase with options: %s", options)
+
     command = AnalyzeCommand(config, logger)
     command.execute()
+    logger.info("Codebase analysis completed.")
 
 
 if __name__ == "__main__":
