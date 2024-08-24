@@ -37,8 +37,9 @@ def log_clipboard_copy(success):
     """Log a message indicating whether copying to clipboard was successful."""
     logger = logging.getLogger()
     if success:
-        logger.info("Content copied to clipboard successfully.")
-        print("Content copied to clipboard successfully.", file=sys.stderr)
+        success_message = "\033[92m📋 Content copied to clipboard successfully.\033[0m"
+        logger.info(success_message)
+        print(success_message, file=sys.stderr)
     else:
         logger.error("Failed to copy content to clipboard.")
         print("Failed to copy content to clipboard.", file=sys.stderr)
