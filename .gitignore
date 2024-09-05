@@ -7,3 +7,4 @@ __pycache__
 .tasks
 cli.log
 .aider*
+.ruff_cache

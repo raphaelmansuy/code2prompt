@@ -22,8 +22,96 @@ from code2prompt.version import VERSION
     type=click.Path(exists=True, dir_okay=False),
     help="Path to configuration file",
 )
+@click.option(
+    "--path",
+    "-p",
+    type=click.Path(exists=True),
+    multiple=True,
+    help="Path(s) to the directory or file to process.",
+)
+@click.option(
+    "--output", "-o", type=click.Path(), help="Name of the output Markdown file."
+)
+@click.option(
+    "--gitignore",
+    "-g",
+    type=click.Path(exists=True),
+    help="Path to the .gitignore file.",
+)
+@click.option(
+    "--filter",
+    "-f",
+    type=str,
+    help='Comma-separated filter patterns to include files (e.g., "*.py,*.js").',
+)
+@click.option(
+    "--exclude",
+    "-e",
+    type=str,
+    help='Comma-separated patterns to exclude files (e.g., "*.txt,*.md").',
+)
+@click.option(
+    "--case-sensitive", is_flag=True, help="Perform case-sensitive pattern matching."
+)
+@click.option(
+    "--suppress-comments",
+    "-s",
+    is_flag=True,
+    help="Strip comments from the code files.",
+)
+@click.option(
+    "--line-number", "-ln", is_flag=True, help="Add line numbers to source code blocks."
+)
+@click.option(
+    "--no-codeblock",
+    is_flag=True,
+    help="Disable wrapping code inside markdown code blocks.",
+)
+@click.option(
+    "--template",
+    "-t",
+    type=click.Path(exists=True),
+    help="Path to a Jinja2 template file for custom prompt generation.",
+)
+@click.option(
+    "--tokens", is_flag=True, help="Display the token count of the generated prompt."
+)
+@click.option(
+    "--encoding",
+    type=click.Choice(["cl100k_base", "p50k_base", "p50k_edit", "r50k_base"]),
+    default="cl100k_base",
+    help="Specify the tokenizer encoding to use.",
+)
+@click.option(
+    "--create-templates",
+    is_flag=True,
+    help="Create a templates directory with example templates.",
+)
+@click.option(
+    "--log-level",
+    type=click.Choice(
+        ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], case_sensitive=False
+    ),
+    default="WARNING",
+    help="Set the logging level.",
+)
+@click.option(
+    "--price",
+    is_flag=True,
+    help="Display the estimated price of tokens based on provider and model.",
+)
+@click.option(
+    "--provider", type=str, help="Specify the provider for price calculation."
+)
+@click.option("--model", type=str, help="Specify the model for price calculation.")
+@click.option(
+    "--output-tokens",
+    type=int,
+    default=1000,
+    help="Specify the number of output tokens for price calculation.",
+)
 @click.pass_context
-def cli(ctx, config):
+def cli(ctx, config, path, **generate_options):
     """code2prompt CLI tool
 
     This command-line interface (CLI) tool allows users to generate prompts from codebases,
@@ -33,6 +121,7 @@ def cli(ctx, config):
     Args:
         ctx: The Click context object.
         config: Optional path to a configuration file.
+        path: Path(s) to the directory or file to process.
     """
     ctx.obj = {}
     if config:
@@ -43,8 +132,7 @@ def cli(ctx, config):
     logging.info("CLI initialized with config: %s", ctx.obj["config"])
     
     if ctx.invoked_subcommand is None:
-        print_help(ctx)
-
+        ctx.invoke(generate, path=path, **generate_options)  # Pass all generate options
 
 @cli.command()
 @click.option(
@@ -192,4 +280,4 @@ def analyze(ctx, **options):
 
 
 if __name__ == "__main__":
-    cli(standalone_mode=False)
+    cli(standalone_mode=False) 
