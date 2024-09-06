@@ -1,4 +1,7 @@
+"""Interactive file selection."""
+
 import os
+import signal  # Move this import above
 from pathlib import Path
 from prompt_toolkit import Application
 from prompt_toolkit.layout.containers import VSplit, HSplit, Window
@@ -6,15 +9,8 @@ from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.layout.layout import Layout
 from prompt_toolkit.layout.scrollable_pane import ScrollablePane
 from prompt_toolkit.widgets import Frame
-from prompt_toolkit.formatted_text import HTML
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
-from prompt_toolkit.application import get_app
-
-import prompt_toolkit
-import signal  # Add this import
-
-print(prompt_toolkit.__version__)
 
 
 def get_terminal_height():
@@ -50,6 +46,7 @@ def format_tree(tree, indent=""):
 
 def interactive_command(ctx, path):
     """Interactive file selection."""
+    check_path(path)
     tree = get_directory_tree(path)
     formatted_tree = format_tree(tree)
     selected_files = []
@@ -215,3 +212,8 @@ def interactive_command(ctx, path):
 
     # Output selected files
     print("Selected files:", selected_files if selected_files else "No files selected.")
+
+
+def check_path(path):
+    if not path:
+        raise ValueError("A valid path must be provided for interactive mode.")

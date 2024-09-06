@@ -34,6 +34,7 @@ tqdm = "^4.66.4"
 tabulate = "^0.9.0"
 pydantic = "^2.8.2"
 prompt-toolkit = "^3.0.47"
+colorlog = "^6.8.2"
 
 [tool.poetry.scripts]
 code2prompt = "code2prompt.main:cli"
