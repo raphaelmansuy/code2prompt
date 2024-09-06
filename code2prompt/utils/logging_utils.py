@@ -51,7 +51,8 @@ def log_token_count(token_count):
 
 def log_token_prices(prices):
     """Log the estimated token prices."""
-    logger = logging.getLogger()
+    # Remove the unused logger variable
+    # logger = logging.getLogger()  # Unused variable
     header = "─────────────────────────────────────────────────── Estimated Token Prices ───────────────────────────────────────────────────"
     print(header)
     print("┏━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓")

@@ -1,6 +1,4 @@
-import pytest
 from code2prompt.core.template_processor import process_template
-import os
 
 def test_include_feature(tmp_path):
     # Create a main template

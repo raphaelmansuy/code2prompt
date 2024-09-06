@@ -1,10 +1,9 @@
 import pytest
 from click.testing import CliRunner
 from code2prompt.main import create_markdown_file
-from code2prompt.utils.analyzer import analyze_codebase, format_flat_output, format_tree_output, get_extension_list
+from code2prompt.utils.analyzer import analyze_codebase, format_flat_output, get_extension_list
 from pathlib import Path
 import tempfile
-import os
 
 @pytest.fixture
 def temp_codebase():
