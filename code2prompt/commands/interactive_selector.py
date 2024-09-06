@@ -21,11 +21,11 @@ class InteractiveFileSelector:
         self.selected_files = []
         self.formatted_tree = []
 
-    def get_terminal_height(self):
+    def _get_terminal_height(self):
         """Get the height of the terminal."""
         return os.get_terminal_size().lines
 
-    def get_directory_tree(self):
+    def _get_directory_tree(self):
         """Get a combined directory tree for the given paths."""
         tree = {}
         for path in self.paths:  # Iterate over each path
@@ -38,7 +38,7 @@ class InteractiveFileSelector:
                     current = current[part]
         return tree
 
-    def format_tree(self, tree, indent=""):
+    def _format_tree(self, tree, indent=""):
         """Format the directory tree into a list of strings."""
         lines = []
         for i, (name, subtree) in enumerate(tree.items()):
@@ -47,18 +47,18 @@ class InteractiveFileSelector:
             lines.append(f"{indent}{prefix}{name}")
             if subtree:
                 extension = " " if is_last else "│ "
-                lines.extend(self.format_tree(subtree, indent + extension))
+                lines.extend(self._format_tree(subtree, indent + extension))
         return lines
 
-    def get_visible_lines(self):
+    def _get_visible_lines(self):
         """Calculate the number of visible lines based on terminal height."""
-        terminal_height = self.get_terminal_height()
+        terminal_height = self._get_terminal_height()
         return terminal_height - 3  # Subtracting for instructions and padding
 
-    def get_formatted_text(self):
+    def _get_formatted_text(self):
         """Generate formatted text for display."""
         result = []
-        visible_lines = self.get_visible_lines()
+        visible_lines = self._get_visible_lines()
         for i in range(
             self.start_line,
             min(self.start_line + visible_lines, len(self.formatted_tree)),
@@ -67,36 +67,42 @@ class InteractiveFileSelector:
             style = "class:cursor" if i == self.cursor_position else ""
             checkbox = (
                 "[X]"
-                if any(str(Path(path) / line.split("── ")[-1].strip()) in self.selected_files for path in self.paths)  # Check against all paths
+                if any(
+                    str(Path(path) / line.split("── ")[-1].strip())
+                    in self.selected_files
+                    for path in self.paths
+                )  # Check against all paths
                 else "[ ]"
             )
             result.append((style, f"{checkbox} {line}\n"))
         return result
 
-    def toggle_file_selection(self, current_item):
+    def _toggle_file_selection(self, current_item):
         """Toggle the selection of the current item."""
-        full_paths = [str(Path(path) / current_item) for path in self.paths]  # Create full paths for all paths
+        full_paths = [
+            str(Path(path) / current_item) for path in self.paths
+        ]  # Create full paths for all paths
         for full_path in full_paths:
             if full_path in self.selected_files:
                 self.selected_files.remove(full_path)
             else:
                 self.selected_files.append(full_path)
 
-    def get_current_item(self):
+    def _get_current_item(self):
         """Get the current item based on cursor position."""
         return self.formatted_tree[self.cursor_position].split("── ")[-1].strip()
 
-    def resize_handler(self, event):
+    def _resize_handler(self, event):
         """Handle terminal resize event."""
         # Ensure cursor is in view
-        self.start_line = max(0, self.cursor_position - self.get_visible_lines() + 1)
+        self.start_line = max(0, self.cursor_position - self._get_visible_lines() + 1)
         self.app.invalidate()  # Invalidate the application to refresh the layout
 
     def run(self):
         """Run the interactive file selection."""
-        self.check_paths()  # Update method name to check multiple paths
-        tree = self.get_directory_tree()
-        self.formatted_tree = self.format_tree(tree)
+        self._check_paths()  # Update method name to check multiple paths
+        tree = self._get_directory_tree()
+        self.formatted_tree = self._format_tree(tree)
 
         kb = KeyBindings()
 
@@ -115,15 +121,15 @@ class InteractiveFileSelector:
         def move_cursor_down(_event):
             if self.cursor_position < len(self.formatted_tree) - 1:
                 self.cursor_position += 1
-                if self.cursor_position >= self.start_line + self.get_visible_lines():
+                if self.cursor_position >= self.start_line + self._get_visible_lines():
                     self.start_line = (
-                        self.cursor_position - self.get_visible_lines() + 1
+                        self.cursor_position - self._get_visible_lines() + 1
                     )  # Scroll down
 
         @kb.add("pageup")
         def page_up(event):
             self.cursor_position = max(
-                0, self.cursor_position - self.get_visible_lines()
+                0, self.cursor_position - self._get_visible_lines()
             )
             # Adjust start_line to keep the cursor in view
             if self.cursor_position < self.start_line:
@@ -133,23 +139,23 @@ class InteractiveFileSelector:
         def page_down(event):
             self.cursor_position = min(
                 len(self.formatted_tree) - 1,
-                self.cursor_position + self.get_visible_lines(),
+                self.cursor_position + self._get_visible_lines(),
             )
             # Adjust start_line to keep the cursor in view
-            if self.cursor_position >= self.start_line + self.get_visible_lines():
-                self.start_line = self.cursor_position - self.get_visible_lines() + 1
+            if self.cursor_position >= self.start_line + self._get_visible_lines():
+                self.start_line = self.cursor_position - self._get_visible_lines() + 1
 
         @kb.add("space")
         def toggle_selection(event):
-            current_item = self.get_current_item()
-            self.toggle_file_selection(current_item)
+            current_item = self._get_current_item()
+            self._toggle_file_selection(current_item)
 
         @kb.add("enter")
         def confirm_selection(event):
             event.app.exit()
 
         tree_window = Window(
-            content=FormattedTextControl(self.get_formatted_text, focusable=True),
+            content=FormattedTextControl(self._get_formatted_text, focusable=True),
             width=60,
             dont_extend_width=True,
             wrap_lines=False,
@@ -159,10 +165,11 @@ class InteractiveFileSelector:
 
         instructions = (
             "Instructions:\n"
+            "-------------\n"
             "1. Use ↑ and ↓ to navigate\n"
             "2. Press Space to select/deselect an item\n"
             "3. Press Enter to confirm your selection\n"
-            "4. Press q to quit the application\n"
+            "4. Press q to quit the selection process\n"
         )
 
         layout = Layout(
@@ -204,7 +211,7 @@ class InteractiveFileSelector:
             mouse_support=True,
         )
 
-        signal.signal(signal.SIGWINCH, self.resize_handler)
+        signal.signal(signal.SIGWINCH, self._resize_handler)
 
         self.app.run()
 
@@ -214,7 +221,9 @@ class InteractiveFileSelector:
         )
         return self.selected_files
 
-    def check_paths(self):  # New method to check all paths
+    def _check_paths(self):  # New method to check all paths
         """Check if the provided paths are valid."""
         if not self.paths or any(not path for path in self.paths):
-            raise ValueError("A valid list of paths must be provided for interactive mode.")
+            raise ValueError(
+                "A valid list of paths must be provided for interactive mode."
+            )

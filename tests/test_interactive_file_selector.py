@@ -19,13 +19,13 @@ def test_check_paths_valid(interactive_file_selector):
 def test_check_paths_invalid_empty():
     selector = InteractiveFileSelector([])
     with pytest.raises(ValueError):
-        selector.check_paths()
+        selector._check_paths()
 
 
 def test_check_paths_invalid_none():
     selector = InteractiveFileSelector([None])
     with pytest.raises(ValueError):
-        selector.check_paths()
+        selector._check_paths()
 
 
 @patch('pathlib.Path.rglob')

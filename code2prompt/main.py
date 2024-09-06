@@ -139,11 +139,16 @@ def generate(ctx, **options):
     """Generate markdown from code files"""
 
     selected_paths = options.get("path")
+    
+    # filter paths based on .gitignore
+    filtered_paths = 
 
     if selected_paths:
         file_selector = InteractiveFileSelector(selected_paths)
         selected_paths = file_selector.run()
         options["path"] = selected_paths
+
+    print("Selected paths: %s", selected_paths)
 
     config = ctx.obj["config"].merge(options)
     logger = setup_logger(level=config.log_level)
