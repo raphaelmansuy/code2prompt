@@ -3,11 +3,11 @@
 import logging
 from pathlib import Path
 import click
-from code2prompt.commands.interactive_command import interactive_command
 from code2prompt.commands.analyze import AnalyzeCommand
 from code2prompt.commands.generate import GenerateCommand
 from code2prompt.config import Configuration
 from code2prompt.utils.logging_utils import setup_logger
+from code2prompt.commands.interactive_selector import InteractiveFileSelector
 from code2prompt.version import VERSION
 
 
@@ -137,9 +137,19 @@ def cli(ctx, config, path, **generate_options):
 @click.pass_context
 def generate(ctx, **options):
     """Generate markdown from code files"""
+
+    selected_paths = options.get("path")
+
+    if selected_paths:
+        file_selector = InteractiveFileSelector(selected_paths)
+        selected_paths = file_selector.run()
+        options["path"] = selected_paths
+
     config = ctx.obj["config"].merge(options)
     logger = setup_logger(level=config.log_level)
     logger.info("Generating markdown with options: %s", options)
+
+    print("Generating markdown with options: %s", options)
 
     command = GenerateCommand(config, logger)
     command.execute()
@@ -172,19 +182,6 @@ def analyze(ctx, **options):
     command.execute()
 
     logger.info("Codebase analysis completed.")
-
-
-@cli.command()
-@click.option(
-    "--path",
-    "-p",
-    type=click.Path(exists=True),
-    help="Path to the directory to navigate.",
-)
-@click.pass_context
-def interactive(ctx, path):
-    """Interactive file selection"""
-    interactive_command(ctx, path)
 
 
 def get_directory_tree(path):
