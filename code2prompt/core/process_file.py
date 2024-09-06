@@ -2,6 +2,7 @@
 This module contains the function to process a file and extract its metadata and content.
 """
 
+from pathlib import Path
 from datetime import datetime
 
 from code2prompt.utils.add_line_numbers import add_line_numbers
@@ -9,7 +10,9 @@ from code2prompt.utils.language_inference import infer_language
 from code2prompt.comment_stripper.strip_comments import strip_comments
 
 
-def process_file(file_path, suppress_comments, line_number, no_codeblock):
+def process_file(
+    file_path: Path, suppress_comments: bool, line_number: bool, no_codeblock: bool
+):
     """
     Processes a given file to extract its metadata and content.
 

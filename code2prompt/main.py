@@ -8,6 +8,7 @@ from code2prompt.commands.generate import GenerateCommand
 from code2prompt.config import Configuration
 from code2prompt.utils.logging_utils import setup_logger
 from code2prompt.commands.interactive_selector import InteractiveFileSelector
+from code2prompt.core.file_path_retriever import retrieve_file_paths
 from code2prompt.version import VERSION
 
 
@@ -141,14 +142,14 @@ def generate(ctx, **options):
     selected_paths = options.get("path")
     
     # filter paths based on .gitignore
-    filtered_paths = 
+    filtered_paths = retrieve_file_paths(options)
 
     if selected_paths:
-        file_selector = InteractiveFileSelector(selected_paths)
-        selected_paths = file_selector.run()
-        options["path"] = selected_paths
+        file_selector = InteractiveFileSelector(filtered_paths)
+        filtered_selected_paths = file_selector.run()
+        options["path"] = filtered_selected_paths
 
-    print("Selected paths: %s", selected_paths)
+    print("Selected paths: %s", filtered_selected_paths)
 
     config = ctx.obj["config"].merge(options)
     logger = setup_logger(level=config.log_level)
