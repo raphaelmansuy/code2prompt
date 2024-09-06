@@ -85,15 +85,21 @@ def interactive_command(ctx, path):
 
     @kb.add("pageup")
     def page_up(event):
-        nonlocal cursor_position
+        nonlocal cursor_position, start_line
         cursor_position = max(0, cursor_position - get_visible_lines())
+        # Adjust start_line to keep the cursor in view
+        if cursor_position < start_line:
+            start_line = cursor_position
 
     @kb.add("pagedown")
     def page_down(event):
-        nonlocal cursor_position
+        nonlocal cursor_position, start_line
         cursor_position = min(
             len(formatted_tree) - 1, cursor_position + get_visible_lines()
         )
+        # Adjust start_line to keep the cursor in view
+        if cursor_position >= start_line + get_visible_lines():
+            start_line = cursor_position - get_visible_lines() + 1
 
     @kb.add("space")
     def toggle_selection(event):
