@@ -8,6 +8,7 @@ from prompt_toolkit.widgets import Frame
 from prompt_toolkit.formatted_text import HTML
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
+from prompt_toolkit.application import get_app
 
 import prompt_toolkit
 
@@ -43,6 +44,7 @@ def interactive_command(ctx, path):
     formatted_tree = format_tree(tree)
     selected_files = []
     cursor_position = 0
+    start_line = 0
 
     kb = KeyBindings()
 
@@ -54,23 +56,33 @@ def interactive_command(ctx, path):
     # Navigation keys
     @kb.add('up')
     def move_cursor_up(event):
-        nonlocal cursor_position
-        cursor_position = max(0, cursor_position - 1)
+        nonlocal cursor_position, start_line
+        if cursor_position > 0:
+            cursor_position -= 1
+            # Adjust start_line to keep the cursor in view
+            if cursor_position < start_line:
+                start_line = cursor_position
 
     @kb.add('down')
     def move_cursor_down(event):
-        nonlocal cursor_position
-        cursor_position = min(len(formatted_tree) - 1, cursor_position + 1)
+        nonlocal cursor_position, start_line
+        if cursor_position < len(formatted_tree) - 1:
+            cursor_position += 1
+            # Adjust start_line to keep the cursor in view
+            if cursor_position >= start_line + get_visible_lines():
+                start_line += 1
 
     @kb.add('pageup')
     def page_up(event):
-        nonlocal cursor_position
-        cursor_position = max(0, cursor_position - 10)
+        nonlocal cursor_position, start_line
+        cursor_position = max(0, cursor_position - get_visible_lines())
+        start_line = max(0, start_line - get_visible_lines())
 
     @kb.add('pagedown')
     def page_down(event):
-        nonlocal cursor_position
-        cursor_position = min(len(formatted_tree) - 1, cursor_position + 10)
+        nonlocal cursor_position, start_line
+        cursor_position = min(len(formatted_tree) - 1, cursor_position + get_visible_lines())
+        start_line = min(len(formatted_tree) - get_visible_lines(), start_line + get_visible_lines())
 
     @kb.add('space')
     def toggle_selection(event):
@@ -93,10 +105,17 @@ def interactive_command(ctx, path):
         else:
             selected_files.append(full_path)
 
+    def get_visible_lines():
+        """Calculate the number of visible lines based on terminal height."""
+        terminal_height = 60
+        return terminal_height - 3  # Subtracting for instructions and padding
+
     def get_formatted_text():
         """Generate formatted text for display."""
         result = []
-        for i, line in enumerate(formatted_tree):
+        visible_lines = get_visible_lines()
+        for i in range(start_line, min(start_line + visible_lines, len(formatted_tree))):
+            line = formatted_tree[i]
             style = 'class:cursor' if i == cursor_position else ''
             checkbox = '[X]' if str(Path(path) / line.split('── ')[-1].strip()) in selected_files else '[ ]'
             result.append((style, f"{checkbox} {line}\n"))
