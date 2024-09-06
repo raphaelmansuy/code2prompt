@@ -1,3 +1,7 @@
+"""
+This module contains the InteractiveFileSelector class, which allows for interactive file selection.
+"""
+
 import os
 import signal
 from pathlib import Path
@@ -92,7 +96,7 @@ class InteractiveFileSelector:
         """Get the current item based on cursor position."""
         return self.formatted_tree[self.cursor_position].split("── ")[-1].strip()
 
-    def _resize_handler(self, event):
+    def _resize_handler(self, _event):
         """Handle terminal resize event."""
         # Ensure cursor is in view
         self.start_line = max(0, self.cursor_position - self._get_visible_lines() + 1)
@@ -127,7 +131,7 @@ class InteractiveFileSelector:
                     )  # Scroll down
 
         @kb.add("pageup")
-        def page_up(event):
+        def page_up(_event):
             self.cursor_position = max(
                 0, self.cursor_position - self._get_visible_lines()
             )
@@ -136,7 +140,7 @@ class InteractiveFileSelector:
                 self.start_line = self.cursor_position
 
         @kb.add("pagedown")
-        def page_down(event):
+        def page_down(_event):
             self.cursor_position = min(
                 len(self.formatted_tree) - 1,
                 self.cursor_position + self._get_visible_lines(),
@@ -146,13 +150,13 @@ class InteractiveFileSelector:
                 self.start_line = self.cursor_position - self._get_visible_lines() + 1
 
         @kb.add("space")
-        def toggle_selection(event):
+        def toggle_selection(_event):
             current_item = self._get_current_item()
             self._toggle_file_selection(current_item)
 
         @kb.add("enter")
-        def confirm_selection(event):
-            event.app.exit()
+        def confirm_selection(_event):
+            self.app.exit()
 
         tree_window = Window(
             content=FormattedTextControl(self._get_formatted_text, focusable=True),

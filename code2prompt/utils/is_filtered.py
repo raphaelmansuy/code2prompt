@@ -1,7 +1,17 @@
+"""
+This module contains utility functions for filtering files based on include and exclude patterns.
+"""
+
 from pathlib import Path
 from fnmatch import fnmatch
 
-def is_filtered(file_path: Path, include_pattern: str = "", exclude_pattern: str = "", case_sensitive: bool = False) -> bool:
+
+def is_filtered(
+    file_path: Path,
+    include_pattern: str = "",
+    exclude_pattern: str = "",
+    case_sensitive: bool = False,
+) -> bool:
     """
     Determine if a file should be filtered based on include and exclude patterns.
 
@@ -34,7 +44,7 @@ def is_filtered(file_path: Path, include_pattern: str = "", exclude_pattern: str
     # Prepare patterns
     def prepare_patterns(pattern):
         if isinstance(pattern, str):
-            return [p.strip().lower() for p in pattern.split(',') if p.strip()]
+            return [p.strip().lower() for p in pattern.split(",") if p.strip()]
         elif isinstance(pattern, (list, tuple)):
             return [str(p).strip().lower() for p in pattern if str(p).strip()]
         else:

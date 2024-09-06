@@ -1,7 +1,13 @@
-from code2prompt.comment_stripper import strip_comments  # Ensure this is correct
+"""
+This module contains the function to process a file and extract its metadata and content.
+"""
+
+from datetime import datetime
+
 from code2prompt.utils.add_line_numbers import add_line_numbers
 from code2prompt.utils.language_inference import infer_language
-from datetime import datetime
+from code2prompt.comment_stripper.strip_comments import strip_comments
+
 
 def process_file(file_path, suppress_comments, line_number, no_codeblock):
     """
@@ -18,19 +24,23 @@ def process_file(file_path, suppress_comments, line_number, no_codeblock):
     """
     file_extension = file_path.suffix
     file_size = file_path.stat().st_size
-    file_creation_time = datetime.fromtimestamp(file_path.stat().st_ctime).strftime("%Y-%m-%d %H:%M:%S")
-    file_modification_time = datetime.fromtimestamp(file_path.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+    file_creation_time = datetime.fromtimestamp(file_path.stat().st_ctime).strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
+    file_modification_time = datetime.fromtimestamp(file_path.stat().st_mtime).strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
     language = "unknown"
 
     try:
         with file_path.open("r", encoding="utf-8") as f:
             file_content = f.read()
-        
+
         language = infer_language(file_path.name)
-        
+
         if suppress_comments and language != "unknown":
             file_content = strip_comments(file_content, language)
-        
+
         if line_number:
             file_content = add_line_numbers(file_content)
     except UnicodeDecodeError:
@@ -44,5 +54,5 @@ def process_file(file_path, suppress_comments, line_number, no_codeblock):
         "created": file_creation_time,
         "modified": file_modification_time,
         "content": file_content,
-        "no_codeblock": no_codeblock
+        "no_codeblock": no_codeblock,
     }
