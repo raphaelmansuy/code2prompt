@@ -10,6 +10,7 @@ from code2prompt.utils.count_tokens import count_tokens
 from code2prompt.utils.logging_utils import log_token_count
 from code2prompt.utils.display_price_table import display_price_table
 
+
 class GenerateCommand(BaseCommand):
     """Command for generating markdown content from code files."""
 
@@ -20,10 +21,10 @@ class GenerateCommand(BaseCommand):
         files_data = self._process_files()
         content = self._generate_content(files_data)
         self._write_output(content)
-        
+
         if self.config.tokens or self.config.price:
             self._handle_token_count_and_price(content)
-        
+
         self.logger.info("Generation complete.")
 
     def _process_files(self) -> List[Dict[str, Any]]:
@@ -49,4 +50,3 @@ class GenerateCommand(BaseCommand):
         model = self.config.model
         provider = self.config.provider
         display_price_table(token_count, provider, model, self.config.output_tokens)
-

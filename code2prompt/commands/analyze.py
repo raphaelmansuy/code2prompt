@@ -4,7 +4,13 @@ from pathlib import Path
 from typing import Dict
 
 from code2prompt.commands.base_command import BaseCommand
-from code2prompt.utils.analyzer import analyze_codebase, format_flat_output, format_tree_output, get_extension_list
+from code2prompt.utils.analyzer import (
+    analyze_codebase,
+    format_flat_output,
+    format_tree_output,
+    get_extension_list,
+)
+
 
 class AnalyzeCommand(BaseCommand):
     """Command for analyzing the codebase structure."""
@@ -12,10 +18,10 @@ class AnalyzeCommand(BaseCommand):
     def execute(self) -> None:
         """Execute the analyze command."""
         self.logger.info("Analyzing codebase...")
-        
+
         for path in self.config.path:
             self._analyze_path(Path(path))
-        
+
         self.logger.info("Analysis complete.")
 
     def _analyze_path(self, path: Path) -> None:
@@ -26,7 +32,7 @@ class AnalyzeCommand(BaseCommand):
             path (Path): The path to analyze.
         """
         extension_counts, extension_dirs = analyze_codebase(path)
-        
+
         if not extension_counts:
             self.logger.warning(f"No files found in {path}")
             return
@@ -62,4 +68,3 @@ class AnalyzeCommand(BaseCommand):
             total_tokens += count * 100  # Assuming an average of 100 tokens per file
 
         return total_tokens
-
