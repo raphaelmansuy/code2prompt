@@ -7,6 +7,15 @@ from .matlab_style import strip_matlab_style_comments
 from .r_style import strip_r_style_comments
 
 def strip_comments(code: str, language: str) -> str:
+    """Strips comments from the given code based on the specified programming language.
+
+    Args:
+        code (str): The source code from which comments will be removed.
+        language (str): The programming language of the source code.
+
+    Returns:
+        str: The code without comments.
+    """
     if language in [
         "c", "cpp", "java", "javascript", "csharp", "php", "go", "rust", "kotlin", "swift", "scala", "dart",
     ]:

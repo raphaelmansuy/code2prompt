@@ -13,12 +13,12 @@ from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
 
 
-def get_terminal_height():
+def get_terminal_height() -> int:
     """Get the height of the terminal."""
     return os.get_terminal_size().lines
 
 
-def get_directory_tree(path):
+def get_directory_tree(path: str) -> dict:
     """Get a directory tree for the given path."""
     tree = {}
     for p in Path(path).rglob("*"):
@@ -31,7 +31,7 @@ def get_directory_tree(path):
     return tree
 
 
-def format_tree(tree, indent=""):
+def format_tree(tree: dict, indent: str = "") -> list:
     """Format the directory tree into a list of strings."""
     lines = []
     for i, (name, subtree) in enumerate(tree.items()):
@@ -44,14 +44,20 @@ def format_tree(tree, indent=""):
     return lines
 
 
+# Declare global variables at the module level
+start_line = 0
+cursor_position = 0
+
+
 def interactive_command(ctx, path):
     """Interactive file selection."""
+    start_line = 0
+    cursor_position = 0
     check_path(path)
     tree = get_directory_tree(path)
     formatted_tree = format_tree(tree)
     selected_files = []
     cursor_position = 0
-    start_line = 0
 
     kb = KeyBindings()
 
@@ -62,37 +68,31 @@ def interactive_command(ctx, path):
 
     # Navigation keys
     @kb.add("up")
-    def move_cursor_up(event):
+    def move_cursor_up(_event):
         nonlocal cursor_position, start_line
         if cursor_position > 0:
             cursor_position -= 1
-            # Adjust start_line to keep the cursor in view
             if cursor_position < start_line:
-                start_line = cursor_position
+                start_line = cursor_position  # Scroll up
 
     @kb.add("down")
-    def move_cursor_down(event):
+    def move_cursor_down(_event):
         nonlocal cursor_position, start_line
         if cursor_position < len(formatted_tree) - 1:
             cursor_position += 1
-            # Adjust start_line to keep the cursor in view
             if cursor_position >= start_line + get_visible_lines():
-                start_line += 1
+                start_line = cursor_position - get_visible_lines() + 1  # Scroll down
 
     @kb.add("pageup")
     def page_up(event):
-        nonlocal cursor_position, start_line
+        nonlocal cursor_position
         cursor_position = max(0, cursor_position - get_visible_lines())
-        start_line = max(0, start_line - get_visible_lines())
 
     @kb.add("pagedown")
     def page_down(event):
-        nonlocal cursor_position, start_line
+        nonlocal cursor_position
         cursor_position = min(
             len(formatted_tree) - 1, cursor_position + get_visible_lines()
-        )
-        start_line = min(
-            len(formatted_tree) - get_visible_lines(), start_line + get_visible_lines()
         )
 
     @kb.add("space")
@@ -215,5 +215,6 @@ def interactive_command(ctx, path):
 
 
 def check_path(path):
+    """Check if the provided path is valid."""
     if not path:
         raise ValueError("A valid path must be provided for interactive mode.")

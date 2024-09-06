@@ -16,6 +16,34 @@ def process_files(options):
     """
     files_data = []
 
+    # Use get_file_paths to retrieve all file paths to process
+    file_paths = get_file_paths(options)
+
+    for path in file_paths:
+        path = Path(path)
+        result = process_file(
+            path,
+            options['suppress_comments'],
+            options['line_number'],
+            options['no_codeblock']
+        )
+        if result:
+            files_data.append(result)
+
+    return files_data
+
+def get_file_paths(options: dict) -> list:
+    """
+    Retrieves file paths based on the provided options.
+
+    Args:
+    options (dict): A dictionary containing options such as paths and gitignore patterns.
+
+    Returns:
+    list: A list of file paths that should be processed.
+    """
+    file_paths: list = []
+
     # Ensure 'path' is always a list for consistent processing
     paths = options['path'] if isinstance(options['path'], list) else [options['path']]
 
@@ -29,27 +57,13 @@ def process_files(options):
         )
 
         if path.is_file():
-            # Process single file
+            # Add single file path
             if should_process_file(path, gitignore_patterns, path.parent, options):
-                result = process_file(
-                    path,
-                    options['suppress_comments'],
-                    options['line_number'],
-                    options['no_codeblock']
-                )
-                if result:
-                    files_data.append(result)
+                file_paths.append(str(path))
         else:
-            # Process directory
+            # Add directory file paths
             for file_path in path.rglob("*"):
                 if should_process_file(file_path, gitignore_patterns, path, options):
-                    result = process_file(
-                        file_path,
-                        options['suppress_comments'],
-                        options['line_number'],
-                        options['no_codeblock']
-                    )
-                    if result:
-                        files_data.append(result)
+                    file_paths.append(str(file_path))
 
-    return files_data
+    return file_paths

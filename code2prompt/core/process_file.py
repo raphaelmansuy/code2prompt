@@ -1,4 +1,4 @@
-from code2prompt.comment_stripper import strip_comments
+from code2prompt.comment_stripper import strip_comments  # Ensure this is correct
 from code2prompt.utils.add_line_numbers import add_line_numbers
 from code2prompt.utils.language_inference import infer_language
 from datetime import datetime
