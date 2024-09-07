@@ -19,11 +19,11 @@ class InteractiveFileSelector:
         self.paths: List[Path] = paths.copy()
         self.start_line: int = 0
         self.cursor_position: int = 0
-        self.selected_files: List[Path] = selected_files.copy()
         self.formatted_tree: List[str] = []
         self.tree_paths: List[Path] = []
         self.kb = self._create_key_bindings()
         self.app = self._create_application(self.kb)
+        self.selected_files = [str(Path(file).resolve()) for file in selected_files]
 
     def _get_terminal_height(self) -> int:
         """Get the height of the terminal."""
@@ -32,7 +32,7 @@ class InteractiveFileSelector:
     def _get_directory_tree(self) -> Dict[Path, Dict]:
         """Get a combined directory tree for the given paths."""
         tree: Dict[Path, Dict] = {}
-        
+
         for path in self.paths:
             current = tree  # Start from the root of the tree
             # Iterate through each part of the path
@@ -43,7 +43,7 @@ class InteractiveFileSelector:
 
         return tree
 
-    def _format_tree(self, tree, indent="") -> List[Union[List[str], List[Path]]]:
+    def _format_tree(self, tree: Dict[Path, Dict], indent: str = "") -> List[Union[List[str], List[Path]]]:
         """Format the directory tree into a list of strings."""
         lines: List[str] = []
         tree_paths: List[Path] = []
@@ -52,16 +52,14 @@ class InteractiveFileSelector:
             prefix = "└── " if is_last else "├── "
             line = f"{indent}{prefix}{Path(file_path).name}"
             lines.append(line)
+            tree_paths.append(Path(file_path).resolve())
             if subtree:
-                tree_paths.append(file_path)
                 extension = " " if is_last else "│ "
                 sub_lines, sub_tree_paths = self._format_tree(
                     subtree, indent + extension
                 )
                 lines.extend(sub_lines)
                 tree_paths.extend(sub_tree_paths)
-            else:
-                tree_paths.append(file_path)
         return lines, tree_paths
 
     def _get_visible_lines(self) -> int:
@@ -72,34 +70,54 @@ class InteractiveFileSelector:
     def _get_formatted_text(self) -> List[tuple]:
         """Generate formatted text for display."""
         result = []
+        
 
+        # Ensure that formatted_tree and tree_paths have the same length
         if len(self.formatted_tree) == len(self.tree_paths):
             visible_lines = self._get_visible_lines()
-            for i in range(
-                self.start_line,
-                min(self.start_line + visible_lines, len(self.formatted_tree)),
-            ):
+            
+            # Calculate the end line for the loop
+            end_line = min(self.start_line + visible_lines, len(self.formatted_tree))
+            
+            
+            for i in range(self.start_line, end_line):
                 line = self.formatted_tree[i]
                 style = "class:cursor" if i == self.cursor_position else ""
-                is_selected = (
-                    self.tree_paths[i] in self.selected_files
-                )  # Check if the full path is selected
-                checkbox = (
-                    "[X]" if is_selected else "[ ]"
-                )  # Update checkbox based on selection
-                result.append(
-                    (style, f"{checkbox} {line}\n")
-                )  # Include checkbox in the display
-        return result
+                
+                # Ensure cursor_position is valid
+                if self.cursor_position >= len(self.formatted_tree):
+                    self.cursor_position = len(self.formatted_tree) - 1
+                
+                # Get the full path
+                file_path = self.tree_paths[i]
+                
+                # Check if the full path is selected
+                is_selected = str(file_path.resolve()) in self.selected_files
+                
+                if is_selected:
+                    print(f"Selected: {file_path}")
+                
+                # Update checkbox based on selection
+                checkbox = "[X]" if is_selected else "[ ]"
+                
+                # Append formatted line to result
+                result.append((style, f"{checkbox} {line}\n"))
 
-    def _toggle_file_selection(self, current_item: Path) -> None:
+                # Debugging output
+                #print(f"Line: {line}, Full Path: {full_path}, Selected: {is_selected}")
+
+        return result
+        
+
+    def _toggle_file_selection(self, current_item: str) -> None:
         """Toggle the selection of the current item."""
         if current_item in self.selected_files:
             self.selected_files.remove(current_item)
         else:
+            print(f"Adding: {current_item}")
             self.selected_files.append(current_item)
 
-    def _get_current_item(self) -> Path:
+    def _get_current_item(self) -> str:
         """Get the current item based on cursor position."""
         if 0 <= self.cursor_position < len(self.tree_paths):
             current_item = self.tree_paths[self.cursor_position]
