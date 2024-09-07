@@ -1,14 +1,16 @@
-# code2prompt/commands/generate.py
+"""
+This module contains the GenerateCommand class, which is responsible for generating
+markdown content from code files based on the provided configuration.
+"""
 
 from typing import List, Dict, Any
-
-from code2prompt.commands.base_command import BaseCommand
 from code2prompt.core.process_files import process_files
 from code2prompt.core.generate_content import generate_content
 from code2prompt.core.write_output import write_output
 from code2prompt.utils.count_tokens import count_tokens
 from code2prompt.utils.logging_utils import log_token_count
 from code2prompt.utils.display_price_table import display_price_table
+from code2prompt.commands.base_command import BaseCommand
 
 
 class GenerateCommand(BaseCommand):
@@ -17,7 +19,7 @@ class GenerateCommand(BaseCommand):
     def execute(self) -> None:
         """Execute the generate command."""
         self.logger.info("Generating markdown...")
-        
+
         files_data = self._process_files()
         content = self._generate_content(files_data)
         self._write_output(content)
@@ -30,8 +32,18 @@ class GenerateCommand(BaseCommand):
     def _process_files(self) -> List[Dict[str, Any]]:
         """Process files based on the configuration."""
         all_files_data = []
+
         for path in self.config.path:
-            files_data = process_files({**self.config.dict(), "path": path})
+            files_data = process_files(
+                file_paths=path,
+                line_number=self.config.line_number,
+                no_codeblock=self.config.no_codeblock,
+                suppress_comments=self.config.suppress_comments,
+                filter_patterns=self.config.filter_patterns,
+                exclude_patterns=self.config.exclude_patterns,
+                case_sensitive=self.config.case_sensitive,
+                gitignore=self.config.gitignore,
+            )
             all_files_data.extend(files_data)
         return all_files_data
 
