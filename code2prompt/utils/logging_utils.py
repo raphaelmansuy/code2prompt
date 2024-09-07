@@ -1,234 +1,65 @@
-# code2prompt/utils/logging_utils.py
-
-import sys
 import logging
-from colorama import init, Fore, Style
+import colorlog
+import sys
 
-# Initialize colorama for cross-platform color support
-init()
+def setup_logger(level="INFO"):
+    """Set up the logger with the specified logging level."""
+    logger = colorlog.getLogger()
+    logger.setLevel(level)
 
-class ColorfulFormatter(logging.Formatter):
-    """
-    A custom formatter for logging messages that colors the output based on the log level
-    and prefixes each message with an emoji corresponding to its severity.
+    # Create console handler
+    ch = colorlog.StreamHandler()
+    ch.setLevel(level)
 
-    Attributes:
-        COLORS (dict): Mapping of log levels to color codes.
-        EMOJIS (dict): Mapping of log levels to emojis.
+    # Create formatter with a more structured format
+    formatter = colorlog.ColoredFormatter(
+        '%(log_color)s[%(asctime)s] %(levelname)s: %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+    ch.setFormatter(formatter)
 
-    Methods:
-        format(record): Formats the given LogRecord.
-    """
-    COLORS = {
-        'DEBUG': Fore.CYAN,
-        'INFO': Fore.GREEN,
-        'WARNING': Fore.YELLOW,
-        'ERROR': Fore.RED,
-        'CRITICAL': Fore.MAGENTA
-    }
+    # Add the handler to the logger
+    logger.addHandler(ch)
 
-    EMOJIS = {
-        'DEBUG': '🔍',
-        'INFO': '✨',
-        'WARNING': '⚠️',
-        'ERROR': '💥',
-        'CRITICAL': '🚨'
-    }
-
-    def format(self, record):
-        """
-        Formats the given LogRecord.
-
-        Args:
-            record (logging.LogRecord): The log record to format.
-
-        Returns:
-            str: The formatted log message.
-        """
-        color = self.COLORS.get(record.levelname, Fore.WHITE)
-        emoji = self.EMOJIS.get(record.levelname, '')
-        return f"{color}{emoji} {record.levelname}: {record.getMessage()}{Style.RESET_ALL}"
-
-def setup_logger(name='code2prompt', level=logging.INFO):
-    """
-    Sets up and returns a logger with the specified name and logging level.
-
-    Args:
-        name (str): The name of the logger. Defaults to 'code2prompt'.
-        level (int): The root logger level. Defaults to logging.INFO.
-
-    Returns:
-        logging.Logger: The configured logger instance.
-    """
-    local_logger = logging.getLogger(name)
-    local_logger.setLevel(level)
-
-    # Only add handler if there are none to prevent duplicate logging
-    if not local_logger.handlers:
-        # Create handlers
-        c_handler = logging.StreamHandler(sys.stderr)
-        c_handler.setFormatter(ColorfulFormatter())
-
-        # Add handlers to the logger
-        local_logger.addHandler(c_handler)
-
-    return local_logger
-
-# Create a global logger instance
-logger = setup_logger()
-
-def log_debug(message):
-    """
-    Logs a debug-level message.
-
-    This function logs a message at the debug level, which is intended for detailed information,
-    typically of interest only when diagnosing problems.
-
-    Args:
-        message (str): The message to log.
-
-    Example:
-        log_debug("This is a debug message")
-    """
-    logger.debug(message)
-
-def log_info(message):
-    """
-    Logs an informational-level message.
-
-    This function logs a message at the INFO level, which is used to provide general information
-    about the program's operation without implying any particular priority.
-
-    Args:
-        message (str): The message to log.
-
-    Example:
-        log_info("Processing started")
-    """
-    logger.info(message)
-
-def log_warning(message):
-    """
-    Logs a warning-level message.
-
-    This function logs a message at the WARNING level, indicating that something unexpected
-    happened, but did not stop the execution of the program.
-
-    Args:
-        message (str): The message to log as a warning.
-
-    Example:
-        log_warning("An error occurred while processing the file")
-    """
-    logger.warning(message)
+    return logger
 
 def log_error(message):
-    """
-    Logs an error-level message.
-
-    This function logs a message at the ERROR level, indicating that an error occurred
-    that prevented the program from continuing normally.
-
-    Args:
-        message (str): The message to log as an error.
-
-    Example:
-        log_error("Failed to process file due to permission issues")
-    """
+    """Log an error message."""
+    logger = logging.getLogger()
     logger.error(message)
 
-def log_critical(message):
-    """
-    Logs a critical-level message.
-
-    This function logs a message at the CRITICAL level, indicating a severe error
-    that prevents the program from functioning correctly.
-
-    Args:
-        message (str): The message to log as a critical error.
-
-    Example:
-        log_critical("A critical system failure occurred")
-    """
-    logger.critical(message)
-
-def log_success(message):
-    """
-    Logs a success-level message.
-
-    This function logs a message at the INFO level with a green color and a checkmark emoji,
-    indicating that an operation was successful.
-
-    Args:
-        message (str): The message to log as a success.
-
-    Example:
-        log_success("File processed successfully")
-    """
-    logger.info(f"{Fore.GREEN}✅ SUCCESS: {message}{Style.RESET_ALL}")
-
-def log_file_processed(file_path):
-    """
-    Logs a message indicating that a file has been processed.
-
-    This function logs a message at the INFO level, indicating that a specific file has been processed.
-    It uses a blue color and a file emoji for visual distinction.
-
-    Args:
-        file_path (str): The path to the file that was processed.
-
-    Example:
-        log_file_processed("/path/to/file.txt")
-    """
-    logger.info(f"{Fore.BLUE}📄 Processed: {file_path}{Style.RESET_ALL}")
-
-def log_token_count(count):
-    """
-    Logs the total number of tokens processed.
-
-    This function logs the total count of tokens processed by the application,
-    using a cyan color and a token emoji for visual distinction.
-
-    Args:
-        count (int): The total number of tokens processed.
-
-    Example:
-        log_token_count(5000)
-    """
-    logger.info(f"{Fore.CYAN}🔢 Token count: {count}{Style.RESET_ALL}")
-
 def log_output_created(output_path):
-    """
-    Logs a message indicating that an output file has been created.
+    """Log a message indicating that an output file has been created."""
+    logger = logging.getLogger()
+    logger.info(f"Output file created: {output_path}")
 
-    This function logs a message at the INFO level, indicating that an output file has been successfully created.
-    It uses a green color and a folder emoji for visual distinction.
-
-    Args:
-        output_path (str): The path to the output file that was created.
-
-    Example:
-        log_output_created("/path/to/output/file.txt")
-    """
-    logger.info(f"{Fore.GREEN}📁 Output file created: {output_path}{Style.RESET_ALL}")
-
-def log_clipboard_copy(success=True):
-    """
-    Logs whether the content was successfully copied to the clipboard.
-
-    This function logs a message indicating whether the content copying to the clipboard was successful or not.
-    It uses different emojis and colors depending on the success status.
-
-    Args:
-        success (bool): Indicates whether the content was successfully copied to the clipboard. Defaults to True.
-
-    Examples:
-        log_clipboard_copy(True)
-            Logs: 📋 Content copied to clipboard
-        log_clipboard_copy(False)
-            Logs: 📋 Failed to copy content to clipboard
-    """
+def log_clipboard_copy(success):
+    """Log a message indicating whether copying to clipboard was successful."""
+    logger = logging.getLogger()
     if success:
-        logger.info(f"{Fore.GREEN}📋 Content copied to clipboard{Style.RESET_ALL}")
+        success_message = "\033[92m📋 Content copied to clipboard successfully.\033[0m"
+        logger.info(success_message)
+        print(success_message, file=sys.stderr)
     else:
-        logger.warning(f"{Fore.YELLOW}📋 Failed to copy content to clipboard{Style.RESET_ALL}")
+        logger.error("Failed to copy content to clipboard.")
+        print("Failed to copy content to clipboard.", file=sys.stderr)
+
+def log_token_count(token_count):
+    """Log the token count."""
+    # Calculate the number of tokens in the input 
+    token_count_message = f"\n✨ \033[94mToken count: {token_count}\033[0m\n"  # Added color for better display
+    print(token_count_message, file=sys.stderr)
+
+def log_token_prices(prices):
+    """Log the estimated token prices."""
+    # Remove the unused logger variable
+    # logger = logging.getLogger()  # Unused variable
+    header = "─────────────────────────────────────────────────── Estimated Token Prices ───────────────────────────────────────────────────"
+    print(header)
+    print("┏━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓")
+    print("┃             ┃                     ┃   Input Price ┃  Output Price ┃         Tokens ┃               Price $ ┃            ┃")
+    print("┃ Provider    ┃ Model               ┃ ($/1M tokens) ┃ ($/1M tokens) ┃       In | Out ┃              In | Out ┃ Total Cost ┃")
+    print("┡━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩")
+    for price in prices:
+        print(f"│ {price['provider']: <11} │ {price['model']: <19} │ {price['input_price']: >13} │ {price['output_price']: >13} │ {price['tokens_in']: >13} | {price['tokens_out']: >13} │ {price['input_cost']: >12} | {price['output_cost']: >12} │ {price['total_cost']: >12} │")
+    print("└─────────────┴─────────────────────┴─────────────────┴─────────────────┴────────────────┴─────────────────────┴────────────┘")

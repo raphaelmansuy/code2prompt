@@ -1,8 +1,7 @@
 import pytest
 from pathlib import Path
 import tempfile
-import shutil
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from code2prompt.utils.create_template_directory import create_templates_directory
 
 @pytest.fixture

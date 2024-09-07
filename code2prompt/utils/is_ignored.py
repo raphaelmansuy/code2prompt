@@ -2,8 +2,6 @@ from fnmatch import fnmatch
 from pathlib import Path
 
 
-from pathlib import Path
-from fnmatch import fnmatch
 
 def is_ignored(file_path: Path, gitignore_patterns: list, base_path: Path) -> bool:
     """

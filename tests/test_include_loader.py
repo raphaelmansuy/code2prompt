@@ -1,7 +1,6 @@
 import pytest
 from jinja2 import Environment, TemplateNotFound
-from code2prompt.utils.include_loader import IncludeLoader, CircularIncludeError
-import os
+from code2prompt.utils.include_loader import IncludeLoader
 
 @pytest.fixture
 def temp_dir(tmp_path):

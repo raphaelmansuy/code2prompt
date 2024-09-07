@@ -10,23 +10,23 @@
 
 Code2Prompt is a powerful command-line tool that generates comprehensive prompts from codebases, designed to streamline interactions between developers and Large Language Models (LLMs) for code analysis, documentation, and improvement tasks.
 
-
 ## Table of Contents
 
 1. [Why Code2Prompt?](#why-code2prompt)
 2. [Features](#features)
 3. [Installation](#installation)
-4. [Quick Start](#quick-start)
-5. [Usage](#usage)
-6. [Options](#options)
-7. [Examples](#examples)
-8. [Templating System](#templating-system)
-9. [Integration with LLM CLI](#integration-with-llm-cli)
-10. [GitHub Actions Integration](#github-actions-integration)
-11. [Configuration File](#configuration-file)
-12. [Troubleshooting](#troubleshooting)
-13. [Contributing](#contributing)
-14. [License](#license)
+4. [Getting Started](#getting-started)
+5. [Quick Start](#quick-start)
+6. [Usage](#usage)
+7. [Options](#options)
+8. [Examples](#examples)
+9. [Templating System](#templating-system)
+10. [Integration with LLM CLI](#integration-with-llm-cli)
+11. [GitHub Actions Integration](#github-actions-integration)
+12. [Configuration File](#configuration-file)
+13. [Troubleshooting](#troubleshooting)
+14. [Contributing](#contributing)
+15. [License](#license)
 
 # Code2Prompt: Transform Your Codebase into AI-Ready Prompts
 
@@ -42,25 +42,25 @@ Code2Prompt is a powerful, open-source command-line tool that bridges the gap be
 
 ### 🚀 Key Features
 
-- **Holistic Codebase Representation**: Generate a well-structured Markdown prompt that captures your entire project's essence.
-- **Intelligent Source Tree Generation**: Create a clear, hierarchical view of your codebase structure.
-- **Customizable Prompt Templates**: Tailor your output using Jinja2 templates to suit specific AI tasks.
-- **Smart Token Management**: Count and optimize tokens to ensure compatibility with various LLM token limits.
-- **Gitignore Integration**: Respect your project's .gitignore rules for accurate representation.
-- **Flexible File Handling**: Filter and exclude files using powerful glob patterns.
-- **Clipboard Ready**: Instantly copy generated prompts to your clipboard for quick AI interactions.
-- **Multiple Output Options**: Save to file or display in the console.
-- **Enhanced Code Readability**: Add line numbers to source code blocks for precise referencing.
-- **Include file**: Support of template import
-- **Input variables**: Support of Input Variables in templates.
+- **Holistic Codebase Representation**: Generate a well-structured Markdown prompt that captures your entire project's essence, making it easier for LLMs to understand the context.
+- **Intelligent Source Tree Generation**: Create a clear, hierarchical view of your codebase structure, allowing for better navigation and understanding of the project.
+- **Customizable Prompt Templates**: Tailor your output using Jinja2 templates to suit specific AI tasks, enhancing the relevance of generated prompts.
+- **Smart Token Management**: Count and optimize tokens to ensure compatibility with various LLM token limits, preventing errors during processing.
+- **Gitignore Integration**: Respect your project's .gitignore rules for accurate representation, ensuring that irrelevant files are excluded from processing.
+- **Flexible File Handling**: Filter and exclude files using powerful glob patterns, giving you control over which files are included in the prompt generation.
+- **Clipboard Ready**: Instantly copy generated prompts to your clipboard for quick AI interactions, streamlining your workflow.
+- **Multiple Output Options**: Save to file or display in the console, providing flexibility in how you want to use the generated prompts.
+- **Enhanced Code Readability**: Add line numbers to source code blocks for precise referencing, making it easier to discuss specific parts of the code.
+- **Include file**: Support of template import, allowing for modular template design.
+- **Input variables**: Support of Input Variables in templates, enabling dynamic prompt generation based on user input.
 
 ### 💡 Why Code2Prompt?
 
 - **Contextual Understanding**: Provide LLMs with a comprehensive view of your project for more accurate suggestions and analysis.
-- **Consistency Boost**: Maintain coding style and conventions across your entire project.
-- **Efficient Refactoring**: Enable better interdependency analysis and smarter refactoring recommendations.
-- **Improved Documentation**: Generate contextually relevant documentation that truly reflects your codebase.
-- **Pattern Recognition**: Help LLMs learn and apply your project-specific patterns and idioms.
+- **Consistency Boost**: Maintain coding style and conventions across your entire project, improving code quality.
+- **Efficient Refactoring**: Enable better interdependency analysis and smarter refactoring recommendations, saving time and effort.
+- **Improved Documentation**: Generate contextually relevant documentation that truly reflects your codebase, enhancing maintainability.
+- **Pattern Recognition**: Help LLMs learn and apply your project-specific patterns and idioms, improving the quality of AI interactions.
 
 Transform the way you interact with AI for software development. With Code2Prompt, harness the full power of your codebase in every AI conversation.
 
@@ -79,6 +79,20 @@ pip install code2prompt
 
 ```bash
 pipx install code2prompt
+```
+
+## Getting Started
+
+To get started with Code2Prompt, follow these steps:
+
+1. **Install Code2Prompt**: Use one of the installation methods mentioned above.
+2. **Prepare Your Codebase**: Ensure your project is organized and that you have a `.gitignore` file if necessary.
+3. **Run Code2Prompt**: Use the command line to generate prompts from your codebase.
+
+For example, to generate a prompt from a single Python file, run:
+
+```bash
+code2prompt --path /path/to/your/script.py
 ```
 
 ## Quick Start
@@ -130,7 +144,7 @@ code2prompt --path /path/to/dir1 --path /path/to/file2.py [OPTIONS]
 | `--encoding` | | Specify the tokenizer encoding to use (default: "cl100k_base") |
 | `--create-templates` | | Create a templates directory with example templates |
 | `--version` | `-v` | Show the version and exit |
-
+| `--log-level` | | Set the logging level (e.g., DEBUG, INFO, WARNING, ERROR, CRITICAL) |
 
 ## Command Parameters
 
@@ -224,7 +238,6 @@ or
 4. When working with complex projects, consider using a configuration file to manage your filter and exclude patterns.
 
 By using the `--filter` and `--exclude` options effectively and safely (with proper quoting), you can precisely control which files are processed in your project, ensuring both accuracy and security in your command execution.
-
 
 ## Examples
 
@@ -350,7 +363,6 @@ code2prompt --path /your/project --tokens --encoding p50k_base
 
 Understanding token counts is crucial when working with AI models that have token limits, ensuring your prompts fit within the model's context window.
 
-
 ### Token Price Estimation
 
 Code2Prompt now includes a powerful feature for estimating token prices across various AI providers and models. Use the `--price` option in conjunction with `--tokens` to display a comprehensive breakdown of estimated costs. This feature calculates prices based on both input and output tokens, with input tokens determined by your codebase and a default of 1000 output tokens (customizable via `--output-tokens`). You can specify a particular provider or model, or view prices across all available options. This functionality helps developers make informed decisions about AI model usage and cost management. For example:
@@ -362,7 +374,6 @@ code2prompt --path /your/project --tokens --price --provider openai --model gpt-
 This command will analyze your project, count the tokens, and provide a detailed price estimation for OpenAI's GPT-4 model.
 
 ![](./docs/screen-example2.png)
-
 
 ## 🔥 Analyzing Codebases
 
@@ -462,8 +473,6 @@ Start from this codebase:
 ## The codebase:
 
 <codebase>
-
-
 ```
 
 When you run `code2prompt` with this template, it will automatically detect the `{{input:variable_name}}` patterns and prompt the user to provide values for each variable (extension_name, main_functionality, and target_audience). This allows for flexible and interactive prompt generation, making it easy to create customized AI prompts for various Chrome extension ideas.
@@ -475,8 +484,7 @@ For example, if a user inputs:
 
 The tool will generate a tailored prompt for an AI to create a detailed plan for this specific Chrome extension. This feature is particularly useful for developers, product managers, or anyone looking to quickly generate customized AI prompts for various projects or ideas.
 
-
-## 🔥 Feature Highligth "Include File" Feature
+## 🔥 Feature Highlight "Include File" Feature
 
 The code2prompt project now supports a powerful "include file" feature, enhancing template modularity and reusability.
 
@@ -531,11 +539,11 @@ Example `.code2promptrc`:
 
 ## Roadmap
 
-   - [ ] Interractive filtering
+   - [ ] Interactive filtering
    - [X] Include system in template to promote re-usability of sub templates.
    - [X] Support of input variables
-   - [ ] Tokens count for Anthropic Models and other models such LLama3 or Mistral
-   - [X] Cost Estimations for main LLM providers based in token count
+   - [ ] Tokens count for Anthropic Models and other models such as LLama3 or Mistral
+   - [X] Cost Estimations for main LLM providers based on token count
    - [ ] Integration with [qllm](https://github.com/quantalogic/qllm) (Quantalogic LLM)
    - [ ] Embedding of file summary in SQL-Lite
    - [ ] Intelligence selection of file based on an LLM
