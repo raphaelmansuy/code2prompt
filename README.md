@@ -145,6 +145,7 @@ code2prompt --path /path/to/dir1 --path /path/to/file2.py [OPTIONS]
 | `--create-templates` | | Create a templates directory with example templates |
 | `--version` | `-v` | Show the version and exit |
 | `--log-level` | | Set the logging level (e.g., DEBUG, INFO, WARNING, ERROR, CRITICAL) |
+| `--interactive` | `-i` | Activate interactive mode for file selection |
 
 ## Command Parameters
 
@@ -424,7 +425,7 @@ Result:
     │   └── __pycache__
     │       └── .pyc
     ├── __pycache__
-    │   └── .pyc
+    │   └─ .pyc
     ├── templates
     │   └── .j2
     └── data
@@ -509,6 +510,35 @@ The code2prompt project now supports a powerful "include file" feature, enhancin
 ```
 
 This approach allows you to organize your template structure more efficiently, improving maintainability and allowing for easy updates to specific sections without modifying the entire template. The include feature supports both relative and absolute paths, making it flexible for various project structures. By leveraging this feature, you can significantly reduce code duplication, improve template management, and create a more modular and scalable structure for your code2prompt templates.
+
+## Interactive Mode
+
+The interactive mode allows users to select files for processing in a user-friendly manner. This feature is particularly useful when dealing with large codebases or when you want to selectively include files without manually specifying each path.
+
+### How to Use Interactive Mode
+
+To activate interactive mode, use the `--interactive` or `-i` option when running the `code2prompt` command. Here's an example:
+
+```bash
+code2prompt --path /path/to/your/project --interactive
+```
+
+![](./docs/screen-example3.png)
+
+
+### Features of Interactive Mode
+
+- **File Selection**: Navigate through the directory structure and select files using keyboard controls.
+- **Visual Feedback**: The interface provides visual cues to help you understand which files are selected or ignored.
+
+### Keyboard Controls
+
+- **Arrow Keys**: Navigate through the list of files.
+- **Spacebar**: Toggle the selection of a file.
+- **Enter**: Confirm your selection and proceed with the command.
+- **Esc**: Exit the interactive mode without making any changes.
+
+This mode enhances the usability of Code2Prompt, making it easier to manage file selections in complex projects.
 
 ## Configuration File
 
