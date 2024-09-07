@@ -1,6 +1,5 @@
 from typing import List, Dict, Set, Tuple
 import os
-import signal
 from pathlib import Path
 from prompt_toolkit import Application
 from prompt_toolkit.layout.containers import VSplit, HSplit, Window
@@ -10,7 +9,11 @@ from prompt_toolkit.layout.scrollable_pane import ScrollablePane
 from prompt_toolkit.widgets import Frame
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
+# Moved signal import here
+import signal
 
+# Constant for terminal height adjustment
+TERMINAL_HEIGHT_ADJUSTMENT = 3
 
 class InteractiveFileSelector:
     """Interactive file selector."""
@@ -62,7 +65,7 @@ class InteractiveFileSelector:
             line = f"{indent}{prefix}{Path(file_path).name}"
             lines.append(line)
 
-            # Resolve and store the full path
+            # Resolve and store the full path once
             resolved_path = Path(parent_dir, file_path).resolve()
             tree_paths.append(resolved_path)
             tree_full_paths.append(str(resolved_path))  # Store the full path as a string
@@ -78,10 +81,17 @@ class InteractiveFileSelector:
 
         return lines, tree_paths, tree_full_paths
 
+    def _validate_cursor_position(self) -> None:
+        """Ensure cursor position is valid."""
+        if self.cursor_position < 0:
+            self.cursor_position = 0
+        elif self.cursor_position >= len(self.formatted_tree):
+            self.cursor_position = len(self.formatted_tree) - 1
+
     def _get_visible_lines(self) -> int:
         """Calculate the number of visible lines based on terminal height."""
         terminal_height = self._get_terminal_height()
-        return terminal_height - 3  # Subtracting for instructions and padding
+        return terminal_height - TERMINAL_HEIGHT_ADJUSTMENT  # Use constant
 
     def _get_formatted_text(self) -> List[tuple]:
         """Generate formatted text for display."""
@@ -99,8 +109,7 @@ class InteractiveFileSelector:
                 style = "class:cursor" if i == self.cursor_position else ""
 
                 # Ensure cursor_position is valid
-                if self.cursor_position >= len(self.formatted_tree):
-                    self.cursor_position = len(self.formatted_tree) - 1
+                self._validate_cursor_position()
 
                 # Get the full path
                 file_path = str(self.tree_full_paths[i])
@@ -161,17 +170,13 @@ class InteractiveFileSelector:
         def move_cursor_up(_event):
             if self.cursor_position > 0:
                 self.cursor_position -= 1
-                if self.cursor_position < self.start_line:
-                    self.start_line = self.cursor_position  # Scroll up
+                self._validate_cursor_position()  # Validate after moving
 
         @kb.add("down")
         def move_cursor_down(_event):
             if self.cursor_position < len(self.formatted_tree) - 1:
                 self.cursor_position += 1
-                if self.cursor_position >= self.start_line + self._get_visible_lines():
-                    self.start_line = (
-                        self.cursor_position - self._get_visible_lines() + 1
-                    )  # Scroll down
+                self._validate_cursor_position()  # Validate after moving
 
         @kb.add("pageup")
         def page_up(_event):
