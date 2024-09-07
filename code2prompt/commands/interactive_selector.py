@@ -19,11 +19,11 @@ from prompt_toolkit.styles import Style
 class InteractiveFileSelector:
     """Interactive file selector."""
 
-    def __init__(self, paths: List[str]):  # Specify type for paths
-        self.paths: List[str] = paths  # Store the list of paths
+    def __init__(self, paths: List[Path]):  # Change type to List[Path]
+        self.paths: List[Path] = paths  # Store the list of paths as Path objects
         self.start_line: int = 0
         self.cursor_position: int = 0
-        self.selected_files: List[str] = []
+        self.selected_files: List[Path] = []  # Change type to List[Path]
         self.formatted_tree: List[str] = []
         self.kb = self._create_key_bindings()  # Call the new method
         self.app = self._create_application(self.kb)  # Use the private property
@@ -74,9 +74,9 @@ class InteractiveFileSelector:
             checkbox = (
                 "[X]"
                 if any(
-                    str(Path(path) / line.split("── ")[-1].strip())
-                    in self.selected_files
+                    full_path == (path / line.split("── ")[-1].strip())  # Check for exact match
                     for path in self.paths
+                    for full_path in self.selected_files  # Iterate over selected_files
                 )  # Check against all paths
                 else "[ ]"
             )
@@ -87,9 +87,10 @@ class InteractiveFileSelector:
         self, current_item: str
     ) -> None:  # Add parameter type and return type
         """Toggle the selection of the current item."""
-        full_paths: List[str] = [
-            str(Path(path) / current_item) for path in self.paths
-        ]  # Create full paths for all paths
+        current_item_path = Path(current_item)  # Convert current_item to Path
+        full_paths: List[Path] = [
+            path / current_item_path for path in self.paths  # Use Path for full paths
+        ]
         for full_path in full_paths:
             if full_path in self.selected_files:
                 self.selected_files.remove(full_path)
@@ -111,6 +112,9 @@ class InteractiveFileSelector:
         self._check_paths()  # Update method name to check multiple paths
         tree = self._get_directory_tree()
         self.formatted_tree = self._format_tree(tree)
+
+        self.kb = self._create_key_bindings()  # Call the new method
+        self.app = self._create_application(self.kb)  # Use the private property
 
         signal.signal(signal.SIGWINCH, self._resize_handler)
 
@@ -209,7 +213,7 @@ class InteractiveFileSelector:
                             Window(height=1),
                             Window(
                                 content=FormattedTextControl(
-                                    lambda: f"Selected: {len(self.selected_files)} file(s): {', '.join(self.selected_files) if self.selected_files else 'None'}"
+                                    lambda: f"Selected: {len(self.selected_files)} file(s): {', '.join(str(file) for file in self.selected_files) if self.selected_files else 'None'}"  # Convert Path to str
                                 ),
                                 height=1,
                             ),
