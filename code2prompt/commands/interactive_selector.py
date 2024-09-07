@@ -23,7 +23,9 @@ class InteractiveFileSelector:
         self.tree_paths: List[Path] = []
         self.kb = self._create_key_bindings()
         self.app = self._create_application(self.kb)
-        self.selected_files : Set[str] = set([str(Path(file).resolve()) for file in selected_files])
+        self.selected_files: Set[str] = set(
+            [str(Path(file).resolve()) for file in selected_files]
+        )
 
     def _get_terminal_height(self) -> int:
         """Get the height of the terminal."""
@@ -43,7 +45,9 @@ class InteractiveFileSelector:
 
         return tree
 
-    def _format_tree(self, tree: Dict[Path, Dict], indent: str = "") -> List[Union[List[str], List[Path]]]:
+    def _format_tree(
+        self, tree: Dict[Path, Dict], indent: str = ""
+    ) -> List[Union[List[str], List[Path]]]:
         """Format the directory tree into a list of strings."""
         lines: List[str] = []
         tree_paths: List[Path] = []
@@ -70,51 +74,47 @@ class InteractiveFileSelector:
     def _get_formatted_text(self) -> List[tuple]:
         """Generate formatted text for display."""
         result = []
-        
 
         # Ensure that formatted_tree and tree_paths have the same length
         if len(self.formatted_tree) == len(self.tree_paths):
             visible_lines = self._get_visible_lines()
-            
+
             # Calculate the end line for the loop
             end_line = min(self.start_line + visible_lines, len(self.formatted_tree))
-            
-            
+
             for i in range(self.start_line, end_line):
                 line = self.formatted_tree[i]
                 style = "class:cursor" if i == self.cursor_position else ""
-                
+
                 # Ensure cursor_position is valid
                 if self.cursor_position >= len(self.formatted_tree):
                     self.cursor_position = len(self.formatted_tree) - 1
-                
+
                 # Get the full path
                 file_path = self.tree_paths[i]
-                
+
                 # Check if the full path is selected
                 is_selected = str(file_path.resolve()) in self.selected_files
-                
-                if is_selected:
-                    print(f"Selected: {file_path}")
-                
+
+                #if is_selected:
+                    #print(f"Selected: {file_path}")
+
                 # Update checkbox based on selection
                 checkbox = "[X]" if is_selected else "[ ]"
-                
+
                 # Append formatted line to result
                 result.append((style, f"{checkbox} {line}\n"))
 
                 # Debugging output
-                #print(f"Line: {line}, Full Path: {full_path}, Selected: {is_selected}")
+                # print(f"Line: {line}, Full Path: {full_path}, Selected: {is_selected}")
 
         return result
-        
 
     def _toggle_file_selection(self, current_item: str) -> None:
         """Toggle the selection of the current item."""
         if current_item in self.selected_files:
             self.selected_files.remove(current_item)
         else:
-            print(f"Adding: {current_item}")
             self.selected_files.add(current_item)
 
     def _get_current_item(self) -> str:
@@ -197,6 +197,14 @@ class InteractiveFileSelector:
 
         return kb
 
+    def _get_selected_files_text(self) -> str:
+        """Get the selected files text."""
+        # Create a nicer display for selected files
+        if self.selected_files:
+            files_list = "\n".join(f"- {file}" for file in self.selected_files)
+            return f"Selected: {len(self.selected_files)} file(s):\n{files_list}"
+        return "Selected: 0 file(s): None"
+
     def _create_application(self, kb) -> Application:
         """Create and return the application instance."""
         tree_window = Window(
@@ -229,9 +237,9 @@ class InteractiveFileSelector:
                             Window(height=1),
                             Window(
                                 content=FormattedTextControl(
-                                    lambda: f"Selected: {len(self.selected_files)} file(s): {', '.join(str(file) for file in self.selected_files) if self.selected_files else 'None'}"
+                                    self._get_selected_files_text
                                 ),
-                                height=1,
+                                height=10,
                             ),
                         ]
                     ),
