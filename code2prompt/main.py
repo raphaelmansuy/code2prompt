@@ -139,20 +139,36 @@ def cli(ctx, config, path, **generate_options):
 def generate(ctx, **options):
     """Generate markdown from code files"""
 
-    selected_paths = options.get("path")
-    
+    config = ctx.obj["config"].merge(options)
+    logger = setup_logger(level=config.log_level)
+
+    selected_paths: list[Path] = config.path
+    filter_patterns: list[str] = config.filter.split(",") if config.filter else []
+    exclude_patterns: list[str] = config.exclude.split(",") if config.exclude else []
+    case_sensitive: bool = config.case_sensitive
+    gitignore: str = config.gitignore
+
     # filter paths based on .gitignore
-    filtered_paths = retrieve_file_paths(options)
+    filtered_paths = retrieve_file_paths(
+        file_paths=selected_paths,  # {{ edit_1 }} Added 'file_paths' argument
+        gitignore=gitignore,
+        filter_patterns=filter_patterns,
+        exclude_patterns=exclude_patterns,
+        case_sensitive=case_sensitive,
+    )
+    
+    print("Filtered paths: %s", filtered_paths)
 
     if selected_paths:
         file_selector = InteractiveFileSelector(filtered_paths)
         filtered_selected_paths = file_selector.run()
         options["path"] = filtered_selected_paths
+    
+
 
     print("Selected paths: %s", filtered_selected_paths)
+    exit()
 
-    config = ctx.obj["config"].merge(options)
-    logger = setup_logger(level=config.log_level)
     logger.info("Generating markdown with options: %s", options)
 
     print("Generating markdown with options: %s", options)

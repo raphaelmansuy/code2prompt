@@ -29,8 +29,6 @@ def retrieve_file_paths(
     """
     if not file_paths:
         raise ValueError("file_paths list cannot be empty.")
-    if not filter_patterns and not exclude_patterns:
-        raise ValueError("At least one filter or exclude pattern must be provided.")
 
     retrieved_paths: list[Path] = []  # Renamed for clarity
 

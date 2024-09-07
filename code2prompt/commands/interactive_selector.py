@@ -32,14 +32,13 @@ class InteractiveFileSelector:
     def _get_directory_tree(self):
         """Get a combined directory tree for the given paths."""
         tree = {}
-        for path in self.paths:  # Iterate over each path
-            for p in Path(path).rglob("*"):
-                parts = p.relative_to(path).parts
-                current = tree
-                for part in parts:
-                    if part not in current:
-                        current[part] = {}
-                    current = current[part]
+        for path in self.paths:  # Iterate over each resolved path
+            parts = Path(path).parts  # Get parts of the resolved path
+            current = tree
+            for part in parts:
+                if part not in current:
+                    current[part] = {}
+                current = current[part]
         return tree
 
     def _format_tree(self, tree, indent=""):
