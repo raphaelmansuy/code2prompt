@@ -91,13 +91,10 @@ class InteractiveFileSelector:
                     self.cursor_position = len(self.formatted_tree) - 1
 
                 # Get the full path
-                file_path = self.tree_paths[i]
+                file_path = str(self.tree_paths[i].resolve())
 
                 # Check if the full path is selected
-                is_selected = str(file_path.resolve()) in self.selected_files
-
-                #if is_selected:
-                    #print(f"Selected: {file_path}")
+                is_selected = file_path in self.selected_files
 
                 # Update checkbox based on selection
                 checkbox = "[X]" if is_selected else "[ ]"
@@ -136,7 +133,7 @@ class InteractiveFileSelector:
         self.formatted_tree, self.tree_paths = self._format_tree(tree)
         signal.signal(signal.SIGWINCH, self._resize_handler)
         self.app.run()
-        return self.selected_files  # Return the selected files
+        return self.selected_files, self.tree_paths
 
     def _create_key_bindings(self) -> KeyBindings:
         """Create and return key bindings for the application."""
