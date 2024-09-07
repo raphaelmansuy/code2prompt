@@ -30,7 +30,7 @@ def retrieve_file_paths(
     if not file_paths:
         raise ValueError("file_paths list cannot be empty.")
 
-    retrieved_paths: list[Path] = []  # Renamed for clarity
+    retrieved_paths: list[Path] = []
 
     for path in file_paths:
         try:
@@ -41,30 +41,30 @@ def retrieve_file_paths(
                 path.parent if path.is_file() else path, gitignore
             )
 
-            if path.is_file():
-                # Add single file path
+            # Add the top-level directory if it should be processed
+            if path.is_dir() and should_process_file(
+                path,
+                gitignore_patterns,
+                path.parent,
+                filter_patterns,
+                exclude_patterns,
+                case_sensitive,
+            ):
+                retrieved_paths.append(path)
+
+            # Add files and directories within the top-level directory
+            for file_path in path.rglob("*"):
                 if should_process_file(
-                    path,
+                    file_path,
                     gitignore_patterns,
-                    path.parent,
+                    path,
                     filter_patterns,
                     exclude_patterns,
                     case_sensitive,
                 ):
-                    retrieved_paths.append(path)
-            else:
-                # Add directory file paths
-                for file_path in path.rglob("*"):
-                    if should_process_file(
-                        file_path,
-                        gitignore_patterns,
-                        path,
-                        filter_patterns,
-                        exclude_patterns,
-                        case_sensitive,
-                    ):
-                        retrieved_paths.append(file_path)
-        except (FileNotFoundError, PermissionError) as e:  # Catch specific exceptions
-            print(f"Error processing path {path}: {e}")  # Log the error
+                    retrieved_paths.append(file_path)
+
+        except (FileNotFoundError, PermissionError) as e:
+            print(f"Error processing path {path}: {e}")
 
     return retrieved_paths
