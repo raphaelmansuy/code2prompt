@@ -49,7 +49,7 @@ class InteractiveFileSelector:
     
 
     def _format_tree(
-        self, tree: Dict[Path, Dict], indent: str = ""
+        self, tree: Dict[Path, Dict], indent: str = "", parent_dir: str = ""
     ) -> Tuple[List[str], List[Path], List[str]]:
         """Format the directory tree into a list of strings."""
         lines: List[str] = []
@@ -63,22 +63,18 @@ class InteractiveFileSelector:
             lines.append(line)
 
             # Resolve and store the full path
-            resolved_path = Path(file_path).resolve()
+            resolved_path = Path(parent_dir, file_path).resolve()
             tree_paths.append(resolved_path)
-            tree_full_paths.append(
-                str(resolved_path)
-            )  # Store the full path as a string
+            tree_full_paths.append(str(resolved_path))  # Store the full path as a string
 
             if subtree:
                 extension = " " if is_last else "│ "
                 sub_lines, sub_tree_paths, sub_full_paths = self._format_tree(
-                    subtree, indent + extension
+                    subtree, indent + extension, str(resolved_path)
                 )
                 lines.extend(sub_lines)
                 tree_paths.extend(sub_tree_paths)
-                tree_full_paths.extend(
-                    sub_full_paths
-                )  # Merge the full paths from the subtree
+                tree_full_paths.extend(sub_full_paths)  # Merge the full paths from the subtree
 
         return lines, tree_paths, tree_full_paths
 
