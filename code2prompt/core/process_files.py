@@ -3,7 +3,6 @@ This module contains functions for processing files and directories.
 """
 
 from pathlib import Path
-from code2prompt.core.file_path_retriever import retrieve_file_paths
 from code2prompt.core.process_file import process_file
 
 
@@ -12,10 +11,6 @@ def process_files(
     suppress_comments: bool,
     line_number: bool,
     no_codeblock: bool,
-    filter_patterns: list[str],
-    exclude_patterns: list[str],
-    case_sensitive: bool,
-    gitignore: list[str],
 ):
     """
     Processes files or directories based on the provided paths.
@@ -28,12 +23,12 @@ def process_files(
     list: A list of dictionaries containing processed file data.
     """
     files_data = []
+    
+    # Test file paths if List[Path] type
+    if not (isinstance(file_paths, list) and all(isinstance(path, Path) for path in file_paths)): 
+        raise ValueError("file_paths must be a list of Path objects")
 
     # Use get_file_paths to retrieve all file paths to process
-    file_paths = retrieve_file_paths(
-        file_paths, filter_patterns, exclude_patterns, case_sensitive, gitignore
-    )
-
     for path in file_paths:
         path = Path(path)
         result = process_file(

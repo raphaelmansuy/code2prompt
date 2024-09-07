@@ -44,6 +44,12 @@ from code2prompt.version import VERSION
     help='Comma-separated filter patterns to include files (e.g., "*.py,*.js").',
 )
 @click.option(
+    "--interactive",
+    "-i",
+    is_flag=True,
+    help="Interactive mode to select files.",
+)
+@click.option(
     "--exclude",
     "-e",
     type=str,
@@ -157,21 +163,12 @@ def generate(ctx, **options):
         case_sensitive=case_sensitive,
     )
 
-    print("Filtered paths: %s", filtered_paths)
-
-    if filtered_paths:
+    if filtered_paths and config.interactive:
         file_selector = InteractiveFileSelector(filtered_paths, filtered_paths)
-        filtered_selected_paths, trees_paths, full_paths = file_selector.run()
-        options["path"] = filtered_selected_paths
-
-    print("Selected paths: %s", filtered_selected_paths)
-    print("Tree paths: %s", trees_paths)
-    print("Full paths: %s", full_paths)
-    exit()
-
-    logger.info("Generating markdown with options: %s", options)
-
-    print("Generating markdown with options: %s", options)
+        filtered_selected_path  = file_selector.run()
+        config.path = filtered_selected_path
+    else:
+        config.path = filtered_paths
 
     command = GenerateCommand(config, logger)
     command.execute()

@@ -156,7 +156,11 @@ class InteractiveFileSelector:
         )
         signal.signal(signal.SIGWINCH, self._resize_handler)
         self.app.run()
-        return self.selected_files, self.tree_paths, self.tree_full_paths
+        list_selected_files : List[Path] = []
+        for f in self.selected_files:
+            list_selected_files.append(Path(f))
+        print(list_selected_files)
+        return list_selected_files
 
     def _create_key_bindings(self) -> KeyBindings:
         """Create and return key bindings for the application."""

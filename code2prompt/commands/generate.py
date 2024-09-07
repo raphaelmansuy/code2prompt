@@ -19,9 +19,8 @@ class GenerateCommand(BaseCommand):
     def execute(self) -> None:
         """Execute the generate command."""
         self.logger.info("Generating markdown...")
-
-        files_data = self._process_files()
-        content = self._generate_content(files_data)
+        file_paths = self._process_files()
+        content = self._generate_content(file_paths)
         self._write_output(content)
 
         if self.config.tokens or self.config.price:
@@ -32,19 +31,13 @@ class GenerateCommand(BaseCommand):
     def _process_files(self) -> List[Dict[str, Any]]:
         """Process files based on the configuration."""
         all_files_data = []
-
-        for path in self.config.path:
-            files_data = process_files(
-                file_paths=path,
-                line_number=self.config.line_number,
-                no_codeblock=self.config.no_codeblock,
-                suppress_comments=self.config.suppress_comments,
-                filter_patterns=self.config.filter_patterns,
-                exclude_patterns=self.config.exclude_patterns,
-                case_sensitive=self.config.case_sensitive,
-                gitignore=self.config.gitignore,
-            )
-            all_files_data.extend(files_data)
+        files_data = process_files(
+            file_paths=self.config.path,
+            line_number=self.config.line_number,
+            no_codeblock=self.config.no_codeblock,
+            suppress_comments=self.config.suppress_comments,
+        )
+        all_files_data.extend(files_data)
         return all_files_data
 
     def _generate_content(self, files_data: List[Dict[str, Any]]) -> str:

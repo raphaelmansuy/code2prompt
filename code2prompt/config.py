@@ -32,6 +32,7 @@ class Configuration(BaseModel):
     output_tokens: int = Field(1000, description="Specify the number of output tokens for price calculation.")
     analyze: bool = Field(False, description="Analyze the codebase and provide a summary of file extensions.")
     format: str = Field("flat", description="Format of the analysis output (flat or tree-like).")
+    interactive: bool = Field(False, description="Interactive mode to select files.")
 
     @field_validator('encoding')
     @classmethod
