@@ -149,6 +149,12 @@ def generate(ctx, **options):
     logger = setup_logger(level=config.log_level)
 
     selected_paths: list[Path] = config.path
+
+    # Check if selected_paths is empty before proceeding
+    if not selected_paths:  # {{ edit_1 }} Added check for empty paths
+        logging.error("No file paths provided. Please specify valid paths.")
+        return  # Exit the function if no paths are provided
+
     filter_patterns: list[str] = config.filter.split(",") if config.filter else []
     exclude_patterns: list[str] = config.exclude.split(",") if config.exclude else []
     case_sensitive: bool = config.case_sensitive
