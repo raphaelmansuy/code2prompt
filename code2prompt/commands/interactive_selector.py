@@ -129,7 +129,7 @@ class InteractiveFileSelector:
     def _get_current_item(self) -> str:
         """Get the current item based on cursor position."""
         if 0 <= self.cursor_position < len(self.tree_paths):
-            current_item = self.tree_paths[self.cursor_position]
+            current_item = self.tree_full_paths[self.cursor_position]
             return current_item  # Return the full path
         return None  # Return None if no valid path is found
 
