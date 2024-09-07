@@ -2,6 +2,7 @@
 This module contains the InteractiveFileSelector class, which allows for interactive file selection.
 """
 
+from typing import List, Dict  # Import necessary types
 import os
 import signal
 from pathlib import Path
@@ -18,20 +19,20 @@ from prompt_toolkit.styles import Style
 class InteractiveFileSelector:
     """Interactive file selector."""
 
-    def __init__(self, paths):  # Changed from single path to list of paths
-        self.paths = paths  # Store the list of paths
-        self.start_line = 0
-        self.cursor_position = 0
-        self.selected_files = []
-        self.formatted_tree = []
+    def __init__(self, paths: List[str]):  # Specify type for paths
+        self.paths: List[str] = paths  # Store the list of paths
+        self.start_line: int = 0
+        self.cursor_position: int = 0
+        self.selected_files: List[str] = []
+        self.formatted_tree: List[str] = []
 
-    def _get_terminal_height(self):
+    def _get_terminal_height(self) -> int:  # Add return type
         """Get the height of the terminal."""
         return os.get_terminal_size().lines
 
-    def _get_directory_tree(self):
+    def _get_directory_tree(self) -> Dict[str, Dict]:  # Add return type
         """Get a combined directory tree for the given paths."""
-        tree = {}
+        tree: Dict[str, Dict] = {}
         for path in self.paths:  # Iterate over each resolved path
             parts = Path(path).parts  # Get parts of the resolved path
             current = tree
@@ -80,9 +81,11 @@ class InteractiveFileSelector:
             result.append((style, f"{checkbox} {line}\n"))
         return result
 
-    def _toggle_file_selection(self, current_item):
+    def _toggle_file_selection(
+        self, current_item: str
+    ) -> None:  # Add parameter type and return type
         """Toggle the selection of the current item."""
-        full_paths = [
+        full_paths: List[str] = [
             str(Path(path) / current_item) for path in self.paths
         ]  # Create full paths for all paths
         for full_path in full_paths:
@@ -91,7 +94,7 @@ class InteractiveFileSelector:
             else:
                 self.selected_files.append(full_path)
 
-    def _get_current_item(self):
+    def _get_current_item(self) -> str:  # Add return type
         """Get the current item based on cursor position."""
         return self.formatted_tree[self.cursor_position].split("── ")[-1].strip()
 
@@ -224,7 +227,7 @@ class InteractiveFileSelector:
         )
         return self.selected_files
 
-    def _check_paths(self):  # New method to check all paths
+    def _check_paths(self) -> None:  # Add return type
         """Check if the provided paths are valid."""
         if not self.paths or any(not path for path in self.paths):
             raise ValueError(
