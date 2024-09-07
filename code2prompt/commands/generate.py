@@ -23,8 +23,10 @@ class GenerateCommand(BaseCommand):
         content = self._generate_content(file_paths)
         self._write_output(content)
 
-        if self.config.tokens or self.config.price:
-            self._handle_token_count_and_price(content)
+        if self.config.price:
+            self.display_token_count_and_price(content)
+        elif self.config.tokens:
+            self.display_token_count(content)
 
         self.logger.info("Generation complete.")
 
@@ -48,10 +50,17 @@ class GenerateCommand(BaseCommand):
         """Write the generated content to output."""
         write_output(content, self.config.output, copy_to_clipboard=True)
 
-    def _handle_token_count_and_price(self, content: str) -> None:
+    def display_token_count_and_price(self, content: str) -> None:
         """Handle token counting and price calculation if enabled."""
         token_count = count_tokens(content, self.config.encoding)
-        log_token_count(token_count)
         model = self.config.model
         provider = self.config.provider
         display_price_table(token_count, provider, model, self.config.output_tokens)
+        log_token_count(token_count)
+
+        
+    def display_token_count(self, content: str) -> None:
+        """Display the token count if enabled."""
+        token_count = count_tokens(content, self.config.encoding)
+        log_token_count(token_count)
+        

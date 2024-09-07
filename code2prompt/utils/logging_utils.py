@@ -46,8 +46,9 @@ def log_clipboard_copy(success):
 
 def log_token_count(token_count):
     """Log the token count."""
-    logger = logging.getLogger()
-    logger.info(f"Token count: {token_count}")
+    # Calculate the number of tokens in the input 
+    token_count_message = f"\n✨ \033[94mToken count: {token_count}\033[0m\n"  # Added color for better display
+    print(token_count_message, file=sys.stderr)
 
 def log_token_prices(prices):
     """Log the estimated token prices."""

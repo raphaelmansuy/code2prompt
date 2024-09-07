@@ -72,8 +72,8 @@ def display_price_table(
     table.add_column("Model", style="green")
     table.add_column("Input Price\n($/1M tokens)", justify="right", style="yellow")
     table.add_column("Output Price\n($/1M tokens)", justify="right", style="yellow")
-    table.add_column("Tokens\nIn | Out", justify="right", style="blue")
-    table.add_column("Price $\nIn | Out", justify="right", style="magenta")
+    table.add_column("Tokens\nOut | In", justify="right", style="blue")
+    table.add_column("Price $\nOut | In", justify="right", style="magenta")
     table.add_column("Total Cost", justify="right", style="red")
 
     for result in price_results:
