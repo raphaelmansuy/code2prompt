@@ -156,15 +156,13 @@ def generate(ctx, **options):
         exclude_patterns=exclude_patterns,
         case_sensitive=case_sensitive,
     )
-    
+
     print("Filtered paths: %s", filtered_paths)
 
-    if selected_paths:
-        file_selector = InteractiveFileSelector(filtered_paths)
+    if filtered_paths:
+        file_selector = InteractiveFileSelector(filtered_paths, filtered_paths)
         filtered_selected_paths = file_selector.run()
         options["path"] = filtered_selected_paths
-    
-
 
     print("Selected paths: %s", filtered_selected_paths)
     exit()

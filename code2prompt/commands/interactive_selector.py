@@ -1,8 +1,4 @@
-"""
-This module contains the InteractiveFileSelector class, which allows for interactive file selection.
-"""
-
-from typing import List, Dict  # Import necessary types
+from typing import List, Dict, Union
 import os
 import signal
 from pathlib import Path
@@ -19,114 +15,110 @@ from prompt_toolkit.styles import Style
 class InteractiveFileSelector:
     """Interactive file selector."""
 
-    def __init__(self, paths: List[Path]):  # Change type to List[Path]
-        self.paths: List[Path] = paths  # Store the list of paths as Path objects
+    def __init__(self, paths: List[Path], selected_files: List[Path]):
+        self.paths: List[Path] = paths.copy()
         self.start_line: int = 0
         self.cursor_position: int = 0
-        self.selected_files: List[Path] = []  # Change type to List[Path]
+        self.selected_files: List[Path] = selected_files.copy()
         self.formatted_tree: List[str] = []
-        self.kb = self._create_key_bindings()  # Call the new method
-        self.app = self._create_application(self.kb)  # Use the private property
+        self.tree_paths: List[Path] = []
+        self.kb = self._create_key_bindings()
+        self.app = self._create_application(self.kb)
 
-    def _get_terminal_height(self) -> int:  # Add return type
+    def _get_terminal_height(self) -> int:
         """Get the height of the terminal."""
         return os.get_terminal_size().lines
 
-    def _get_directory_tree(self) -> Dict[str, Dict]:  # Add return type
+    def _get_directory_tree(self) -> Dict[Path, Dict]:
         """Get a combined directory tree for the given paths."""
-        tree: Dict[str, Dict] = {}
-        for path in self.paths:  # Iterate over each resolved path
-            parts = Path(path).parts  # Get parts of the resolved path
+        tree: Dict[Path, Dict] = {}
+        for path in self.paths:
             current = tree
-            for part in parts:
-                if part not in current:
-                    current[part] = {}
-                current = current[part]
+            current[path] = {}  # Store the path as a key
+            for part in Path(path).parts:
+                if (
+                    part not in current
+                ):  # Fix: Check if part is in current, not current[path]
+                    current[part] = {}  # Fix: Store part as a key
+                current = current[part]  # Fix: Move to the next level in the tree
         return tree
 
-    def _format_tree(self, tree, indent=""):
+    def _format_tree(self, tree, indent="") -> List[Union[List[str], List[Path]]]:
         """Format the directory tree into a list of strings."""
-        lines = []
-        for i, (name, subtree) in enumerate(tree.items()):
+        lines: List[str] = []
+        tree_paths: List[Path] = []
+        for i, (file_path, subtree) in enumerate(tree.items()):
             is_last = i == len(tree) - 1
             prefix = "└── " if is_last else "├── "
-            lines.append(f"{indent}{prefix}{name}")
+            line = f"{indent}{prefix}{Path(file_path).name}"  # Ensure file_path is a Path object
+            lines.append(line)
+            tree_paths.append(file_path)
             if subtree:
                 extension = " " if is_last else "│ "
-                lines.extend(self._format_tree(subtree, indent + extension))
-        return lines
+                sub_lines, sub_tree_paths = self._format_tree(
+                    subtree, indent + extension
+                )
+                lines.extend(sub_lines)
+                tree_paths.extend(sub_tree_paths)
+        return lines, tree_paths
 
-    def _get_visible_lines(self):
+    def _get_visible_lines(self) -> int:
         """Calculate the number of visible lines based on terminal height."""
         terminal_height = self._get_terminal_height()
         return terminal_height - 3  # Subtracting for instructions and padding
 
-    def _get_formatted_text(self):
+    def _get_formatted_text(self) -> List[tuple]:
         """Generate formatted text for display."""
         result = []
-        visible_lines = self._get_visible_lines()
-        for i in range(
-            self.start_line,
-            min(self.start_line + visible_lines, len(self.formatted_tree)),
-        ):
-            line = self.formatted_tree[i]
-            style = "class:cursor" if i == self.cursor_position else ""
-            checkbox = (
-                "[X]"
-                if any(
-                    full_path == (path / line.split("── ")[-1].strip())  # Check for exact match
-                    for path in self.paths
-                    for full_path in self.selected_files  # Iterate over selected_files
-                )  # Check against all paths
-                else "[ ]"
-            )
-            result.append((style, f"{checkbox} {line}\n"))
+
+        if len(self.formatted_tree) == len(self.tree_paths):
+            visible_lines = self._get_visible_lines()
+            for i in range(
+                self.start_line,
+                min(self.start_line + visible_lines, len(self.formatted_tree)),
+            ):
+                line = self.formatted_tree[i]
+                style = "class:cursor" if i == self.cursor_position else ""
+                is_selected = (
+                    self.tree_paths[i] in self.selected_files
+                )  # Check if the full path is selected
+                checkbox = (
+                    "[X]" if is_selected else "[ ]"
+                )  # Update checkbox based on selection
+                result.append(
+                    (style, f"{checkbox} {line}\n")
+                )  # Include checkbox in the display
         return result
 
-    def _toggle_file_selection(
-        self, current_item: str
-    ) -> None:  # Add parameter type and return type
+    def _toggle_file_selection(self, current_item: Path) -> None:
         """Toggle the selection of the current item."""
-        current_item_path = Path(current_item)  # Convert current_item to Path
-        full_paths: List[Path] = [
-            path / current_item_path for path in self.paths  # Use Path for full paths
-        ]
-        for full_path in full_paths:
-            if full_path in self.selected_files:
-                self.selected_files.remove(full_path)
-            else:
-                self.selected_files.append(full_path)
+        if current_item in self.selected_files:
+            self.selected_files.remove(current_item)
+        else:
+            self.selected_files.append(current_item)
 
-    def _get_current_item(self) -> str:  # Add return type
+    def _get_current_item(self) -> Path:
         """Get the current item based on cursor position."""
-        return self.formatted_tree[self.cursor_position].split("── ")[-1].strip()
+        if 0 <= self.cursor_position < len(self.tree_paths):
+            current_item = self.tree_paths[self.cursor_position]
+            return current_item  # Return the full path
+        return None  # Return None if no valid path is found
 
-    def _resize_handler(self, _event):
+    def _resize_handler(self, _event) -> None:
         """Handle terminal resize event."""
-        # Ensure cursor is in view
         self.start_line = max(0, self.cursor_position - self._get_visible_lines() + 1)
         self.app.invalidate()  # Invalidate the application to refresh the layout
 
-    def run(self):
+    def run(self) -> List[Path]:
         """Run the interactive file selection."""
-        self._check_paths()  # Update method name to check multiple paths
+        self._check_paths()
         tree = self._get_directory_tree()
-        self.formatted_tree = self._format_tree(tree)
-
-        self.kb = self._create_key_bindings()  # Call the new method
-        self.app = self._create_application(self.kb)  # Use the private property
-
+        self.formatted_tree, self.tree_paths = self._format_tree(tree)
         signal.signal(signal.SIGWINCH, self._resize_handler)
-
         self.app.run()
+        return self.selected_files  # Return the selected files
 
-        print(
-            "Selected files:",
-            self.selected_files if self.selected_files else "No files selected.",
-        )
-        return self.selected_files
-
-    def _create_key_bindings(self) -> KeyBindings:  # New private method
+    def _create_key_bindings(self) -> KeyBindings:
         """Create and return key bindings for the application."""
         kb = KeyBindings()
 
@@ -155,9 +147,10 @@ class InteractiveFileSelector:
             self.cursor_position = max(
                 0, self.cursor_position - self._get_visible_lines()
             )
-            # Adjust start_line to keep the cursor in view
             if self.cursor_position < self.start_line:
-                self.start_line = self.cursor_position
+                self.start_line = (
+                    self.cursor_position
+                )  # Adjust start_line to keep the cursor in view
 
         @kb.add("pagedown")
         def page_down(_event):
@@ -165,22 +158,26 @@ class InteractiveFileSelector:
                 len(self.formatted_tree) - 1,
                 self.cursor_position + self._get_visible_lines(),
             )
-            # Adjust start_line to keep the cursor in view
             if self.cursor_position >= self.start_line + self._get_visible_lines():
-                self.start_line = self.cursor_position - self._get_visible_lines() + 1
+                self.start_line = (
+                    self.cursor_position - self._get_visible_lines() + 1
+                )  # Adjust start_line to keep the cursor in view
 
         @kb.add("space")
         def toggle_selection(_event):
-            current_item = self._get_current_item()
-            self._toggle_file_selection(current_item)
+            current_item = self._get_current_item()  # Get the current item as a Path
+            if current_item:  # Ensure current_item is not None
+                self._toggle_file_selection(
+                    current_item
+                )  # Pass the Path object directly
 
         @kb.add("enter")
         def confirm_selection(_event):
             self.app.exit()
 
-        return kb  # Return the created key bindings
+        return kb
 
-    def _create_application(self, kb) -> Application:  # New private method
+    def _create_application(self, kb) -> Application:
         """Create and return the application instance."""
         tree_window = Window(
             content=FormattedTextControl(self._get_formatted_text, focusable=True),
@@ -190,7 +187,6 @@ class InteractiveFileSelector:
         )
 
         scrollable_tree = ScrollablePane(tree_window)
-
         instructions = (
             "Instructions:\n"
             "-------------\n"
@@ -213,7 +209,7 @@ class InteractiveFileSelector:
                             Window(height=1),
                             Window(
                                 content=FormattedTextControl(
-                                    lambda: f"Selected: {len(self.selected_files)} file(s): {', '.join(str(file) for file in self.selected_files) if self.selected_files else 'None'}"  # Convert Path to str
+                                    lambda: f"Selected: {len(self.selected_files)} file(s): {', '.join(str(file) for file in self.selected_files) if self.selected_files else 'None'}"
                                 ),
                                 height=1,
                             ),
@@ -239,7 +235,7 @@ class InteractiveFileSelector:
             mouse_support=True,
         )
 
-    def _check_paths(self) -> None:  # Add return type
+    def _check_paths(self) -> None:
         """Check if the provided paths are valid."""
         if not self.paths or any(not path for path in self.paths):
             raise ValueError(
