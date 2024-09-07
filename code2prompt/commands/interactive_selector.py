@@ -1,4 +1,4 @@
-from typing import List, Dict, Union
+from typing import List, Dict, Set, Union
 import os
 import signal
 from pathlib import Path
@@ -23,7 +23,7 @@ class InteractiveFileSelector:
         self.tree_paths: List[Path] = []
         self.kb = self._create_key_bindings()
         self.app = self._create_application(self.kb)
-        self.selected_files = [str(Path(file).resolve()) for file in selected_files]
+        self.selected_files : Set[str] = set([str(Path(file).resolve()) for file in selected_files])
 
     def _get_terminal_height(self) -> int:
         """Get the height of the terminal."""
@@ -115,7 +115,7 @@ class InteractiveFileSelector:
             self.selected_files.remove(current_item)
         else:
             print(f"Adding: {current_item}")
-            self.selected_files.append(current_item)
+            self.selected_files.add(current_item)
 
     def _get_current_item(self) -> str:
         """Get the current item based on cursor position."""
