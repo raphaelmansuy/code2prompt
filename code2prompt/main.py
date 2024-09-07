@@ -161,11 +161,12 @@ def generate(ctx, **options):
 
     if filtered_paths:
         file_selector = InteractiveFileSelector(filtered_paths, filtered_paths)
-        filtered_selected_paths, trees_paths = file_selector.run()
+        filtered_selected_paths, trees_paths, full_paths = file_selector.run()
         options["path"] = filtered_selected_paths
 
     print("Selected paths: %s", filtered_selected_paths)
     print("Tree paths: %s", trees_paths)
+    print("Full paths: %s", full_paths)
     exit()
 
     logger.info("Generating markdown with options: %s", options)

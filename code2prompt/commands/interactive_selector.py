@@ -1,4 +1,4 @@
-from typing import List, Dict, Set, Union
+from typing import List, Dict, Set, Tuple
 import os
 import signal
 from pathlib import Path
@@ -21,6 +21,7 @@ class InteractiveFileSelector:
         self.cursor_position: int = 0
         self.formatted_tree: List[str] = []
         self.tree_paths: List[Path] = []
+        self.tree_full_paths: List[str] = []
         self.kb = self._create_key_bindings()
         self.app = self._create_application(self.kb)
         self.selected_files: Set[str] = set(
@@ -44,27 +45,42 @@ class InteractiveFileSelector:
                 current = current[part]  # Move to the next level in the tree
 
         return tree
+    
+    
 
     def _format_tree(
         self, tree: Dict[Path, Dict], indent: str = ""
-    ) -> List[Union[List[str], List[Path]]]:
+    ) -> Tuple[List[str], List[Path], List[str]]:
         """Format the directory tree into a list of strings."""
         lines: List[str] = []
         tree_paths: List[Path] = []
+        tree_full_paths: List[str] = []
+
         for i, (file_path, subtree) in enumerate(tree.items()):
             is_last = i == len(tree) - 1
             prefix = "└── " if is_last else "├── "
             line = f"{indent}{prefix}{Path(file_path).name}"
             lines.append(line)
-            tree_paths.append(Path(file_path).resolve())
+
+            # Resolve and store the full path
+            resolved_path = Path(file_path).resolve()
+            tree_paths.append(resolved_path)
+            tree_full_paths.append(
+                str(resolved_path)
+            )  # Store the full path as a string
+
             if subtree:
                 extension = " " if is_last else "│ "
-                sub_lines, sub_tree_paths = self._format_tree(
+                sub_lines, sub_tree_paths, sub_full_paths = self._format_tree(
                     subtree, indent + extension
                 )
                 lines.extend(sub_lines)
                 tree_paths.extend(sub_tree_paths)
-        return lines, tree_paths
+                tree_full_paths.extend(
+                    sub_full_paths
+                )  # Merge the full paths from the subtree
+
+        return lines, tree_paths, tree_full_paths
 
     def _get_visible_lines(self) -> int:
         """Calculate the number of visible lines based on terminal height."""
@@ -91,7 +107,7 @@ class InteractiveFileSelector:
                     self.cursor_position = len(self.formatted_tree) - 1
 
                 # Get the full path
-                file_path = str(self.tree_paths[i].resolve())
+                file_path = str(self.tree_full_paths[i])
 
                 # Check if the full path is selected
                 is_selected = file_path in self.selected_files
@@ -130,10 +146,12 @@ class InteractiveFileSelector:
         """Run the interactive file selection."""
         self._check_paths()
         tree = self._get_directory_tree()
-        self.formatted_tree, self.tree_paths = self._format_tree(tree)
+        self.formatted_tree, self.tree_paths, self.tree_full_paths = self._format_tree(
+            tree
+        )
         signal.signal(signal.SIGWINCH, self._resize_handler)
         self.app.run()
-        return self.selected_files, self.tree_paths
+        return self.selected_files, self.tree_paths, self.tree_full_paths
 
     def _create_key_bindings(self) -> KeyBindings:
         """Create and return key bindings for the application."""
