@@ -25,6 +25,8 @@ class InteractiveFileSelector:
         self.cursor_position: int = 0
         self.selected_files: List[str] = []
         self.formatted_tree: List[str] = []
+        self.kb = self._create_key_bindings()  # Call the new method
+        self.app = self._create_application(self.kb)  # Use the private property
 
     def _get_terminal_height(self) -> int:  # Add return type
         """Get the height of the terminal."""
@@ -110,6 +112,18 @@ class InteractiveFileSelector:
         tree = self._get_directory_tree()
         self.formatted_tree = self._format_tree(tree)
 
+        signal.signal(signal.SIGWINCH, self._resize_handler)
+
+        self.app.run()
+
+        print(
+            "Selected files:",
+            self.selected_files if self.selected_files else "No files selected.",
+        )
+        return self.selected_files
+
+    def _create_key_bindings(self) -> KeyBindings:  # New private method
+        """Create and return key bindings for the application."""
         kb = KeyBindings()
 
         @kb.add("q")
@@ -160,6 +174,10 @@ class InteractiveFileSelector:
         def confirm_selection(_event):
             self.app.exit()
 
+        return kb  # Return the created key bindings
+
+    def _create_application(self, kb) -> Application:  # New private method
+        """Create and return the application instance."""
         tree_window = Window(
             content=FormattedTextControl(self._get_formatted_text, focusable=True),
             width=60,
@@ -209,23 +227,13 @@ class InteractiveFileSelector:
             }
         )
 
-        self.app = Application(
+        return Application(
             layout=layout,
             key_bindings=kb,
             full_screen=True,
             style=style,
             mouse_support=True,
         )
-
-        signal.signal(signal.SIGWINCH, self._resize_handler)
-
-        self.app.run()
-
-        print(
-            "Selected files:",
-            self.selected_files if self.selected_files else "No files selected.",
-        )
-        return self.selected_files
 
     def _check_paths(self) -> None:  # Add return type
         """Check if the provided paths are valid."""
