@@ -32,15 +32,15 @@ class InteractiveFileSelector:
     def _get_directory_tree(self) -> Dict[Path, Dict]:
         """Get a combined directory tree for the given paths."""
         tree: Dict[Path, Dict] = {}
+        
         for path in self.paths:
-            current = tree
-            current[path] = {}  # Store the path as a key
+            current = tree  # Start from the root of the tree
+            # Iterate through each part of the path
             for part in Path(path).parts:
-                if (
-                    part not in current
-                ):  # Fix: Check if part is in current, not current[path]
-                    current[part] = {}  # Fix: Store part as a key
-                current = current[part]  # Fix: Move to the next level in the tree
+                if part not in current:  # Check if part is already in the current level
+                    current[part] = {}  # Create a new dictionary for the part
+                current = current[part]  # Move to the next level in the tree
+
         return tree
 
     def _format_tree(self, tree, indent="") -> List[Union[List[str], List[Path]]]:
@@ -50,16 +50,18 @@ class InteractiveFileSelector:
         for i, (file_path, subtree) in enumerate(tree.items()):
             is_last = i == len(tree) - 1
             prefix = "└── " if is_last else "├── "
-            line = f"{indent}{prefix}{Path(file_path).name}"  # Ensure file_path is a Path object
+            line = f"{indent}{prefix}{Path(file_path).name}"
             lines.append(line)
-            tree_paths.append(file_path)
             if subtree:
+                tree_paths.append(file_path)
                 extension = " " if is_last else "│ "
                 sub_lines, sub_tree_paths = self._format_tree(
                     subtree, indent + extension
                 )
                 lines.extend(sub_lines)
                 tree_paths.extend(sub_tree_paths)
+            else:
+                tree_paths.append(file_path)
         return lines, tree_paths
 
     def _get_visible_lines(self) -> int:
