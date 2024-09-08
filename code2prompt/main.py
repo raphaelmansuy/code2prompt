@@ -148,10 +148,10 @@ def generate(ctx, **options):
     config = ctx.obj["config"].merge(options)
     logger = setup_logger(level=config.log_level)
 
-    selected_paths: list[Path] = config.path
+    selected_paths: list[Path] = [Path(p) for p in config.path]
 
     # Check if selected_paths is empty before proceeding
-    if not selected_paths:  # {{ edit_1 }} Added check for empty paths
+    if not selected_paths:
         logging.error("No file paths provided. Please specify valid paths.")
         return  # Exit the function if no paths are provided
 
@@ -160,18 +160,23 @@ def generate(ctx, **options):
     case_sensitive: bool = config.case_sensitive
     gitignore: str = config.gitignore
 
-    # filter paths based on .gitignore
-    filtered_paths = retrieve_file_paths(
-        file_paths=selected_paths,  # {{ edit_1 }} Added 'file_paths' argument
-        gitignore=gitignore,
-        filter_patterns=filter_patterns,
-        exclude_patterns=exclude_patterns,
-        case_sensitive=case_sensitive,
-    )
+    # Handle both directory and file inputs
+    filtered_paths = []
+    for path in selected_paths:
+        if path.is_dir():
+            filtered_paths.extend(retrieve_file_paths(
+                file_paths=[path],
+                gitignore=gitignore,
+                filter_patterns=filter_patterns,
+                exclude_patterns=exclude_patterns,
+                case_sensitive=case_sensitive,
+            ))
+        elif path.is_file():
+            filtered_paths.append(path)
 
     if filtered_paths and config.interactive:
         file_selector = InteractiveFileSelector(filtered_paths, filtered_paths)
-        filtered_selected_path  = file_selector.run()
+        filtered_selected_path = file_selector.run()
         config.path = filtered_selected_path
     else:
         config.path = filtered_paths
