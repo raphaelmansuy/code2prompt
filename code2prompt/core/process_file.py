@@ -11,7 +11,7 @@ from code2prompt.comment_stripper.strip_comments import strip_comments
 
 
 def process_file(
-    file_path: Path, suppress_comments: bool, line_number: bool, no_codeblock: bool
+    file_path: Path, suppress_comments: bool, line_number: bool, no_codeblock: bool, syntax_map: dict
 ):
     """
     Processes a given file to extract its metadata and content.
@@ -21,6 +21,7 @@ def process_file(
     - suppress_comments (bool): Flag indicating whether to remove comments from the file content.
     - line_number (bool): Flag indicating whether to add line numbers to the file content.
     - no_codeblock (bool): Flag indicating whether to disable wrapping code inside markdown code blocks.
+    - syntax_map (dict): Custom syntax mappings for language inference.
 
     Returns:
     dict: A dictionary containing the file information and content.
@@ -33,13 +34,12 @@ def process_file(
     file_modification_time = datetime.fromtimestamp(file_path.stat().st_mtime).strftime(
         "%Y-%m-%d %H:%M:%S"
     )
-    language = "unknown"
 
     try:
         with file_path.open("r", encoding="utf-8") as f:
             file_content = f.read()
 
-        language = infer_language(file_path.name)
+        language = infer_language(file_path.name, syntax_map)
 
         if suppress_comments and language != "unknown":
             file_content = strip_comments(file_content, language)

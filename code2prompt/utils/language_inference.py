@@ -1,12 +1,13 @@
 import os
 
 
-def infer_language(filename: str) -> str:
+def infer_language(filename: str, syntax_map: dict) -> str:
     """
     Infers the programming language of a given file based on its extension.
 
     Parameters:
     - filename (str): The name of the file including its extension.
+    - syntax_map (dict): Custom syntax mappings for language inference.
 
     Returns:
     - str: The inferred programming language as a lowercase string, e.g., "python".
@@ -14,6 +15,10 @@ def infer_language(filename: str) -> str:
     """
     _, extension = os.path.splitext(filename)
     extension = extension.lower()
+
+    # Check user-defined syntax map first
+    if extension in syntax_map:
+        return syntax_map[extension]
 
     language_map = {
         ".c": "c",
