@@ -1,12 +1,9 @@
-from code2prompt.main import create_markdown_file
-
+from code2prompt.main import create_markdown_file_command
 
 from click.testing import CliRunner
 
-
 import tempfile
 from pathlib import Path
-
 
 def test_create_markdown_with_filter():
     runner = CliRunner()
@@ -19,7 +16,7 @@ def test_create_markdown_with_filter():
 
         filter_option = "*.py"
         output_file = temp_dir_path / "output_with_filter.md"
-        result = runner.invoke(create_markdown_file, ['-p', temp_dir, '-o', str(output_file), '-f', filter_option])
+        result = runner.invoke(create_markdown_file_command, ['-p', temp_dir, '-o', str(output_file), '-f', filter_option])
 
         assert result.exit_code == 0
         assert output_file.exists()
