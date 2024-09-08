@@ -59,7 +59,7 @@ def is_filtered(
 
     # Check exclude patterns first (they take precedence)
     if match_patterns(file_path_str, exclude_patterns):
-        return False
+        return False  # Exclude dotfiles and other specified patterns
 
     # If include patterns are specified, the file must match at least one
     if include_patterns:

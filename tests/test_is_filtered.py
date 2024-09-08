@@ -2,6 +2,8 @@ import pytest
 from pathlib import Path
 from code2prompt.utils.is_filtered import is_filtered
 
+# Removed incorrect import
+
 
 @pytest.mark.parametrize(
     "file_path, include_pattern, exclude_pattern, case_sensitive, expected",
@@ -24,17 +26,22 @@ from code2prompt.utils.is_filtered import is_filtered
         (Path("file_without_extension"), "", "*.*", False, True),
         (Path("deeply/nested/directory/file.txt"), "**/*.txt", "", False, True),
         (Path("file.txt.bak"), "", "*.bak", False, False),
+        (
+            Path("file.py"),
+            "syntax_map:*.py",
+            "",
+            False,
+            True,
+        ),  # New test case for syntax map
+        (
+            Path("file.txt"),
+            "syntax_map:*.py",
+            "",
+            False,
+            False,
+        ),  # New test case for syntax map
     ],
 )
-def test_is_filtered(
-    file_path, include_pattern, exclude_pattern, case_sensitive, expected
-):
-    assert (
-        is_filtered(file_path, include_pattern, exclude_pattern, case_sensitive)
-        == expected
-    )
-
-
 def test_is_filtered_with_directories():
     assert is_filtered(
         Path("src/test"), "**/test", "", False
@@ -53,3 +60,22 @@ def test_is_filtered_case_sensitivity():
 
 def test_is_filtered_exclude_precedence():
     assert not is_filtered(Path("important_test.py"), "*.py", "*test*", False)
+
+
+# Define test cases
+test_cases = [
+    (Path(".gitignore"), "", "**/.gitignore", False),  # Should be excluded
+    (Path(".codetopromptrc"), "", "**/.codetopromptrc", False),  # Should be excluded
+    (Path("README.md"), "", "", True),  # Should be included
+    (Path("notes.txt"), "", "**/*.txt", False),  # Should be excluded
+    (Path("file.py"), "*.py", "", True),  # Should be included
+]
+
+# Run tests
+for file_path, include, exclude, expected in test_cases:
+    result = is_filtered(file_path, include, exclude)
+    assert (
+        result == expected
+    ), f"Test failed for {file_path}: expected {expected}, got {result}"
+
+print("All tests passed!")
