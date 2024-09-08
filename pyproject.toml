@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "code2prompt"
-version = "0.8.0"
+version = "0.8.1"
 description = "A tool to convert code snippets into AI prompts for documentation or explanation purposes."
 authors = ["Raphael MANSUY <raphael.mansuy@gmail.com>"]
 license = "MIT"
