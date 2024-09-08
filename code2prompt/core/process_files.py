@@ -3,15 +3,17 @@ This module contains functions for processing files and directories.
 """
 
 from pathlib import Path
+from typing import List, Dict, Any
 from code2prompt.core.process_file import process_file
 
 
 def process_files(
-    file_paths: list[Path],
-    suppress_comments: bool,
+    file_paths: List[Path],
     line_number: bool,
     no_codeblock: bool,
-):
+    suppress_comments: bool,
+    syntax_map: dict  # Add this parameter
+) -> List[Dict[str, Any]]:
     """
     Processes files or directories based on the provided paths.
 
@@ -30,12 +32,12 @@ def process_files(
 
     # Use get_file_paths to retrieve all file paths to process
     for path in file_paths:
-        path = Path(path)
         result = process_file(
             file_path=path,
             suppress_comments=suppress_comments,
             line_number=line_number,
             no_codeblock=no_codeblock,
+            syntax_map=syntax_map  # Ensure this is being passed
         )
         if result:
             files_data.append(result)

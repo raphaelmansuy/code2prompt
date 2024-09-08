@@ -1,7 +1,7 @@
 # code2prompt/config.py
 
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Dict
 from pydantic import BaseModel, Field, field_validator, ValidationError
 
 class Configuration(BaseModel):
@@ -33,6 +33,9 @@ class Configuration(BaseModel):
     analyze: bool = Field(False, description="Analyze the codebase and provide a summary of file extensions.")
     format: str = Field("flat", description="Format of the analysis output (flat or tree-like).")
     interactive: bool = Field(False, description="Interactive mode to select files.")
+    
+    # Add the syntax_map attribute
+    syntax_map: Dict[str, str] = Field(default_factory=dict, description="Custom syntax mappings for language inference.")
 
     @field_validator('encoding')
     @classmethod

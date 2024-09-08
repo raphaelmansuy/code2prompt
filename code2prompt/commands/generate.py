@@ -19,7 +19,7 @@ class GenerateCommand(BaseCommand):
     def execute(self) -> None:
         """Execute the generate command."""
         self.logger.info("Generating markdown...")
-        file_paths = self._process_files()
+        file_paths = self._process_files(syntax_map=self.config.syntax_map)  # Pass syntax_map here
         content = self._generate_content(file_paths)
         self._write_output(content)
 
@@ -30,7 +30,7 @@ class GenerateCommand(BaseCommand):
 
         self.logger.info("Generation complete.")
 
-    def _process_files(self) -> List[Dict[str, Any]]:
+    def _process_files(self, syntax_map: dict) -> List[Dict[str, Any]]:
         """Process files based on the configuration."""
         all_files_data = []
         files_data = process_files(
@@ -38,6 +38,7 @@ class GenerateCommand(BaseCommand):
             line_number=self.config.line_number,
             no_codeblock=self.config.no_codeblock,
             suppress_comments=self.config.suppress_comments,
+            syntax_map=syntax_map,  # Pass syntax_map here
         )
         all_files_data.extend(files_data)
         return all_files_data

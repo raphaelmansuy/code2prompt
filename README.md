@@ -48,6 +48,7 @@ Code2Prompt is a powerful, open-source command-line tool that bridges the gap be
 - **Smart Token Management**: Count and optimize tokens to ensure compatibility with various LLM token limits, preventing errors during processing.
 - **Gitignore Integration**: Respect your project's .gitignore rules for accurate representation, ensuring that irrelevant files are excluded from processing.
 - **Flexible File Handling**: Filter and exclude files using powerful glob patterns, giving you control over which files are included in the prompt generation.
+- **Custom Syntax Highlighting**: Pair custom file extensions with specific syntax highlighting using the `--syntax-map` option. For example, you can specify that `.inc` files should be treated as `bash` scripts.
 - **Clipboard Ready**: Instantly copy generated prompts to your clipboard for quick AI interactions, streamlining your workflow.
 - **Multiple Output Options**: Save to file or display in the console, providing flexibility in how you want to use the generated prompts.
 - **Enhanced Code Readability**: Add line numbers to source code blocks for precise referencing, making it easier to discuss specific parts of the code.
@@ -126,6 +127,30 @@ For multiple paths:
 code2prompt --path /path/to/dir1 --path /path/to/file2.py [OPTIONS]
 ```
 
+### Custom Syntax Highlighting
+
+To pair custom file extensions with specific syntax highlighting, use the `--syntax-map` option. This allows you to specify mappings in the format `extension:syntax`. For example:
+
+```
+code2prompt --path /path/to/your/code --syntax-map "inc:bash,customext:python,ext2:javascript"
+```
+
+This command will treat `.inc` files as `bash` scripts, `.customext` files as `python`, and `.ext2` files as `javascript`.
+
+You can also use multiple `--syntax-map` arguments or separate mappings with commas:
+
+```
+code2prompt --path /path/to/your/script.py --syntax-map "inc:bash"
+```
+
+```
+code2prompt --path /path/to/your/project --syntax-map "inc:bash,txt:markdown" --output project_summary.md
+```
+
+```
+code2prompt --path /path/to/src --path /path/to/lib --syntax-map "inc:bash,customext:python" --output codebase_summary.md
+```
+
 ## Options
 
 | Option | Short | Description |
@@ -146,6 +171,7 @@ code2prompt --path /path/to/dir1 --path /path/to/file2.py [OPTIONS]
 | `--version` | `-v` | Show the version and exit |
 | `--log-level` | | Set the logging level (e.g., DEBUG, INFO, WARNING, ERROR, CRITICAL) |
 | `--interactive` | `-i` | Activate interactive mode for file selection |
+| `--syntax-map` | | Pair custom file extensions with specific syntax highlighting (e.g., "inc:bash,customext:python,ext2:javascript") |
 
 ## Command Parameters
 
@@ -569,7 +595,7 @@ Example `.code2promptrc`:
 
 ## Roadmap
 
-   - [ ] Interactive filtering
+   - [X] Interactive filtering
    - [X] Include system in template to promote re-usability of sub templates.
    - [X] Support of input variables
    - [ ] Tokens count for Anthropic Models and other models such as LLama3 or Mistral

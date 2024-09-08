@@ -115,6 +115,11 @@ from code2prompt.version import VERSION
     default=1000,
     help="Specify the number of output tokens for price calculation.",
 )
+@click.option(
+    "--syntax-map",
+    type=str,
+    help="Comma-separated list of extension:synonym mappings for syntax highlighting."
+)
 @click.pass_context
 def cli(ctx, config, path, **generate_options):
     """code2prompt CLI tool"""
@@ -122,7 +127,7 @@ def cli(ctx, config, path, **generate_options):
     if config:
         ctx.obj["config"] = Configuration.load_from_file(Path(config))
     else:
-        ctx.obj["config"] = Configuration()
+        ctx.obj["config"] = Configuration()  # This will now have syntax_map initialized
 
     logging.info("CLI initialized with config: %s", ctx.obj["config"])
 
@@ -144,6 +149,14 @@ def cli(ctx, config, path, **generate_options):
 @click.pass_context
 def generate(ctx, **options):
     """Generate markdown from code files"""
+
+    # Parse the syntax_map option into a dictionary
+    if options.get('syntax_map'):
+        syntax_map = {}
+        for mapping in options['syntax_map'].split(','):
+            ext, syntax = mapping.split(':')
+            syntax_map['.' + ext.strip()] = syntax.strip()  # Add a dot before the extension
+        options['syntax_map'] = syntax_map  # Replace the string with the dictionary
 
     config = ctx.obj["config"].merge(options)
     logger = setup_logger(level=config.log_level)
