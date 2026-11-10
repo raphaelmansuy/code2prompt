@@ -154,7 +154,12 @@ def generate(ctx, **options):
     if options.get('syntax_map'):
         syntax_map = {}
         for mapping in options['syntax_map'].split(','):
-            ext, syntax = mapping.split(':')
+            parts = mapping.split(':')
+            if len(parts) != 2 or not parts[0].strip() or not parts[1].strip():
+                raise click.BadParameter(
+                    "{!r} is not a valid mapping; use EXT:syntax (e.g. 'py:python').".format(mapping)
+                )
+            ext, syntax = parts
             syntax_map['.' + ext.strip()] = syntax.strip()  # Add a dot before the extension
         options['syntax_map'] = syntax_map  # Replace the string with the dictionary
 
